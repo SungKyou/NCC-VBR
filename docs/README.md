@@ -6,7 +6,7 @@ C로 개발된 NCC-VBR 서비스 3종을 Go로 전환하는 작업의 문서 모
 
 기준일: 2026-11-18
 
-작업 위치는 `c:\dev\ncc-vbr-go`다. 2026-11-18에 cifs·remove(Codex 세션, `c:\dev\ncc-vbr(codex)`)와 agent(Claude Code 세션, `c:\dev\ncc-vbr`)를 이곳의 Go 모듈 하나로 합쳤다. 세 서비스는 실행 파일과 버전을 따로 두고 따로 운영한다. 이후 모든 서비스 변경은 Claude Code가 한다. 경위와 통합 뒤 검증은 [00-process/05-merge-record.md](00-process/05-merge-record.md)에 있다.
+작업 위치는 `c:\dev\ncc-vbr-go`다.   세 서비스는 실행 파일과 버전을 따로 두고 따로 운영한다.  경위와 통합 뒤 검증은 [00-process/05-merge-record.md](00-process/05-merge-record.md)에 있다.
 
 ## 1. 현재 상태
 

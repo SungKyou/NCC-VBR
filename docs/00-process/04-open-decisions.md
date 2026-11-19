@@ -42,3 +42,12 @@ agent의 사전 확인 Q-A01~Q-A17 은 2026-11-17 에 모두 정해졌다([agent
 | Q-A19 | 백업 성공 문장 | 운영 로그와 같은 `VM BACKUP Success : …`. 소스 1.602 의 `XVA file check Success : …` 는 쓰지 않는다 | 관리 서버에 1.602 문장을 반영한 적이 있는지 |
 
 자세한 근거: [agent/04-change-register.md](../agent/04-change-register.md) 5장.
+
+## 5. vbr_vm (2단계)
+
+판단 자료는 [vm/04-change-register.md](../vm/04-change-register.md) 5장에 있다.
+
+| 번호 | 항목 | 기존(vbr_agent) | ncc-xen | 선택지 | 권장 | 결정 |
+|---|---|---|---|---|---|---|
+| Q-VM-01 | export 스냅샷 정책 기본값 | 항상 임시 스냅샷 | Running만 임시 스냅샷, Halted는 그대로 내보냄 | `auto` / `always` (요청마다 바꿀 수 있고 디스크 선택 백업은 항상 스냅샷) | `always`. 백업 중에도 VM을 켤 수 있고 1단계 실기로 확인된 방식이다. `auto`의 VM 잠김은 미확인(I10) | **2026-11-19 사용자**: `auto`. 요청으로 `always`. 내보내는 동안 VM 시작 가능 여부는 실기 I10으로 확인. **해결** |
+| Q-VM-02 | export 압축 기본값 | 항상 gzip | none | `none` / `gzip` / `zstd` (요청마다 바꿀 수 있음) | `gzip`. 기존과 같고 XenCenter로도 복구할 수 있다. zstd는 빠르지만 이 서비스로만 복구된다 | **2026-11-19 사용자**: 요청의 compression을 따르고, 없으면 none. 설정 기본값 키는 두지 않는다. **해결** |

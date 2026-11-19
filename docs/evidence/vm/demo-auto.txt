@@ -1,0 +1,406 @@
+== 2026-11-19T13:06:19 demo.ps1 -Auto (go version go1.27.4 windows/amd64)
+
+  ╔══════════════════════════════════════════════════╗
+  ║  자동 모드 — 작업 폴더 C:\Users\SK\AppData\Local\Temp\vbr-vm-demo-20261119-130620
+  ╚══════════════════════════════════════════════════╝
+  PASS  U70 /health  port 65407
+  PASS  U80 토큰 없음 401  unauthorized: missing or invalid X-Internal-Token
+  PASS  U02 필수 값 없음 400  MISSING_FIELD payload.options.file_name
+  → I01 전체 백업(Halted, auto)
+  ┌─ Request
+  │ {
+
+  │   "taskId": "full-bb47cca758c7",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "full"
+
+  │     },
+
+  │     "targetUUID": "42097417-b9ee-2f97-8eeb-3612efbcb25d",
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I01 전체 백업  size=56832 sha256=58f3f9267dc7…
+  PASS  U03 같은 taskId  duplicate taskId — already accepted, not re-executed
+  → I02 디스크 0만
+  ┌─ Request
+  │ {
+
+  │   "taskId": "part-8db06c470191",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "part",
+
+  │       "disks": [
+
+  │         0
+
+  │       ],
+
+  │       "compression": "gzip"
+
+  │     },
+
+  │     "targetUUID": "42097417-b9ee-2f97-8eeb-3612efbcb25d",
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I02 디스크 선택 백업  exported_uuid=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a
+  → U23·U41 zstd + 백업 뒤 검증
+  ┌─ Request
+  │ {
+
+  │   "taskId": "zstd-f5ae15e7b94d",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "z",
+
+  │       "verify_after_export": true,
+
+  │       "compression": "zstd"
+
+  │     },
+
+  │     "targetUUID": "42097417-b9ee-2f97-8eeb-3612efbcb25d",
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  U41 zstd + 검증  C:\Users\SK\AppData\Local\Temp\vbr-vm-demo-20261119-130620\backup\z.xva.zst
+  → I05 검증
+  ┌─ Request
+  │ {
+
+  │   "taskId": "verify-6a478724bc8b",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "verify",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "FILE",
+
+  │     "options": {
+
+  │       "file_path": "C:\\Users\\SK\\AppData\\Local\\Temp\\vbr-vm-demo-20261119-130620\\backup\\full.xva"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I05 XVA 검증  chunk_count=1
+  → I03·I04 복구 (full.xva)
+  ┌─ Request
+  │ {
+
+  │   "taskId": "restore-ddf57e235ca8",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "restore",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "FILE",
+
+  │     "options": {
+
+  │       "restore_original_uuid": true,
+
+  │       "sr_uuid": "e4138437-7e20-480f-08b1-25e5b8b6027b",
+
+  │       "file_path": "C:\\Users\\SK\\AppData\\Local\\Temp\\vbr-vm-demo-20261119-130620\\backup\\full.xva"
+
+  │     },
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I03 복구 full.xva  vm_uuid=cd5498f2-0342-db8e-749e-53a5e86744dd
+  → I03·I04 복구 (z.xva.zst)
+  ┌─ Request
+  │ {
+
+  │   "taskId": "restore-ba26f3864b21",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "restore",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "FILE",
+
+  │     "options": {
+
+  │       "restore_original_uuid": true,
+
+  │       "sr_uuid": "e4138437-7e20-480f-08b1-25e5b8b6027b",
+
+  │       "file_path": "C:\\Users\\SK\\AppData\\Local\\Temp\\vbr-vm-demo-20261119-130620\\backup\\z.xva.zst"
+
+  │     },
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I03 복구 z.xva.zst  vm_uuid=cd5498f2-0342-db8e-749e-53a5e86744dd
+  → I08 없는 VM
+  ┌─ Request
+  │ {
+
+  │   "taskId": "xerr-0ae8968a9d36",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "x"
+
+  │     },
+
+  │     "targetUUID": "00000000-0000-0000-0000-000000000000",
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I08 없는 VM  XAPI Error: UUID_INVALID | VM | 00000000-0000-0000-0000-000000000000
+  → I08 틀린 암호
+  ┌─ Request
+  │ {
+
+  │   "taskId": "auth-575d53de81bf",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "y"
+
+  │     },
+
+  │     "targetUUID": "42097417-b9ee-2f97-8eeb-3612efbcb25d",
+
+  │     "masterIp": "127.0.0.1:65405",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I08 틀린 암호  XAPI_AUTH_FAILED
+  → I07 처리 중 취소
+  ┌─ Request
+  │ {
+
+  │   "taskId": "cancel-ed1b11f75322",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "export",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "VM",
+
+  │     "options": {
+
+  │       "file_name": "c"
+
+  │     },
+
+  │     "targetUUID": "42097417-b9ee-2f97-8eeb-3612efbcb25d",
+
+  │     "masterIp": "127.0.0.1:65406",
+
+  │     "credentials": {
+
+  │       "password": "***",
+
+  │       "username": "root"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  I07 처리 중 취소  cancel HTTP 202, status=canceled
+  PASS  U50 목록 조회  count=9
+  → U71 설정 즉시 반영(locale=en)
+  ┌─ Request
+  │ {
+
+  │   "taskId": "locale-28dcb1d0d079",
+
+  │   "jobType": "VM_BACKUP",
+
+  │   "action": "verify",
+
+  │   "executionType": "async",
+
+  │   "payload": {
+
+  │     "targetType": "FILE",
+
+  │     "options": {
+
+  │       "file_path": "C:\\Users\\SK\\AppData\\Local\\Temp\\vbr-vm-demo-20261119-130620\\backup\\full.xva"
+
+  │     }
+
+  │   }
+
+  │ }
+  └─
+  ✔ 202 ACCEPTED
+  PASS  U71 locale 즉시 반영  XVA verification passed: C:\Users\SK\AppData\Local\Temp\vbr-vm-demo-20261119-130620\backup\full.xva
+  PASS  U82 암호가 로그·기록에 없음  vbr_vm.log, tasks\jobs.jsonl
+
+  ══ 결과: PASS 16, FAIL 0
+  로그와 작업 기록: C:\Users\SK\AppData\Local\Temp\vbr-vm-demo-20261119-130620

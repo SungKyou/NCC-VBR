@@ -1,0 +1,264 @@
+original agent started (exit 0)
+2026/11/19 04:14:01 fake XAPI listening on https://[::]:8443
+converted agent started (exit 0)
+== driver ==
+PASS     reply P00 accept
+EXPECTED reply P00 result (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/17.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva\n"
+PASS     reply P01 format error
+FAIL     reply P02 bad uuid result
+    c : "B<POLL-SEQ>50001[ERROR]VM UUID is not valid."
+    go: "B<POLL-SEQ>00001[ERROR]VM UUID is not valid."
+PASS     reply P03 restore args result
+PASS     reply P04 accept 20261117100000005
+PASS     reply P04 accept 20261117100000006
+PASS     reply P04 accept 20261117100000007
+PASS     reply P04 accept 20261117100000008
+PASS     reply P04 accept 20261117100000009
+PASS     reply P04 query running
+PASS     reply P04 query queued
+PASS     reply P04 cancel running
+PASS     reply P04 cancel queued
+PASS     reply P04 query canceled
+PASS     reply P04 query not found
+PASS     reply P04 query short
+PASS     reply P04 cancel short
+PASS     reply P04 cancel not found
+EXPECTED reply P04 result 20261117100000005 (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/s0.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva\n"
+EXPECTED reply P04 result 20261117100000006 (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/s1.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva\n"
+EXPECTED reply P04 result 20261117100000007 (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/s2.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva\n"
+EXPECTED reply P04 result 20261117100000009 (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/s4.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva\n"
+PASS     reply P05 accept
+EXPECTED reply P05 result (C-AG-01)
+    c : "B<POLL-SEQ>00001XVA file check Success : backup filename=<ROOT>/p.xva\n"
+    go: "B<POLL-SEQ>00001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva\n"
+PASS     reply P06 accept
+PASS     reply P06 result
+PASS     reply P07 multi cancel
+PASS     tran 20261117100000000 #1
+PASS     tran 20261117100000000 #2
+PASS     tran 20261117100000000 #3
+EXPECTED tran 20261117100000000 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000000000005XVA file check Success : backup filename=<ROOT>/17.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000000000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva"
+EXPECTED tran 20261117100000000 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000000005XVA file check Success : backup filename=<ROOT>/17.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000000000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva"
+EXPECTED tran 20261117100000001 #1 (C-AG-02)
+    c : "9:Format Error | X2026111710000000190005BACKUP x100000000"
+    go: "9:Format Error | X2026111710000000190005BACKUP x"
+PASS     tran 20261117100000002 #1
+PASS     tran 20261117100000002 #2
+PASS     tran 20261117100000002 #3
+FAIL     tran 20261117100000002 #4
+    c : "0:ASYNC RESULT send success | B2026111710000000290005[ERROR]VM UUID is not valid."
+    go: "5:ASYNC Queue result send finished | B2026111710000000290005[ERROR]VM UUID is not valid."
+FAIL     tran 20261117100000002 #5
+    c : "5:ASYNC Queue result send finished | B2026111710000000290005[ERROR]VM UUID is not valid."
+    go: "0:ASYNC RESULT send error | B2026111710000000290005[ERROR]VM UUID is not valid."
+PASS     tran 20261117100000003 #1
+PASS     tran 20261117100000003 #2
+PASS     tran 20261117100000003 #3
+PASS     tran 20261117100000003 #4
+EXPECTED tran 20261117100000003 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000390005[ERROR]SR UUID is not valid."
+    go: "0:ASYNC RESULT send error | B2026111710000000390005[ERROR]SR UUID is not valid."
+PASS     tran 20261117100000005 #1
+PASS     tran 20261117100000005 #2
+PASS     tran 20261117100000005 #3
+EXPECTED tran 20261117100000005 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000000500005XVA file check Success : backup filename=<ROOT>/s0.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000000500005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva"
+EXPECTED tran 20261117100000005 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000500005XVA file check Success : backup filename=<ROOT>/s0.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000000500005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva"
+PASS     tran 20261117100000006 #1
+PASS     tran 20261117100000006 #2
+PASS     tran 20261117100000006 #3
+EXPECTED tran 20261117100000006 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000000600005XVA file check Success : backup filename=<ROOT>/s1.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000000600005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva"
+EXPECTED tran 20261117100000006 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000600005XVA file check Success : backup filename=<ROOT>/s1.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000000600005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva"
+PASS     tran 20261117100000007 #1
+PASS     tran 20261117100000007 #2
+PASS     tran 20261117100000007 #3
+EXPECTED tran 20261117100000007 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000000700005XVA file check Success : backup filename=<ROOT>/s2.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000000700005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva"
+EXPECTED tran 20261117100000007 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000700005XVA file check Success : backup filename=<ROOT>/s2.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000000700005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva"
+PASS     tran 20261117100000008 #1
+PASS     tran 20261117100000008 #2
+PASS     tran 20261117100000008 #3
+PASS     tran 20261117100000009 #1
+PASS     tran 20261117100000009 #2
+PASS     tran 20261117100000009 #3
+EXPECTED tran 20261117100000009 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000000900005XVA file check Success : backup filename=<ROOT>/s4.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000000900005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva"
+EXPECTED tran 20261117100000009 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000000900005XVA file check Success : backup filename=<ROOT>/s4.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000000900005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva"
+PASS     tran 20261117100000010 #1
+PASS     tran 20261117100000010 #2
+PASS     tran 20261117100000010 #3
+PASS     tran 20261117100000010 #4
+PASS     tran 20261117100000011 #1
+PASS     tran 20261117100000011 #2
+PASS     tran 20261117100000011 #3
+PASS     tran 20261117100000011 #4
+PASS     tran 20261117100000012 #1
+PASS     tran 20261117100000012 #2
+PASS     tran 20261117100000012 #3
+PASS     tran 20261117100000012 #4
+PASS     tran 20261117100000013 #1
+PASS     tran 20261117100000013 #2
+PASS     tran 20261117100000013 #3
+PASS     tran 20261117100000013 #4
+PASS     tran 20261117100000014 #1
+PASS     tran 20261117100000014 #2
+PASS     tran 20261117100000014 #3
+PASS     tran 20261117100000014 #4
+PASS     tran 20261117100000015 #1
+PASS     tran 20261117100000015 #2
+PASS     tran 20261117100000015 #3
+PASS     tran 20261117100000015 #4
+PASS     tran 20261117100000016 #1
+PASS     tran 20261117100000016 #2
+PASS     tran 20261117100000016 #3
+PASS     tran 20261117100000016 #4
+PASS     tran 20261117100000017 #1
+PASS     tran 20261117100000017 #2
+PASS     tran 20261117100000017 #3
+PASS     tran 20261117100000017 #4
+PASS     tran 20261117100000018 #1
+PASS     tran 20261117100000018 #2
+PASS     tran 20261117100000018 #3
+PASS     tran 20261117100000018 #4
+PASS     tran 20261117100000020 #1
+PASS     tran 20261117100000020 #2
+PASS     tran 20261117100000020 #3
+EXPECTED tran 20261117100000020 #4 (C-AG-01)
+    c : "5:ASYNC Queue result send finished | B2026111710000002000005XVA file check Success : backup filename=<ROOT>/p.xva"
+    go: "5:ASYNC Queue result send finished | B2026111710000002000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva"
+EXPECTED tran 20261117100000020 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000002000005XVA file check Success : backup filename=<ROOT>/p.xva"
+    go: "0:ASYNC RESULT send error | B2026111710000002000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva"
+PASS     tran 20261117100000021 #1
+PASS     tran 20261117100000021 #2
+PASS     tran 20261117100000021 #3
+PASS     tran 20261117100000021 #4
+EXPECTED tran 20261117100000021 #5 (C-AG-03)
+    c : "0:ASYNC RESULT send success | B2026111710000002100005cd5498f2-0342-db8e-749e-53a5e86744dd"
+    go: "0:ASYNC RESULT send error | B2026111710000002100005cd5498f2-0342-db8e-749e-53a5e86744dd"
+PASS     tran 20261117100000030 #1
+PASS     tran 20261117100000030 #2
+PASS     tran 20261117100000030 #3
+PASS     tran 20261117100000030 #4
+PASS     backup.log
+
+STRAY frames : c=0 go=0
+
+SUMMARY: PASS 94, EXPECTED 21, FAIL 3
+RESULT: FAIL
+
+== server.log (original, last 15) ==
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594080 937465316   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594080 937465316   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594080 937465316   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594080 937465316   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594080 937465316   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+[2026-11-19 04:14:44]Check / disk failed.[overlay              1055762868  64594084 937465312   6% /]
+== server.log (converted, last 15) ==
+[2026-11-19 04:14:04][ERROR]VM UUID is not valid.
+[2026-11-19 04:14:04]Send to REQUEST Manager internal error[20261117100000002]
+[2026-11-19 04:14:04]Send to REQUEST Manager internal error[20261117100000003]
+[2026-11-19 04:14:16]VM export file [/p/go/BACKUP/s2.xva] size [176] elapsed [0s]
+[2026-11-19 04:14:16]VM export file [/p/go/BACKUP/s0.xva] size [176] elapsed [0s]
+[2026-11-19 04:14:16]VM export file [/p/go/BACKUP/s1.xva] size [176] elapsed [0s]
+[2026-11-19 04:14:16]Send to REQUEST Manager internal error[20261117100000005]
+[2026-11-19 04:14:16]Send to REQUEST Manager internal error[20261117100000006]
+[2026-11-19 04:14:16]Send to REQUEST Manager internal error[20261117100000007]
+[2026-11-19 04:14:28]VM export file [/p/go/BACKUP/s4.xva] size [176] elapsed [0s]
+[2026-11-19 04:14:28]Send to REQUEST Manager internal error[20261117100000009]
+[2026-11-19 04:14:29]VM export file [/p/go/BACKUP/p.xva] size [176] elapsed [0s]
+[2026-11-19 04:14:29]Send to REQUEST Manager internal error[20261117100000020]
+[2026-11-19 04:14:29]Send to REQUEST Manager internal error[20261117100000021]
+[2026-11-19 04:14:29]Multi cancel summary : total [100], cancel [0], failed [100]
+== call counts ==
+     6834 /p/xe.log
+      107 /p/xapi.log
+     6941 total
+== xe calls (original, first 25 except host-list) ==
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=17
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-313700000000
+xe vm-export vm=676ffe7e-c3f4-8913-f0ed-313700000000 filename=/p/c/BACKUP/17.xva compress=true
+xe vm-uninstall uuid=676ffe7e-c3f4-8913-f0ed-313700000000 force=true
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=slow
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000
+xe vm-export vm=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=/p/c/BACKUP/s0.xva compress=true
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=slow
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000
+xe vm-export vm=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=/p/c/BACKUP/s1.xva compress=true
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=slow
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000
+xe vm-export vm=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=/p/c/BACKUP/s2.xva compress=true
+xe vm-uninstall uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000 force=true
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=slow
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000
+xe vm-uninstall uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000 force=true
+xe vm-export vm=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=/p/c/BACKUP/s4.xva compress=true
+xe vm-uninstall uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000 force=true
+xe vm-uninstall uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000 force=true
+xe vm-snapshot uuid=22acc256-b431-f9df-6c44-b1f71e7912fc new-name-label=p
+xe template-param-set is-a-template=false ha-always-run=false uuid=676ffe7e-c3f4-8913-f0ed-700000000000
+xe vbd-list vm-uuid=676ffe7e-c3f4-8913-f0ed-700000000000 type=Disk params=uuid
+xe vbd-param-get uuid=5b0d6a66-0000-4000-8000-000000000000 param-name=userdevice
+xe vbd-param-get uuid=5b0d6a66-0000-4000-8000-000000000000 param-name=vdi-uuid
+== XAPI calls (converted, first 25) ==
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 17
+VM.get_record OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VM.set_is_a_template OpaqueRef:5aa50001-0000-0000-0000-000000000000 0
+VM.set_ha_always_run OpaqueRef:5aa50001-0000-0000-0000-000000000000 0
+task.create NCC-VBR VM Export vbr_agent export 676ffe7e-c3f4-8913-f0ed-313700000000
+HTTP export uuid=676ffe7e-c3f4-8913-f0ed-313700000000 use_compression=true
+task.destroy OpaqueRef:7a5c0002-0000-0000-0000-000000000000
+VM.get_VBDs OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VBD.get_record OpaqueRef:b0000000-0000-0000-0000-000000000000
+VBD.get_record OpaqueRef:b0000000-0000-0000-0000-000000000001
+VDI.get_is_a_snapshot OpaqueRef:d0000000-0000-0000-0000-000000000000
+VDI.destroy OpaqueRef:d0000000-0000-0000-0000-000000000000
+VDI.get_is_a_snapshot OpaqueRef:d0000000-0000-0000-0000-000000000001
+VDI.destroy OpaqueRef:d0000000-0000-0000-0000-000000000001
+VM.destroy OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 slow
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.get_record OpaqueRef:5aa50003-0000-0000-0000-000000000000
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 slow
+VM.set_is_a_template OpaqueRef:5aa50003-0000-0000-0000-000000000000 0
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.set_ha_always_run OpaqueRef:5aa50003-0000-0000-0000-000000000000 0
+VM.get_record OpaqueRef:5aa50004-0000-0000-0000-000000000000

@@ -1,8 +1,12 @@
 // vbr_secret 은 vbr_agent 의 XAPI 암호를 암호화하는 도구다(새로 작성).
 // 암호 형식은 ncc-xen stdcrypto 의 ENC[v1:aes-256-gcm:키ID:...] 봉투와 같다.
 //
-//	vbr_secret keygen  <키링 파일>   키링 파일을 새로 만든다(권한 600, 이미 있으면 거부)
-//	vbr_secret encrypt <키링 파일>   표준 입력의 첫 줄을 암호화해 ENC[...] 를 출력한다
+//	vbr_secret keygen  <키링 파일>            키링 파일을 새로 만든다(권한 600, 이미 있으면 거부)
+//	vbr_secret encrypt <키링 파일> [용도]     표준 입력의 첫 줄을 암호화해 ENC[...] 를 출력한다
+//
+// 용도를 빼면 XAPI 암호(ncc-vbr/xapi-password, vbr_agent·vbr_vm 요청 암호)다.
+// vbr_vm 설정 토큰은 sysconfig.api_auth.VBR_VM_API_TOKEN, sysconfig.api_auth.GATEWAY_INTERNAL_TOKEN 을 준다
+// (2026-11-19 추가, docs/vm/07-operations.md 3장).
 package main
 
 import (
@@ -20,15 +24,23 @@ import (
 const purpose = "ncc-vbr/xapi-password" // vbr_agent 의 PasswordPurpose 와 같다
 
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) < 3 || len(os.Args) > 4 {
 		usage()
 	}
 	var err error
-	switch os.Args[1] {
-	case "keygen":
+	switch {
+	case os.Args[1] == "keygen" && len(os.Args) == 3:
 		err = keygen(os.Args[2])
-	case "encrypt":
-		err = encrypt(os.Args[2])
+	case os.Args[1] == "encrypt":
+		p := purpose
+		if len(os.Args) == 4 {
+			if !allowedPurpose(os.Args[3]) {
+				fmt.Fprintf(os.Stderr, "vbr_secret : unknown purpose %q\n", os.Args[3])
+				os.Exit(255)
+			}
+			p = os.Args[3]
+		}
+		err = encrypt(os.Args[2], p)
 	default:
 		usage()
 	}
@@ -38,8 +50,24 @@ func main() {
 	}
 }
 
+// purposes 는 encrypt 가 받는 용도다. 오타로 풀 수 없는 값을 만들지 않게 목록으로 막는다.
+var purposes = []string{
+	purpose,
+	"sysconfig.api_auth.VBR_VM_API_TOKEN",
+	"sysconfig.api_auth.GATEWAY_INTERNAL_TOKEN",
+}
+
+func allowedPurpose(p string) bool {
+	for _, x := range purposes {
+		if x == p {
+			return true
+		}
+	}
+	return false
+}
+
 func usage() {
-	fmt.Fprintf(os.Stderr, "Usage : vbr_secret keygen <keyring-file>\n        vbr_secret encrypt <keyring-file>  (password from stdin)\n")
+	fmt.Fprintf(os.Stderr, "Usage : vbr_secret keygen <keyring-file>\n        vbr_secret encrypt <keyring-file> [purpose]  (secret from stdin)\n        purpose : %s\n", strings.Join(purposes, " | "))
 	os.Exit(255)
 }
 
@@ -74,7 +102,7 @@ func keygen(path string) error {
 	return nil
 }
 
-func encrypt(path string) error {
+func encrypt(path, use string) error {
 	p, err := secret.LoadFromFile(path)
 	if err != nil {
 		return err
@@ -83,7 +111,7 @@ func encrypt(path string) error {
 	if err != nil {
 		return err
 	}
-	enc, err := p.Encrypt(purpose, []byte(plain))
+	enc, err := p.Encrypt(use, []byte(plain))
 	if err != nil {
 		return err
 	}

@@ -3,12 +3,13 @@
 #   ./build.sh            : linux/amd64 와 windows/amd64 를 모두 만든다
 #   ./build.sh linux      : linux/amd64 만 만든다
 #   ./build.sh test       : 단위 시험만 실행한다
-# 산출물: bin/<os>-<arch>/vbr_cifs, vbr_remove, vbr_agent, vbr_secret
+# 산출물: bin/<os>-<arch>/vbr_cifs, vbr_remove, vbr_agent, vbr_vm, vbr_secret
 #         linux 에는 agent 비교 시험 도구 fakexapi, driver 도 만든다
+#         두 OS 모두 vbr_vm demo.ps1 자동 모드용 vm-fakexapi 를 만든다
 set -eu
 cd "$(dirname "$0")"
 
-COMMANDS="vbr_cifs vbr_remove vbr_agent vbr_secret"
+COMMANDS="vbr_cifs vbr_remove vbr_agent vbr_vm vbr_secret"
 TEST_TOOLS="fakexapi driver"
 
 build() {
@@ -23,6 +24,8 @@ build() {
         CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" \
             go build -trimpath -ldflags "-s -w" -o "${out}/${cmd}${ext}" "./cmd/${cmd}"
     done
+    echo "build ${os}/${arch} vm-fakexapi (test tool)"
+    CGO_ENABLED=0 GOOS="$os" GOARCH="$arch" go build -trimpath -o "${out}/vm-fakexapi${ext}" "./test/vm/fakexapi"
     if [ "$os" = "linux" ]; then
         for tool in $TEST_TOOLS; do
             echo "build ${os}/${arch} ${tool} (test tool)"

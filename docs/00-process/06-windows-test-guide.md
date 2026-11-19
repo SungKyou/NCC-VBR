@@ -1,4 +1,4 @@
-# Windows 사용자 시험 절차 (cifs → remove → agent)
+# Windows 사용자 시험 절차 (cifs → remove → agent → vbr_vm)
 
 기준일: 2026-11-18 / 대상 실행 파일: `c:\dev\ncc-vbr-go\go\bin\windows-amd64\`
 
@@ -602,3 +602,33 @@ Remove-Item "$R\BACKUP\*.xva"        # 백업 파일을 더 쓸 일이 없으면
 각 번호마다 실행일, 결과(같음/다름), 다르면 실제 출력과 `server.log` 끝 20줄을 남긴다. 결과는 각 서비스의 `06-test-report.md` 실행 기록에 옮긴다.
 
 4장 R0~R9 실행 결과(2026-11-18~19): [agent/06-test-report.md](../agent/06-test-report.md) 5.3절, 로그 사본 `docs/evidence/agent/windows-real-20261119/`.
+
+## 6. vbr_vm (2단계, 2026-11-19 추가)
+
+`vbr_vm`은 JSON API 서비스라 명령을 손으로 치지 않고 데모 스크립트로 시험한다([vm/06](../vm/06-test-plan-report.md) 9장). pwsh 7 이 필요하다.
+
+### 6.1 자동 모드 (실제 풀에 접속하지 않음)
+
+```powershell
+cd c:\dev\ncc-vbr-go\go
+.\build.ps1 windows
+.\test\vm\demo.ps1 -Auto
+```
+예상: `PASS 16, FAIL 0`. 가짜 XAPI 두 개와 `vbr_vm.exe`를 임시 폴더에 띄웠다가 끝나면 모두 끈다. 마지막 줄에 로그 폴더가 나온다. 방화벽 창은 뜨지 않는다(127.0.0.1 만 쓴다).
+
+### 6.2 실기 모드 (실제 XenServer 풀)
+
+1. 설정과 키링을 만든다(PC 에서 시험할 때).
+```powershell
+$B = "c:\dev\ncc-vbr-go\go\bin\windows-amd64"; $V = "C:\temp\vbrvm"
+New-Item -ItemType Directory -Force "$V\backup" | Out-Null; cd $V
+& "$B\vbr_secret.exe" keygen "$V\key.yaml"
+$tok = [guid]::NewGuid().ToString('N')
+$encTok = $tok | & "$B\vbr_secret.exe" encrypt "$V\key.yaml" sysconfig.api_auth.VBR_VM_API_TOKEN
+```
+2. `C:\temp\vbrvm\sysconfig.yaml`을 [vm/05](../vm/05-interface-spec.md) 10장 예로 만든다. 바꿀 값: `server.port: 8090`, `api_auth.VBR_VM_API_TOKEN: "<$encTok 값>"`, `crypto.keyring_file: C:/temp/vbrvm/key.yaml`, `backup.base_path: C:/temp/vbrvm/backup`, `task_store.dir: C:/temp/vbrvm/tasks`, `logging.file_name: C:/temp/vbrvm/vbr_vm.log`.
+3. PowerShell 창을 하나 더 열어 서비스를 띄운다: `cd C:\temp\vbrvm; & "c:\dev\ncc-vbr-go\go\bin\windows-amd64\vbr_vm.exe" -config C:\temp\vbrvm\sysconfig.yaml`
+4. 처음 창에서 `$env:VBR_VM_API_TOKEN = $tok` 뒤 `c:\dev\ncc-vbr-go\go\test\vm\demo.ps1`. 처음 메뉴를 고르면 서비스 주소, 풀 마스터, XAPI 암호(화면에 안 보임), `key.yaml` 경로를 묻는다. 암호는 스크립트가 ENC 값으로 바꿔 보낸다.
+5. 메뉴 2(전체 백업) → 3(디스크 선택) → 4(복구) → 5(검증) → 6(동시) → 7(취소) → 8(오류) → 9(정리 안내) 순으로 한다. 각 메뉴가 PASS/FAIL 과 dom0 확인 명령을 출력한다. 1단계 R0~R9 결과(agent/06 5.3)와 비교한다.
+
+주의(1단계와 같음): 시험 VM `42097417-…`과 기존 스냅샷 `926b6f3f-…`은 지우지 않는다. 복구한 VM 은 켜지 않는다. 9번은 지울 명령을 보여 주기만 하고 실행하지 않는다.

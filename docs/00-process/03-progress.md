@@ -102,6 +102,9 @@ agent는 구현 전에 사용자에게 문제를 먼저 알리도록 지시받�
 | 2026-11-18 | cifs·remove V2 | `docker run ncc-vbr-go-parity`(실행 8 추가) | 통과 42, 실패 0 | `evidence/merge/parity-cifs-2068.txt` |
 | 2026-11-18 | 사용자 Windows 확인 | [06-windows-test-guide.md](06-windows-test-guide.md) cifs W-CIFS-01~09, remove W-RM-01~07 (사용자 실행) | 정상. agent(W-AG)는 이번에 실행하지 않음 | 대화 기록 |
 | 2026-11-18 | 소스 변경 | 실기 R1 인증 실패(PowerShell 파이프 BOM)로 `vbr_secret` 이 입력 첫 줄의 UTF-8 BOM 을 떼게 함. `TestReadPassword` 추가 | 단위 시험 통과(Windows), `build.ps1 all` 재빌드 | `agent/06` 2장 |
+| 2026-11-19 | 2단계 착수 | 표준 양식을 재설계 유형(B)까지 다루게 고침(절차 0·5·8장, T01~T06, 작업서, 표준 구조 10장). `vbr_vm` 착수서와 착수 결정 DEC-VM-01~16 작성 | 문서만 변경 | `vm/00-charter.md` |
+| 2026-11-19 | 2단계 문서 초안 | ncc-xen JobType 명세 v3.36 1·17·18장과 backend 코드(043c6d5) 분석. `vm/01`~`06`, `08` 초안. 결정 대기 Q-VM-01(스냅샷 정책), Q-VM-02(압축 기본값) | 문서만 변경. 링크 검사 | `vm/` |
+| 2026-11-19 | 2단계 구현 | `vbr_vm` 4.000: `go/cmd/vbr_vm`, `internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}`, `vm/vmtest`, `test/vm/{demo.ps1,demo_modules,fakexapi}`. 외부 라이브러리 gin·viper·lumberjack·zstd. `vbr_secret`에 용도 인자(DEC-VM-33) | V0 통과(govulncheck 0, DEC-VM-28로 x/net·quic-go·go1.27.4), V1 Windows 76/4/0·Linux 75/1/0, 데모 자동 16/16, 기존 서비스 회귀 통과(원본 비교 ALL PASS, agent 97/21/0). 실기 V2·V3 남음 | `evidence/vm/`, `vm/06` |
 | 2026-11-18~19 | agent V3 실기(일부) | Windows PC의 `vbr_agent.exe` → 실제 XenServer 9 풀, 가이드 4장 R0~R9 (사용자 실행) | IT-01~05, PT-01, PT-02 통과. 원본 VM이 있는 풀의 preserve=true 복구는 DUPLICATE_MAC_SEED로 거부(운영 안내 반영). 정리 완료 | `evidence/agent/windows-real-20261119/`, `agent/06` 5.3 |
 
 V2 1차와 2차의 원인과 조치는 [cifs/06-test-report.md](../cifs/06-test-report.md) 5장에 있다.
@@ -125,6 +128,7 @@ V2 1차와 2차의 원인과 조치는 [cifs/06-test-report.md](../cifs/06-test-
 | 1 | 결정 대기 항목 확인 | 사용자 | [04-open-decisions.md](04-open-decisions.md) |
 | 2 | cifs·remove 통합 시험(V3)과 운영 규모 시험(V4) | 사용자 | 시험 서버, NAS 마운트, 포털 접속 정보 |
 | 3 | agent 결정 Q-A18, Q-A19 | 사용자 | [04-open-decisions.md](04-open-decisions.md) 4장 |
+| 3-1 | vbr_vm 실기 시험 I01~I10, L01 | 사용자 | [06-windows-test-guide.md](06-windows-test-guide.md) 6장, [vm/06](../vm/06-test-plan-report.md) 6장 |
 | 4 | agent 남은 통합 시험 IT-06·07, PT-03·04 | 사용자 | Linux agent 서버, 실제 관리 서버, `/BACKUP` NAS. PT-01·02, IT-01~05는 2026-11-19 Windows 실기로 통과([agent/06-test-report.md](../agent/06-test-report.md) 5.3) |
 | 4-1 | (선택) `collect-xe-samples.sh` 실행 결과 | 사용자 | 조회 기능을 나중에 더할 때 필요. 지금 범위에는 필요 없다 |
 | 5 | 조회(`I`) 기능 | 전환 수행자 | 사용자가 필요하다고 할 때(DEC-AG-09) |

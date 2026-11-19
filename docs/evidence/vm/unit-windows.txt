@@ -1,0 +1,404 @@
+== 2026-11-19T13:13:14 go version go1.27.4 windows/amd64
+== gofmt -l
+== go vet
+vet exit=0
+?   	ncc-vbr/cmd/vbr_agent	[no test files]
+?   	ncc-vbr/cmd/vbr_cifs	[no test files]
+?   	ncc-vbr/cmd/vbr_remove	[no test files]
+=== RUN   TestReadPassword
+--- PASS: TestReadPassword (0.00s)
+PASS
+ok  	ncc-vbr/cmd/vbr_secret	0.081s
+?   	ncc-vbr/cmd/vbr_vm	[no test files]
+=== RUN   TestMessageFrame
+--- PASS: TestMessageFrame (0.00s)
+=== RUN   TestTranLogFormatAndQuery
+--- PASS: TestTranLogFormatAndQuery (0.04s)
+=== RUN   TestAsyncBackupFlow
+--- PASS: TestAsyncBackupFlow (0.22s)
+=== RUN   TestAsyncResultOnOpenConnection
+--- PASS: TestAsyncResultOnOpenConnection (0.06s)
+=== RUN   TestQueryProcessingAndNotFound
+--- PASS: TestQueryProcessingAndNotFound (0.01s)
+=== RUN   TestCancel
+--- PASS: TestCancel (0.02s)
+=== RUN   TestRejects
+--- PASS: TestRejects (0.12s)
+=== RUN   TestArgumentErrors
+--- PASS: TestArgumentErrors (0.04s)
+=== RUN   TestBackupFailureResult
+--- PASS: TestBackupFailureResult (0.01s)
+=== RUN   TestPriorityOrder
+--- PASS: TestPriorityOrder (0.01s)
+=== RUN   TestRestartRecovery
+--- PASS: TestRestartRecovery (0.01s)
+=== RUN   TestAllowClient
+--- PASS: TestAllowClient (0.00s)
+=== RUN   TestShortMessage
+--- PASS: TestShortMessage (6.00s)
+=== RUN   TestXenBackup
+--- PASS: TestXenBackup (0.03s)
+=== RUN   TestXenPartialBackup
+--- PASS: TestXenPartialBackup (0.01s)
+=== RUN   TestXenExportFailure
+--- PASS: TestXenExportFailure (0.02s)
+=== RUN   TestXenSnapshotFailure
+--- PASS: TestXenSnapshotFailure (0.01s)
+=== RUN   TestXenRestore
+--- PASS: TestXenRestore (0.01s)
+PASS
+ok  	ncc-vbr/internal/agent	6.710s
+?   	ncc-vbr/internal/apiauth	[no test files]
+?   	ncc-vbr/internal/boot	[no test files]
+=== RUN   TestFirstRunCopiesEverything
+--- PASS: TestFirstRunCopiesEverything (0.04s)
+=== RUN   TestSecondRunCopiesNothing
+--- PASS: TestSecondRunCopiesNothing (0.01s)
+=== RUN   TestChangedFileKeepsOldVersion
+--- PASS: TestChangedFileKeepsOldVersion (0.01s)
+=== RUN   TestMissingTargetFileIsCopiedAgain
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.01s)
+=== RUN   TestUntouchedSourceIsNotCompared
+    cifs_test.go:182: depends on Linux atime/ctime
+--- SKIP: TestUntouchedSourceIsNotCompared (0.00s)
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/configured_Tuesday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/another_weekday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/default_Sunday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/invalid_setting
+--- PASS: TestFullScanDayComparesFilesOlderThanHistory (0.02s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/configured_Tuesday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/another_weekday (0.00s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/default_Sunday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/invalid_setting (0.00s)
+=== RUN   TestExclusionAndSecondLevel
+--- PASS: TestExclusionAndSecondLevel (0.01s)
+=== RUN   TestDisabledFolderRenamesTarget
+--- PASS: TestDisabledFolderRenamesTarget (0.01s)
+=== RUN   TestDisabledFolderKeepsExistingData
+--- PASS: TestDisabledFolderKeepsExistingData (0.01s)
+=== RUN   TestDisabledFolderPreservesActiveSourceBackup
+--- PASS: TestDisabledFolderPreservesActiveSourceBackup (0.01s)
+=== RUN   TestErrorKeepsHistoryUnchanged
+--- PASS: TestErrorKeepsHistoryUnchanged (0.01s)
+=== RUN   TestMissingTargetRootStops
+--- PASS: TestMissingTargetRootStops (0.00s)
+=== RUN   TestSymlinkIsSkipped
+    cifs_test.go:366: symlink needs privilege on Windows
+--- SKIP: TestSymlinkIsSkipped (0.00s)
+=== RUN   TestHistoryFileName
+    cifs_test.go:383: Linux path rule
+--- SKIP: TestHistoryFileName (0.00s)
+PASS
+ok  	ncc-vbr/internal/cifs	0.212s
+=== RUN   TestSectionAndKeyRules
+--- PASS: TestSectionAndKeyRules (0.00s)
+=== RUN   TestLongLineIsNotTruncated
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+=== RUN   TestRealDevelopmentFile
+--- PASS: TestRealDevelopmentFile (0.00s)
+PASS
+ok  	ncc-vbr/internal/config	0.093s
+?   	ncc-vbr/internal/daemon	[no test files]
+?   	ncc-vbr/internal/fsx	[no test files]
+=== RUN   TestCatalogParity
+--- PASS: TestCatalogParity (0.00s)
+PASS
+ok  	ncc-vbr/internal/i18n	0.088s
+=== RUN   TestReopenMarksInterrupted
+--- PASS: TestReopenMarksInterrupted (0.06s)
+=== RUN   TestCompactAndRetention
+--- PASS: TestCompactAndRetention (0.02s)
+=== RUN   TestOutbox
+--- PASS: TestOutbox (0.01s)
+PASS
+ok  	ncc-vbr/internal/jobstore	0.189s
+=== RUN   TestServerLogFormat
+--- PASS: TestServerLogFormat (0.04s)
+=== RUN   TestTransactionLogFormat
+--- PASS: TestTransactionLogFormat (0.00s)
+=== RUN   TestRotateWhenOverMaxSize
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+ok  	ncc-vbr/internal/logx	0.151s
+=== RUN   TestEncodeLayout
+--- PASS: TestEncodeLayout (0.05s)
+=== RUN   TestSendAndReceive
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+ok  	ncc-vbr/internal/portal	0.161s
+=== RUN   TestValueMasksNestedSecrets
+--- PASS: TestValueMasksNestedSecrets (0.00s)
+PASS
+ok  	ncc-vbr/internal/redact	0.092s
+=== RUN   TestIsExpiredVersion
+--- PASS: TestIsExpiredVersion (0.00s)
+=== RUN   TestParseDays
+--- PASS: TestParseDays (0.00s)
+=== RUN   TestRunRejectsOverflowingDaysBeforeTraversing
+--- PASS: TestRunRejectsOverflowingDaysBeforeTraversing (0.00s)
+=== RUN   TestShellQuote
+--- PASS: TestShellQuote (0.00s)
+=== RUN   TestLogModeDeletesNothing
+--- PASS: TestLogModeDeletesNothing (0.01s)
+=== RUN   TestDeleteModeRemovesOnlyExpiredVersions
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.01s)
+=== RUN   TestMissingDirectoryFails
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+ok  	ncc-vbr/internal/remove	0.151s
+=== RUN   TestRoundTrip
+--- PASS: TestRoundTrip (0.00s)
+=== RUN   TestUnknownField
+--- PASS: TestUnknownField (0.00s)
+=== RUN   TestFileMode
+    secret_test.go:54: 권한 검사는 unix 에서만 한다(원본과 같다)
+--- SKIP: TestFileMode (0.00s)
+PASS
+ok  	ncc-vbr/internal/secret	0.104s
+=== RUN   TestSuffixedFileName
+--- PASS: TestSuffixedFileName (0.00s)
+PASS
+ok  	ncc-vbr/internal/stdlogger	0.096s
+?   	ncc-vbr/internal/testkit	[no test files]
+?   	ncc-vbr/internal/vm	[no test files]
+=== RUN   TestHealthAndAuth
+--- PASS: TestHealthAndAuth (0.01s)
+=== RUN   TestSubmitValidation
+2026/11/19 13:13:31 WARN 요청 거부 taskId="" code=MISSING_FIELD field=taskId
+2026/11/19 13:13:31 WARN 요청 거부 taskId="a b" code=INVALID_FIELD field=taskId
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=UNSUPPORTED_JOB field=jobType
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=UNSUPPORTED_JOB field=action
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=UNSUPPORTED_JOB field=payload.targetType
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload.targetUUID
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=INVALID_FIELD field=payload.targetUUID
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload.masterIp
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload.credentials.password
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload.options
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=MISSING_FIELD field=payload.options.file_name
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=INVALID_FIELD field=payload.options.file_name
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=INVALID_FIELD field=payload.options.compression
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=INVALID_FIELD field=payload.options.disks
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v1 code=INVALID_FIELD field=payload.options.snapshot_mode
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v2 code=MISSING_FIELD field=payload.options.sr_uuid
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v3 code=MISSING_FIELD field=payload.options.file_path
+2026/11/19 13:13:31 WARN 요청 거부 taskId=v4 code=PLAINTEXT_PASSWORD_REJECTED field=payload.credentials.password
+--- PASS: TestSubmitValidation (0.04s)
+=== RUN   TestExportHaltedAuto
+2026/11/19 13:13:31 INFO 작업 접수 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55452\",\"options\":{\"file_name\":\"vm1\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"e1\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55452
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestExportHaltedAuto2141667314\001\backup\vm1.xva compression=none
+2026/11/19 13:13:31 INFO VM 내보내기 완료 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestExportHaltedAuto2141667314\001\backup\vm1.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:31 INFO 작업 끝 taskId=e1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestExportHaltedAuto (0.06s)
+=== RUN   TestExportRunningWithDisks
+2026/11/19 13:13:31 INFO 작업 접수 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55457\",\"options\":{\"compression\":\"gzip\",\"disks\":[0],\"file_name\":\"part\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"e2\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55457
+2026/11/19 13:13:31 INFO 임시 스냅샷 생성 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUUID=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a snapshotName=NCC-BACKUP-vm1-20261119131331
+2026/11/19 13:13:31 INFO 고르지 않은 디스크를 임시 스냅샷에서 뺌 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d userdevice=1
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a snapshotUsed=true filePath=C:\Users\SK\AppData\Local\Temp\TestExportRunningWithDisks1889414337\001\backup\part.xva compression=gzip
+2026/11/19 13:13:31 INFO VM 내보내기 완료 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestExportRunningWithDisks1889414337\001\backup\part.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:31 INFO 임시 스냅샷 삭제 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUUID=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a
+2026/11/19 13:13:31 INFO 작업 끝 taskId=e2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestExportRunningWithDisks (0.06s)
+=== RUN   TestExportDiskNotFound
+2026/11/19 13:13:31 INFO 작업 접수 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55462\",\"options\":{\"disks\":[5],\"file_name\":\"x\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"e3\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55462
+2026/11/19 13:13:31 INFO 임시 스냅샷 생성 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUUID=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a snapshotName=NCC-BACKUP-vm1-20261119131331
+2026/11/19 13:13:31 INFO 임시 스냅샷 삭제 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUUID=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=e3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=failed code=DISK_NOT_FOUND detail="requested disks [5] not found on the VM (disks: [0 1])"
+--- PASS: TestExportDiskNotFound (0.06s)
+=== RUN   TestExportFileExists
+2026/11/19 13:13:31 INFO 작업 접수 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55466\",\"options\":{\"file_name\":\"dup.xva\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"f1\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55466
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestExportFileExists3700227345\001\backup\dup.xva compression=none
+2026/11/19 13:13:31 INFO VM 내보내기 완료 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestExportFileExists3700227345\001\backup\dup.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:31 INFO 작업 끝 taskId=f1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+2026/11/19 13:13:31 INFO 작업 접수 taskId=f2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55466\",\"options\":{\"file_name\":\"dup\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"f2\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=f2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=f2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=failed code=FILE_EXISTS detail="file already exists: C:\\Users\\SK\\AppData\\Local\\Temp\\TestExportFileExists3700227345\\001\\backup\\dup.xva"
+2026/11/19 13:13:31 INFO 작업 접수 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55466\",\"options\":{\"file_name\":\"dup\",\"overwrite\":true},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"f3\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55466
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestExportFileExists3700227345\001\backup\dup.xva compression=none
+2026/11/19 13:13:31 INFO VM 내보내기 완료 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestExportFileExists3700227345\001\backup\dup.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:31 INFO 작업 끝 taskId=f3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestExportFileExists (0.16s)
+=== RUN   TestExportZstdVerifyAfter
+2026/11/19 13:13:31 INFO 작업 접수 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55473\",\"options\":{\"compression\":\"zstd\",\"file_name\":\"z\",\"verify_after_export\":true},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"z1\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55473
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestExportZstdVerifyAfter333758982\001\backup\z.xva.zst compression=zstd
+2026/11/19 13:13:31 INFO VM 내보내기 완료 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestExportZstdVerifyAfter333758982\001\backup\z.xva.zst fileSizeBytes=213 sha256=725374628a982f6b80a2070bbda17a1dbef3002ee4789f1fa0537a7c4d5fd74b
+2026/11/19 13:13:31 INFO 작업 끝 taskId=z1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestExportZstdVerifyAfter (0.06s)
+=== RUN   TestXAPIErrors
+2026/11/19 13:13:31 INFO 작업 접수 taskId=x1 action=export targetUUID=00000000-0000-0000-0000-000000000000 request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55478\",\"options\":{\"file_name\":\"x1\"},\"targetType\":\"VM\",\"targetUUID\":\"00000000-0000-0000-0000-000000000000\"},\"taskId\":\"x1\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=x1 action=export targetUUID=00000000-0000-0000-0000-000000000000
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=x1 action=export targetUUID=00000000-0000-0000-0000-000000000000 master=https://127.0.0.1:55478
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=x1 action=export targetUUID=00000000-0000-0000-0000-000000000000 status=failed code=XAPI_ERROR detail="XAPI Error: UUID_INVALID | VM | 00000000-0000-0000-0000-000000000000"
+2026/11/19 13:13:31 INFO 작업 접수 taskId=x2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\"},\"masterIp\":\"127.0.0.1:55478\",\"options\":{\"file_name\":\"x2\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"x2\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=x2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=x2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=failed code=XAPI_AUTH_FAILED detail="XAPI Error: SESSION_AUTHENTICATION_FAILED | root | Authentication failure"
+2026/11/19 13:13:31 INFO 작업 접수 taskId=x3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55478\",\"options\":{\"file_name\":\"x3\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"x3\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=x3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=x3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55478
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=x3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestXAPIErrors3995150272\001\backup\x3.xva compression=none
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=x3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=failed code=XAPI_ERROR detail="export HTTP 500: VDI_IO_ERROR"
+2026/11/19 13:13:31 INFO 작업 접수 taskId=x4 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55478\",\"options\":{\"file_name\":\"x4\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"x4\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=x4 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:31 INFO XAPI 로그인 성공 taskId=x4 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55478
+2026/11/19 13:13:31 INFO VM 내보내기 시작 taskId=x4 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestXAPIErrors3995150272\001\backup\x4.xva compression=none
+2026/11/19 13:13:31 WARN 작업이 오류로 끝남 taskId=x4 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=failed code=EXPORT_INCOMPLETE detail="XAPI task failure: VDI_IO_ERROR: Device I/O errors"
+--- PASS: TestXAPIErrors (0.21s)
+=== RUN   TestVerify
+2026/11/19 13:13:31 INFO 작업 접수 taskId=w1 action=verify targetUUID="" request="{\"action\":\"verify\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"options\":{\"file_path\":\"good.xva\"},\"targetType\":\"FILE\"},\"taskId\":\"w1\"}"
+2026/11/19 13:13:31 INFO 작업 시작 taskId=w1 action=verify targetUUID=""
+2026/11/19 13:13:31 INFO XVA 검증 끝 taskId=w1 action=verify targetUUID="" filePath=C:\Users\SK\AppData\Local\Temp\TestVerify1799480837\001\backup\good.xva verified=true chunkCount=1
+2026/11/19 13:13:31 INFO 작업 끝 taskId=w1 action=verify targetUUID="" status=succeeded
+2026/11/19 13:13:32 INFO 작업 접수 taskId=w2 action=verify targetUUID="" request="{\"action\":\"verify\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"options\":{\"file_path\":\"bad.xva\"},\"targetType\":\"FILE\"},\"taskId\":\"w2\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=w2 action=verify targetUUID=""
+2026/11/19 13:13:32 INFO XVA 검증 끝 taskId=w2 action=verify targetUUID="" filePath=C:\Users\SK\AppData\Local\Temp\TestVerify1799480837\001\backup\bad.xva verified=false chunkCount=1
+2026/11/19 13:13:32 INFO 작업 끝 taskId=w2 action=verify targetUUID="" status=succeeded
+2026/11/19 13:13:32 INFO 작업 접수 taskId=w3 action=verify targetUUID="" request="{\"action\":\"verify\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"options\":{\"file_path\":\"none.xva\"},\"targetType\":\"FILE\"},\"taskId\":\"w3\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=w3 action=verify targetUUID=""
+2026/11/19 13:13:32 WARN 작업이 오류로 끝남 taskId=w3 action=verify targetUUID="" status=failed code=FILE_IO_ERROR detail="open C:\\Users\\SK\\AppData\\Local\\Temp\\TestVerify1799480837\\001\\backup\\none.xva: The system cannot find the file specified."
+--- PASS: TestVerify (0.16s)
+=== RUN   TestRestore
+2026/11/19 13:13:32 INFO 작업 접수 taskId=r1 action=restore targetUUID="" request="{\"action\":\"restore\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55490\",\"options\":{\"file_path\":\"r.xva\",\"home_server_uuid\":\"9ad088e0-d03d-0269-0b7f-e40006aa5014\",\"name_label\":\"restored\",\"restore_original_uuid\":true,\"sr_uuid\":\"e4138437-7e20-480f-08b1-25e5b8b6027b\"},\"targetType\":\"FILE\"},\"taskId\":\"r1\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=r1 action=restore targetUUID=""
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=r1 action=restore targetUUID="" master=https://127.0.0.1:55490
+2026/11/19 13:13:32 INFO VM 가져오기 시작 taskId=r1 action=restore targetUUID="" filePath=C:\Users\SK\AppData\Local\Temp\TestRestore4158970318\001\backup\r.xva srUUID=e4138437-7e20-480f-08b1-25e5b8b6027b restoreOriginalUUID=true
+2026/11/19 13:13:32 INFO VM 가져오기 완료 taskId=r1 action=restore targetUUID="" vmUUID=cd5498f2-0342-db8e-749e-53a5e86744dd
+2026/11/19 13:13:32 INFO 작업 끝 taskId=r1 action=restore targetUUID="" status=succeeded
+2026/11/19 13:13:32 INFO 작업 접수 taskId=r2 action=restore targetUUID="" request="{\"action\":\"restore\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55490\",\"options\":{\"file_path\":\"r.xva\",\"sr_uuid\":\"00000000-0000-0000-0000-000000000000\"},\"targetType\":\"FILE\"},\"taskId\":\"r2\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=r2 action=restore targetUUID=""
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=r2 action=restore targetUUID="" master=https://127.0.0.1:55490
+2026/11/19 13:13:32 WARN 작업이 오류로 끝남 taskId=r2 action=restore targetUUID="" status=failed code=XAPI_ERROR detail="XAPI Error: UUID_INVALID | SR | 00000000-0000-0000-0000-000000000000"
+--- PASS: TestRestore (0.11s)
+=== RUN   TestRestoreZstd
+2026/11/19 13:13:32 INFO 작업 접수 taskId=rz action=restore targetUUID="" request="{\"action\":\"restore\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55496\",\"options\":{\"file_path\":\"r.xva.zst\",\"sr_uuid\":\"e4138437-7e20-480f-08b1-25e5b8b6027b\"},\"targetType\":\"FILE\"},\"taskId\":\"rz\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=rz action=restore targetUUID=""
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=rz action=restore targetUUID="" master=https://127.0.0.1:55496
+2026/11/19 13:13:32 INFO VM 가져오기 시작 taskId=rz action=restore targetUUID="" filePath=C:\Users\SK\AppData\Local\Temp\TestRestoreZstd1646352318\001\backup\r.xva.zst srUUID=e4138437-7e20-480f-08b1-25e5b8b6027b restoreOriginalUUID=false
+2026/11/19 13:13:32 INFO VM 가져오기 완료 taskId=rz action=restore targetUUID="" vmUUID=cd5498f2-0342-db8e-749e-53a5e86744dd
+2026/11/19 13:13:32 INFO 작업 끝 taskId=rz action=restore targetUUID="" status=succeeded
+--- PASS: TestRestoreZstd (0.06s)
+=== RUN   TestDuplicateConcurrent
+2026/11/19 13:13:32 INFO 작업 접수 taskId=same action=verify targetUUID="" request="{\"action\":\"verify\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"options\":{\"file_path\":\"good.xva\"},\"targetType\":\"FILE\"},\"taskId\":\"same\"}"
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 작업 시작 taskId=same action=verify targetUUID=""
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO XVA 검증 끝 taskId=same action=verify targetUUID="" filePath=C:\Users\SK\AppData\Local\Temp\TestDuplicateConcurrent3002412147\001\backup\good.xva verified=true chunkCount=1
+2026/11/19 13:13:32 INFO 작업 끝 taskId=same action=verify targetUUID="" status=succeeded
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+2026/11/19 13:13:32 INFO 같은 taskId 가 이미 접수됨(다시 실행하지 않음) taskId=same
+--- PASS: TestDuplicateConcurrent (0.02s)
+=== RUN   TestCancel
+2026/11/19 13:13:32 INFO 작업 접수 taskId=c1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55653\",\"options\":{\"file_name\":\"c1\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"c1\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=c1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=c1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55653
+2026/11/19 13:13:32 INFO VM 내보내기 시작 taskId=c1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestCancel948115182\001\backup\c1.xva compression=none
+2026/11/19 13:13:32 INFO 작업 접수 taskId=c2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55653\",\"options\":{\"file_name\":\"c2\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"c2\"}"
+2026/11/19 13:13:32 WARN 작업이 오류로 끝남 taskId=c1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=canceled code=CANCELED detail="context canceled"
+--- PASS: TestCancel (0.06s)
+=== RUN   TestWorkersAndCancelQueued
+2026/11/19 13:13:32 INFO 작업 접수 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55659\",\"options\":{\"file_name\":\"q1\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"q1\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55659
+2026/11/19 13:13:32 INFO VM 내보내기 시작 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestWorkersAndCancelQueued1587167601\001\backup\q1.xva compression=none
+2026/11/19 13:13:32 INFO 작업 접수 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55659\",\"options\":{\"file_name\":\"q2\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"q2\"}"
+2026/11/19 13:13:32 INFO 작업 접수 taskId=q3 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55659\",\"options\":{\"file_name\":\"q3\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"q3\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:32 INFO VM 내보내기 완료 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestWorkersAndCancelQueued1587167601\001\backup\q1.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:32 INFO 작업 끝 taskId=q1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55659
+2026/11/19 13:13:32 INFO VM 내보내기 시작 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestWorkersAndCancelQueued1587167601\001\backup\q2.xva compression=none
+2026/11/19 13:13:32 INFO VM 내보내기 완료 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestWorkersAndCancelQueued1587167601\001\backup\q2.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:32 INFO 작업 끝 taskId=q2 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestWorkersAndCancelQueued (0.06s)
+=== RUN   TestShutdown
+2026/11/19 13:13:32 INFO 작업 접수 taskId=s1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55666\",\"options\":{\"file_name\":\"s1\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"s1\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=s1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=s1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55666
+2026/11/19 13:13:32 INFO VM 내보내기 시작 taskId=s1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestShutdown2148319077\001\backup\s1.xva compression=none
+2026/11/19 13:13:32 WARN 작업이 오류로 끝남 taskId=s1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=interrupted code=INTERRUPTED detail="context canceled"
+2026/11/19 13:13:32 http: TLS handshake error from 127.0.0.1:55671: EOF
+--- PASS: TestShutdown (0.01s)
+=== RUN   TestSecretsNotLeaked
+2026/11/19 13:13:32 INFO 작업 접수 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d request="{\"action\":\"export\",\"jobType\":\"VM_BACKUP\",\"payload\":{\"credentials\":{\"password\":\"***\",\"username\":\"root\"},\"masterIp\":\"127.0.0.1:55672\",\"options\":{\"file_name\":\"k1\"},\"targetType\":\"VM\",\"targetUUID\":\"42097417-b9ee-2f97-8eeb-3612efbcb25d\"},\"taskId\":\"k1\"}"
+2026/11/19 13:13:32 INFO 작업 시작 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d
+2026/11/19 13:13:32 INFO XAPI 로그인 성공 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d master=https://127.0.0.1:55672
+2026/11/19 13:13:32 INFO VM 내보내기 시작 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d exportUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d snapshotUsed=false filePath=C:\Users\SK\AppData\Local\Temp\TestSecretsNotLeaked1452837821\001\backup\k1.xva compression=none
+2026/11/19 13:13:32 INFO VM 내보내기 완료 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filePath=C:\Users\SK\AppData\Local\Temp\TestSecretsNotLeaked1452837821\001\backup\k1.xva fileSizeBytes=56832 sha256=58f3f9267dc73ce2b06b3ddedb1af8ab478dd18d1f42b651e06516a88930034a
+2026/11/19 13:13:32 INFO 작업 끝 taskId=k1 action=export targetUUID=42097417-b9ee-2f97-8eeb-3612efbcb25d status=succeeded
+--- PASS: TestSecretsNotLeaked (0.06s)
+PASS
+ok  	ncc-vbr/internal/vm/api	1.393s
+?   	ncc-vbr/internal/vm/vmtest	[no test files]
+=== RUN   TestLoadAndReload
+--- PASS: TestLoadAndReload (0.00s)
+=== RUN   TestAuthAndCryptoRules
+--- PASS: TestAuthAndCryptoRules (0.00s)
+PASS
+ok  	ncc-vbr/internal/vmconfig	0.093s
+?   	ncc-vbr/internal/walk	[no test files]
+?   	ncc-vbr/internal/xapi	[no test files]
+=== RUN   TestPathRules
+--- PASS: TestPathRules (0.01s)
+PASS
+ok  	ncc-vbr/internal/xva	0.086s
+?   	ncc-vbr/test/agent-parity/driver	[no test files]
+?   	ncc-vbr/test/agent-parity/fakexapi	[no test files]
+?   	ncc-vbr/test/vm/fakexapi	[no test files]
+test exit=0

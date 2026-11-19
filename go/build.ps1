@@ -2,12 +2,12 @@
 #   .\build.ps1            : linux/amd64 와 windows/amd64 를 모두 만든다
 #   .\build.ps1 linux      : linux/amd64 만 만든다
 #   .\build.ps1 test       : 단위 시험만 실행한다
-# 산출물: bin\<os>-<arch>\vbr_cifs, vbr_remove
+# 산출물: bin\<os>-<arch>\vbr_cifs, vbr_remove, vbr_agent, vbr_vm, vbr_secret
 param([ValidateSet('all', 'linux', 'windows', 'test')][string]$Target = 'all')
 
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
-$commands = @('vbr_cifs', 'vbr_remove', 'vbr_agent', 'vbr_secret')
+$commands = @('vbr_cifs', 'vbr_remove', 'vbr_agent', 'vbr_vm', 'vbr_secret')
 $testTools = @('fakexapi', 'driver')
 
 function Invoke-Build([string]$Os, [string]$Arch) {
@@ -23,6 +23,10 @@ function Invoke-Build([string]$Os, [string]$Arch) {
             go build -trimpath -ldflags '-s -w' -o "$out/$cmd$ext" "./cmd/$cmd"
             if ($LASTEXITCODE -ne 0) { throw "build failed: $cmd" }
         }
+        # vbr_vm demo.ps1 자동 모드용 가짜 XAPI(시험 도구)
+        Write-Host "build $Os/$Arch vm-fakexapi (test tool)"
+        go build -trimpath -o "$out/vm-fakexapi$ext" "./test/vm/fakexapi"
+        if ($LASTEXITCODE -ne 0) { throw "build failed: vm-fakexapi" }
         if ($Os -eq 'linux') {
             foreach ($tool in $testTools) {
                 Write-Host "build $Os/$Arch $tool (test tool)"

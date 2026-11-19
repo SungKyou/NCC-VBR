@@ -1,0 +1,2161 @@
+# ncc-xen @043c6d5 원본(docs/evidence/vm/copied-original) 대비 vbr_vm 복사 코드의 차이(줄 끝 CR 무시). 생성 2026-11-19T13:07:09
+# 항목별 설명은 docs/vm/08-copied-code-register.md 3장
+
+
+######## CP-VM-02  backend/internal/apiauth/apiauth.go  ->  go/internal/apiauth/apiauth.go
+ .../backend => go}/internal/apiauth/apiauth.go     | 55 ++++++++++++----------
+ 1 file changed, 30 insertions(+), 25 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/apiauth/apiauth.go b/go/internal/apiauth/apiauth.go
+index eb20e97..bbd001f 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/apiauth/apiauth.go
++++ b/go/internal/apiauth/apiauth.go
+@@ -1,16 +1,14 @@
+-// Package apiauth는 cmd/server·cmd/analyzer의 인바운드 HTTP API 토큰 인증입니다
+-// (🆕 2026-10-29, 코드 검토 ①).
+-//
+-// Backend → Middleware 방향(internal/gateway)도 같은 X-Internal-Token 헤더를 씁니다.
+-// 🔄 2026-11-02 Middleware 협의 결과로 토큰을 방향별 2개로 나눔(internal/config APIAuthConfig):
+-//   - Middleware → Backend: sysconfig.yaml api_auth.NCC_XEN_API_TOKEN — 이 패키지가 검사
+-//   - Backend → Middleware: api_auth.GATEWAY_INTERNAL_TOKEN — internal/gateway가 실음
+-//
+-// 같은 이름의 환경 변수가 있으면 우선합니다(internal/config applyEnvOverrides).
++// copied from ncc-xen backend/internal/apiauth/apiauth.go @043c6d5 (CP-VM-02), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-02):
++//   - 토큰 이름을 NCC_XEN_API_TOKEN 에서 VBR_VM_API_TOKEN 으로 바꿨다.
++//   - 토큰을 고정 값 대신 함수로 받는다. 설정 즉시 반영(DEC-VM-17)으로 토큰·enabled 가 실행 중에 바뀐다.
++//   - 401 본문에 code 필드를 더했다(05 문서 9장).
++
++// Package apiauth 는 vbr_vm 이 받는 HTTP API 의 토큰 인증이다.
+ //
+-//   - api_auth.enabled=false: 인증 없음(기동 시 경고 로그만).
+-//   - enabled=true: /api/v1/*, /debug/* 요청에 같은 값의 X-Internal-Token 헤더가
+-//     없으면 401. /health는 모니터링용으로 계속 열어 둡니다.
++//   - enabled=false: 인증 없음(경고 로그는 vmconfig 쪽에서 남긴다).
++//   - enabled=true: /api/v1/* 요청에 같은 값의 X-Internal-Token 헤더가 없으면 401.
++//     /health 는 모니터링용으로 열어 둔다(이 미들웨어를 붙이지 않는다).
+ package apiauth
+ 
+ import (
+@@ -21,28 +19,35 @@ import (
+ 	"github.com/gin-gonic/gin"
+ )
+ 
+-// Header는 토큰을 싣는 HTTP 헤더 이름입니다(internal/gateway와 동일).
++// Header 는 토큰을 싣는 HTTP 헤더 이름이다(ncc-xen 과 같다).
+ const Header = "X-Internal-Token"
+ 
+-// EnvToken은 인바운드 API 토큰을 담는 환경 변수 이름입니다.
+-const EnvToken = "NCC_XEN_API_TOKEN"
++// EnvToken 은 받는 쪽 토큰을 담는 환경 변수 이름이다. 설정 파일보다 우선한다.
++const EnvToken = "VBR_VM_API_TOKEN"
++
++// EnvGatewayToken 은 결과 보고에 싣는 토큰의 환경 변수 이름이다(ncc-xen 과 같은 이름).
++const EnvGatewayToken = "GATEWAY_INTERNAL_TOKEN"
+ 
+-// TokenFromEnv는 환경 변수의 토큰을 반환합니다(없으면 빈 문자열).
++// UnauthorizedMessage 는 401 본문의 문장이다(ncc-xen 과 같은 문장).
++const UnauthorizedMessage = "unauthorized: missing or invalid " + Header
++
++// TokenFromEnv 는 환경 변수의 토큰을 돌려준다(없으면 빈 문자열).
+ func TokenFromEnv() string {
+ 	return os.Getenv(EnvToken)
+ }
+ 
+-// Middleware는 token이 비어 있으면 아무것도 검사하지 않고, 아니면
+-// X-Internal-Token 헤더를 상수 시간 비교로 확인합니다.
+-func Middleware(token string) gin.HandlerFunc {
+-	if token == "" {
+-		return func(c *gin.Context) { c.Next() }
+-	}
+-	want := []byte(token)
++// Middleware 는 요청마다 current() 로 (켜짐 여부, 토큰)을 읽어 검사한다.
++// 켜져 있는데 토큰이 비어 있으면 모든 요청을 거부한다(기동 때는 vmconfig 가 막는다).
++func Middleware(current func() (enabled bool, token string)) gin.HandlerFunc {
+ 	return func(c *gin.Context) {
++		enabled, token := current()
++		if !enabled {
++			c.Next()
++			return
++		}
+ 		got := []byte(c.GetHeader(Header))
+-		if len(got) == 0 || subtle.ConstantTimeCompare(got, want) != 1 {
+-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized: missing or invalid " + Header})
++		if token == "" || len(got) == 0 || subtle.ConstantTimeCompare(got, []byte(token)) != 1 {
++			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": UnauthorizedMessage, "code": "UNAUTHORIZED"})
+ 			return
+ 		}
+ 		c.Next()
+
+######## CP-VM-03  backend/internal/job/redact.go  ->  go/internal/redact/redact.go
+ .../internal/job => go/internal/redact}/redact.go  | 77 +++++++---------------
+ 1 file changed, 23 insertions(+), 54 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/redact.go b/go/internal/redact/redact.go
+index cd75347..0d592fa 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/redact.go
++++ b/go/internal/redact/redact.go
+@@ -1,31 +1,27 @@
+-package job
++// copied from ncc-xen backend/internal/job/redact.go @043c6d5 (CP-VM-03), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-03):
++//   - 패키지를 job 에서 redact 로 옮기고 함수를 공개했다(Value, IsSensitiveKey).
++//   - 가린 값을 "***REDACTED***" 대신 "***" 로 쓴다(05 문서 8.1).
++//   - Request 구조체 전용 함수(redactedRequestForLogging)는 vm 패키지 쪽에 새로 썼다.
++
++// Package redact 는 로그·작업 기록·응답에 남기기 전에 비밀 값을 가린다.
++//
++// 키 이름에 아래 부분 문자열이 들어 있으면(대소문자 무시) 값을 가린다.
++// 필드 목록을 나열하는 방식보다 새 필드가 생겨도 대체로 자동으로 덮인다(ncc-xen 2026-09-18 결정).
++package redact
+ 
+ import "strings"
+ 
+-// sensitiveKeySubstrings — payload.options 내 값을 로그에 남기기 전에
+-// 마스킹해야 하는 키 이름의 (대소문자 무시) 부분 문자열 목록입니다.
+-//
+-// 2026-09-18: handler.go의 규약 1 수신 전문 로그(pretty print, Info 레벨)가
+-// req 전체를 마스킹 없이 그대로 기록하고 있어, jobType에 따라
+-// payload.options에 담기는 POOL_QUERY/pool_join의 password/master_password,
+-// cross_pool_copy·cross_pool_move의 dst_password, SR_CONTROL iSCSI의
+-// chap_password 등 인프라 자격증명이 로그 파일(및 그 백업, 지원 번들)에
+-// 평문으로 남는 문제가 있었습니다.
+-//
+-// 키 이름 부분 문자열 매칭 방식을 택한 이유: jobType별 옵션 필드를 일일이
+-// 나열(allowlist/denylist)하면 새 jobType이나 옵션이 추가될 때마다 이 목록도
+-// 함께 갱신해야 하는데, 누락되면 그 즉시 조용히 로그에 새 다시 노출됩니다.
+-// 키 이름에 아래 부분 문자열이 포함되는지만 보는 방식은 필드가 늘어나도
+-// 대체로 자동으로 커버됩니다(다만 완전히 새로운 명명 패턴이 생기면 이
+-// 목록에 추가해야 함 — 만능은 아닙니다).
++// Mask 는 가린 값 대신 쓰는 문자열이다.
++const Mask = "***"
++
+ var sensitiveKeySubstrings = []string{
+ 	"password", "passwd", "secret", "token", "apikey", "api_key",
+ 	"credential", "sessionref", "session_ref",
+ }
+ 
+-// isSensitiveKey는 key(대소문자 무시)에 sensitiveKeySubstrings 중 하나라도
+-// 포함되면 true를 반환합니다.
+-func isSensitiveKey(key string) bool {
++// IsSensitiveKey 는 key 에 비밀 값을 뜻하는 부분 문자열이 있으면 참이다.
++func IsSensitiveKey(key string) bool {
+ 	lower := strings.ToLower(key)
+ 	for _, s := range sensitiveKeySubstrings {
+ 		if strings.Contains(lower, s) {
+@@ -35,54 +31,27 @@ func isSensitiveKey(key string) bool {
+ 	return false
+ }
+ 
+-// redactSensitive는 JSON 디코딩 결과로 나올 수 있는 임의의 트리
+-// (map[string]interface{} / []interface{} / 스칼라)를 재귀적으로 순회하며,
+-// 키 이름이 isSensitiveKey에 매칭되는 값을 "***REDACTED***" 문자열로 치환한
+-// 새 트리를 반환합니다.
+-//
+-// 원본은 절대 변경하지 않습니다 — map/slice는 참조 타입이라 얕은 복사만
+-// 하면 안에서 값을 바꿀 때 원본까지 같이 바뀌므로, 매칭되지 않는 경우에도
+-// 항상 새 map/slice를 만들어 채웁니다. template_create의 vbd_configs[] /
+-// networks[] 처럼 배열 안에 다시 map이 들어있는 중첩 구조도 재귀로 처리되어
+-// 깊이에 상관없이 동작합니다.
+-func redactSensitive(v interface{}) interface{} {
++// Value 는 JSON 디코딩 결과 트리(map / slice / 스칼라)를 돌며 비밀 키의 값을 가린 새 트리를 돌려준다.
++// 원본은 바꾸지 않는다. "credentials" 처럼 키 이름이 비밀이면 그 아래 전체를 가린다.
++func Value(v interface{}) interface{} {
+ 	switch t := v.(type) {
+ 	case map[string]interface{}:
+ 		out := make(map[string]interface{}, len(t))
+ 		for k, val := range t {
+-			if isSensitiveKey(k) {
+-				out[k] = "***REDACTED***"
++			if IsSensitiveKey(k) {
++				out[k] = Mask
+ 				continue
+ 			}
+-			out[k] = redactSensitive(val)
++			out[k] = Value(val)
+ 		}
+ 		return out
+ 	case []interface{}:
+ 		out := make([]interface{}, len(t))
+ 		for i, val := range t {
+-			out[i] = redactSensitive(val)
++			out[i] = Value(val)
+ 		}
+ 		return out
+ 	default:
+-		// string/float64/bool/nil 등 스칼라는 그대로 반환
+ 		return v
+ 	}
+ }
+-
+-// redactedRequestForLogging는 req를 로그 전용으로만 사용할 사본으로
+-// 반환합니다 — payload.options만 redactSensitive()를 거친 새 map으로
+-// 교체하고 나머지 필드(taskId/jobType/action 등, 원래도 비밀정보 없음)는
+-// 그대로 둡니다.
+-//
+-// 반환값은 로깅에만 사용해야 합니다. 실제 실행(Executor.Execute)에는 이
+-// 함수를 거치지 않은 원본 req를 그대로 넘겨야 합니다 — 마스킹된 값이 실제
+-// XAPI 호출에 들어가면 인증 실패 등으로 기능이 깨집니다.
+-func redactedRequestForLogging(req Request) Request {
+-	redacted := req
+-	if req.Payload.Options != nil {
+-		if m, ok := redactSensitive(req.Payload.Options).(map[string]interface{}); ok {
+-			redacted.Payload.Options = m
+-		}
+-	}
+-	return redacted
+-}
+
+######## CP-VM-05  backend/internal/job/vm_backup_export.go  ->  go/internal/xva/export.go
+ .../internal/xva/export.go                         | 481 +++++----------------
+ 1 file changed, 105 insertions(+), 376 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_export.go b/go/internal/xva/export.go
+index 3648402..cd0799c 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_export.go
++++ b/go/internal/xva/export.go
+@@ -1,432 +1,161 @@
+-package job
++// copied from ncc-xen backend/internal/job/vm_backup_export.go runExport 203~375행 @043c6d5 (CP-VM-05), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-05):
++//   - 요청 해석·세션 찾기·VM 상태 판단·임시 스냅샷은 vm 패키지로 옮기고, 이 함수는 "uuid 를 파일로 받기"만 한다.
++//   - 규약 2 processing 송신 대신 Progress 콜백을 부른다.
++//   - 작업이 취소되면 XAPI task 를 취소한다(1단계 agent/transfer.go watchCancel).
++//   - task 최종 상태 확인을 12초 제한에서 ctx 까지로 바꿨다(1단계와 같음).
++//   - 파일 권한 0666(원본 vbr_agent chmod)을 유지했다.
++//   - 오류를 i18n 문장 대신 코드가 있는 *Error 로 돌려준다.
+ 
+-// vm_backup_export.go — VM_BACKUP action=export (XVA)
+-// 🆕 2026-09-01: vm_backup.go에서 기계적으로 분리됨 (로직 변경 없음).
+-// 원본 설계 주석은 vm_backup.go 상단 참고.
++package xva
+ 
+ import (
+ 	"context"
+ 	"crypto/sha256"
+-	"crypto/tls"
+ 	"encoding/hex"
+ 	"errors"
+-	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"net/url"
+ 	"os"
+-	"path/filepath"
+ 	"strings"
+ 	"sync/atomic"
+ 	"time"
+ 
+ 	"github.com/klauspost/compress/zstd"
+-	"github.com/ncc/xen-backend/internal/i18n"
+-	"github.com/ncc/xen-backend/pkg/xapi/mixins"
+-)
+-
+-func (e *VMBackupExecutor) runExport(ctx context.Context, req Request) {
+-	vmUUID := req.Payload.TargetUUID
+-	if vmUUID == "" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m004"))
+-		return
+-	}
+-
+-	// ── format 분기 (🆕 v3.15 — OVF/OVA; ovf 낱개 파일 지원 추가, 2026-08-13) ──
+-	// format=ova/ovf는 XVA와 완전히 다른 파이프라인(VDI별 export_raw_vdi + 직접 조립)이라
+-	// 별도 함수로 분리한다. 기존 XVA 경로(아래)는 무변경.
+-	format, _ := strOpt(req.Payload.Options, "format")
+-	format = strings.ToLower(strings.TrimSpace(format))
+-	if format == "ova" || format == "ovf" {
+-		e.runExportOVA(ctx, req)
+-		return
+-	}
+-	if format != "" && format != "xva" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m043", format))
+-		return
+-	}
+-
+-	// ── 옵션 파싱 ────────────────────────────────────────────
+-	fileName, _ := strOpt(req.Payload.Options, "file_name")
+-	exportPath, _ := strOpt(req.Payload.Options, "export_path")
+-	compression, _ := strOpt(req.Payload.Options, "compression")
+-	compression = strings.ToLower(strings.TrimSpace(compression))
+-	if compression == "" {
+-		compression = "none"
+-	}
+-	if compression != "none" && compression != "gzip" && compression != "zstd" { // 🆕 2026-08-21: zstd 추가
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m011", compression))
+-		return
+-	}
+-	keepSnapshot := boolOpt(req.Payload.Options, "keep_snapshot", false)
+-	overwrite := boolOpt(req.Payload.Options, "overwrite", false)
+-
+-	// ── 경로 해석 및 검증 ────────────────────────────────────
+-	if fileName == "" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m006"))
+-		return
+-	}
+-	if !isValidBackupFileName(fileName) {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m007", fileName))
+-		return
+-	}
+-	if !strings.HasSuffix(strings.ToLower(fileName), ".xva") {
+-		fileName += ".xva"
+-	}
+-	outDir := e.settings.BasePath
+-	if exportPath != "" {
+-		cleaned := filepath.Clean(exportPath)
+-		if containsParentRef(cleaned) {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m008", exportPath))
+-			return
+-		}
+-		resolved, ok := resolvePathWithSandbox(e.settings, cleaned)
+-		if !ok {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m106", exportPath))
+-			return
+-		}
+-		outDir = resolved
+-	}
+-	if err := os.MkdirAll(outDir, 0o755); err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m010", err))
+-		return
+-	}
+-	finalPath := filepath.Join(outDir, fileName)
+-	if _, err := os.Stat(finalPath); err == nil && !overwrite {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m009", finalPath))
+-		return
+-	}
+-	// 🆕 2026-08-21: zstd 압축 시 최종 산출물은 finalPath+".zst" — 별도 충돌 확인
+-	// (finalPath 자체는 다운로드 중간 스테이징 파일로만 쓰이고 압축 후 삭제됨 — 아래 참고)
+-	outputPath := finalPath
+-	if compression == "zstd" {
+-		outputPath = finalPath + ".zst"
+-		if _, err := os.Stat(outputPath); err == nil && !overwrite {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m009", outputPath))
+-			return
+-		}
+-	}
+ 
+-	// ── Pool 세션 ────────────────────────────────────────────
+-	session, err := e.findSession(req.Payload.MasterIP, req.Payload.PoolUUID)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m002", err))
+-		return
+-	}
+-	client, err := e.ensureConnected(ctx, session)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m003", err))
+-		return
+-	}
+-	vmClient := mixins.NewVMClient(client)
+-
+-	// ── VM 상태 확인 및 export 대상 결정 ─────────────────────
+-	vmRef, err := vmClient.GetByUUID(ctx, vmUUID)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m005", err))
+-		return
+-	}
+-	record, err := vmClient.GetRecord(ctx, vmRef)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m005", err))
+-		return
+-	}
+-	powerState := ""
+-	if ps, ok := record["power_state"].(string); ok {
+-		powerState = strings.ToLower(ps)
+-	}
+-	isSnapshot := xapiBoolField(record["is_a_snapshot"])
+-	vmName, _ := record["name_label"].(string)
++	"ncc-vbr/internal/xapi"
++)
+ 
+-	exportUUID := vmUUID
+-	snapshotUsed := false
+-	tempSnapRef := ""
+-	tempSnapUUID := ""
++// exportFileMode 는 1단계 vbr_agent(원본 chmod 0666)와 같다.
++const exportFileMode = 0o666
++
++// ExportParams 는 내보내기 하나의 입력이다.
++type ExportParams struct {
++	Client      *xapi.Client
++	VM          *xapi.VMClient
++	HTTP        *http.Client
++	UUID        string // 내보낼 VM 또는 스냅샷
++	OutputPath  string // 확장자까지 붙은 최종 파일 경로(OutputName)
++	Compression string // none / gzip / zstd
++	Overwrite   bool
++	TaskLabel   string
++	Interval    time.Duration // 진행률·task 상태 확인 간격
++	Progress    Progress
++}
+ 
+-	switch {
+-	case isSnapshot:
+-		// 스냅샷은 상태 무관 그대로 export 가능
+-	case powerState == "halted":
+-		// 그대로 export
+-	case powerState == "suspended":
+-		// Disk 기준 export. suspend 메모리(suspend_VDI_uuid)는 일반 VBD로 VM에
+-		// 연결되어 있지 않은 별도 필드이므로 /export가 VBD 체인을 순회할 때 자동으로
+-		// 제외된다 — 추가 파라미터 없이 halted와 동일 경로로 처리 가능 (2026-07-22 확정).
+-		// memory 포함 옵션(include_memory)은 XAPI 파라미터 확인 후 별도 지원 예정(17.4).
+-	case powerState == "running":
+-		// 임시 스냅샷 생성 (disk-only, crash-consistent — quiesced는 XS 8.x에서 제거됨)
+-		snapName := fmt.Sprintf("NCC-BACKUP-%s-%s", vmName, time.Now().Format("20060102150405"))
+-		snapRef, snapErr := vmClient.Snapshot(ctx, vmUUID, snapName)
+-		if snapErr != nil {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m014", snapErr))
+-			return
+-		}
+-		snapUUID, uErr := vmClient.GetUUIDByRef(ctx, snapRef)
+-		if uErr != nil {
+-			// UUID 조회 실패 시 만들어진 스냅샷을 즉시 정리하고 실패 보고
+-			_ = vmClient.DestroyByRef(ctx, snapRef)
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m014", uErr))
+-			return
+-		}
+-		tempSnapRef, tempSnapUUID = snapRef, snapUUID
+-		exportUUID = snapUUID
+-		snapshotUsed = true
+-		e.log.Info(i18n.T("vm_backup.l002"),
+-			"taskId", req.TaskID, "snapshotUUID", snapUUID, "snapshotName", snapName)
+-	default:
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m013", powerState))
+-		return
+-	}
++// ExportResult 는 내보낸 파일의 정보다.
++type ExportResult struct {
++	Size     int64
++	SHA256   string // 디스크에 남은 파일 전체의 SHA256
++	Duration time.Duration
++}
+ 
+-	// ── 임시 스냅샷 정리 (성공/실패 무관 항상 시도, keep_snapshot=true면 보존) ──
+-	snapshotCleanupErr := ""
+-	cleanupSnapshot := func() {
+-		if tempSnapRef == "" || keepSnapshot {
+-			return
+-		}
+-		cctx, ccancel := context.WithTimeout(context.Background(), 60*time.Second)
+-		defer ccancel()
+-		if derr := vmClient.DestroyByRef(cctx, tempSnapRef); derr != nil {
+-			snapshotCleanupErr = derr.Error()
+-			e.log.Warn(i18n.T("vm_backup.l007"),
+-				"taskId", req.TaskID, "snapshotUUID", tempSnapUUID, "error", derr)
+-		} else {
+-			e.log.Info(i18n.T("vm_backup.l006"), "taskId", req.TaskID, "snapshotUUID", tempSnapUUID)
+-		}
+-		tempSnapRef = "" // 재시도 방지
++// Export 는 UUID 를 XVA 파일로 받는다. 쓰는 동안은 ".partial" 이름이고, 스트림이 끝나고
++// XAPI task 가 성공이어야 최종 이름으로 바꾼다. 실패·취소면 ".partial" 을 지운다.
++func Export(ctx context.Context, p ExportParams) (ExportResult, error) {
++	if _, err := os.Stat(p.OutputPath); err == nil && !p.Overwrite {
++		return ExportResult{}, &Error{Code: CodeFileExists, Err: errorf("file already exists: %s", p.OutputPath)}
+ 	}
+-	fail := func(msg string) {
+-		cleanupSnapshot()
+-		e.sendFailure(ctx, req, msg)
+-	}
+-
+-	// ── XAPI Task 생성 (진행률 추적용) ────────────────────────
+-	taskRef, err := vmClient.TaskCreate(ctx, "NCC-Xen VM Export", "VM_BACKUP export taskId="+req.TaskID)
++	taskRef, err := p.VM.TaskCreate(ctx, p.TaskLabel, "vbr_vm export "+p.UUID)
+ 	if err != nil {
+-		fail(i18n.T("vm_backup.m015", err))
+-		return
++		return ExportResult{}, &Error{Code: CodeXAPI, Err: err}
+ 	}
+-	defer func() {
+-		dctx, dcancel := context.WithTimeout(context.Background(), 15*time.Second)
+-		defer dcancel()
+-		if derr := vmClient.TaskDestroy(dctx, taskRef); derr != nil {
+-			e.log.Warn(i18n.T("vm_backup.l010"), "taskId", req.TaskID, "error", derr)
+-		}
+-	}()
++	defer destroyTask(p.VM, taskRef)
++	stopWatch := watchCancel(ctx, p.VM, taskRef)
++	defer stopWatch()
+ 
+-	// ── export URL 구성 ───────────────────────────────────────
+ 	q := url.Values{}
+-	q.Set("session_id", client.SessionRef())
+-	q.Set("uuid", exportUUID)
++	q.Set("session_id", p.Client.SessionRef())
++	q.Set("uuid", p.UUID)
+ 	q.Set("task_id", taskRef)
+-	if compression == "gzip" {
++	if p.Compression == CompressionGzip {
+ 		q.Set("use_compression", "true")
+ 	}
+-	exportURL := fmt.Sprintf("https://%s/export?%s", session.masterIP, q.Encode())
+-
+-	e.log.Info(i18n.T("vm_backup.l003"),
+-		"taskId", req.TaskID,
+-		"exportUUID", exportUUID,
+-		"snapshotUsed", snapshotUsed,
+-		"filePath", outputPath,
+-		"compression", compression,
+-	)
+-
+-	// ── HTTP 스트리밍 다운로드 ────────────────────────────────
+-	httpClient := &http.Client{
+-		Transport: &http.Transport{
+-			TLSClientConfig: &tls.Config{InsecureSkipVerify: !session.verifySSL},
+-		},
+-		// 전체 Timeout은 두지 않음 — ctx(시간 단위)가 수명 관리
++	exportURL, err := endpoint(p.Client, "/export", q)
++	if err != nil {
++		return ExportResult{}, &Error{Code: CodeXAPI, Err: err}
+ 	}
+ 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, exportURL, nil)
+ 	if err != nil {
+-		fail(i18n.T("vm_backup.m016", err))
+-		return
++		return ExportResult{}, &Error{Code: CodeXAPI, Err: err}
+ 	}
+-	resp, err := httpClient.Do(httpReq)
++	resp, err := p.HTTP.Do(httpReq)
+ 	if err != nil {
+-		fail(i18n.T("vm_backup.m016", err))
+-		return
++		if e := ctxError(ctx); e != nil {
++			return ExportResult{}, e
++		}
++		return ExportResult{}, &Error{Code: CodeXAPI, Err: errorf("export request failed: %v", err)}
+ 	}
+ 	defer resp.Body.Close()
+ 	if resp.StatusCode != http.StatusOK {
+ 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
+-		fail(i18n.T("vm_backup.m017", resp.StatusCode, strings.TrimSpace(string(body))))
+-		return
++		return ExportResult{}, &Error{Code: CodeXAPI,
++			Err: errorf("export HTTP %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))}
+ 	}
+ 
+-	// 진행률 폴링 goroutine (vm_control copy와 동일 패턴: 1~99%)
+ 	counter := &countingWriter{}
+-	stopProgress := make(chan struct{})
+-	go func() {
+-		ticker := time.NewTicker(5 * time.Second)
+-		defer ticker.Stop()
+-		for {
+-			select {
+-			case <-stopProgress:
+-				return
+-			case <-ctx.Done():
+-				return
+-			case <-ticker.C:
+-				progress, perr := vmClient.TaskGetProgress(ctx, taskRef)
+-				if perr != nil {
+-					continue
+-				}
+-				percent := int(progress*98) + 1
+-				if percent < 1 {
+-					percent = 1
+-				}
+-				if percent > 99 {
+-					percent = 99
+-				}
+-				e.log.Info(i18n.T("vm_backup.l004"),
+-					"taskId", req.TaskID, "percent", percent,
+-					"bytesWritten", atomic.LoadInt64(&counter.n))
+-				_ = e.gw.SendProcessing(ctx,
+-					req.TaskID, "VM_BACKUP", req.Action, "VM", vmUUID,
+-					i18n.T("vm_backup.m022", percent), percent,
+-					map[string]interface{}{
+-						"step":      "exporting",
+-						"file_path": outputPath,
+-					})
+-			}
+-		}
+-	}()
+-
+-	partial := outputPath + ".partial"
++	stopProgress := pollTask(ctx, p.VM, taskRef, p.Interval, func() int64 { return atomic.LoadInt64(&counter.n) }, p.Progress)
++	partial := p.OutputPath + ".partial"
+ 	start := time.Now()
+-	outFile, err := os.Create(partial)
+-	if err != nil {
+-		close(stopProgress)
+-		fail(i18n.T("vm_backup.m018", err))
+-		return
+-	}
+-	hasher := sha256.New()
+-
+-	// 🆕 2026-10-16: zstd는 다운로드와 동시에 스트리밍으로 압축한다 (export 완료 후
+-	// 비압축 XVA 전체를 다시 읽어서 압축하던 기존 2-pass 구조 제거 — 디스크 쓰기/읽기가
+-	// 각각 1회로 줄고, 비압축 원본을 임시로 보관할 피크 디스크 공간도 필요 없어짐).
+-	// gzip/none 경로는 기존과 완전히 동일(바로 io.MultiWriter로 기록), 무변경.
+-	var copyErr error
+-	if compression == "zstd" {
+-		enc, encErr := zstd.NewWriter(io.MultiWriter(outFile, hasher))
+-		if encErr != nil {
+-			_ = outFile.Close()
+-			close(stopProgress)
+-			e.removePartial(req, partial)
+-			fail(i18n.T("vm_backup.m102", encErr))
+-			return
+-		}
+-		_, copyErr = io.Copy(io.MultiWriter(enc, counter), resp.Body)
+-		if encCloseErr := enc.Close(); encCloseErr != nil && copyErr == nil {
+-			copyErr = encCloseErr
+-		}
+-	} else {
+-		_, copyErr = io.Copy(io.MultiWriter(outFile, hasher, counter), resp.Body)
+-	}
+-	closeErr := outFile.Close()
+-	close(stopProgress)
+-
++	sum, copyErr := writePartial(partial, resp.Body, counter, p.Compression)
++	stopProgress()
+ 	if copyErr == nil {
+-		copyErr = closeErr
++		copyErr = waitTask(ctx, p.VM, taskRef, p.Interval, CodeExportIncomplete)
+ 	}
+ 	if copyErr != nil {
+-		e.removePartial(req, partial)
+-		if errors.Is(copyErr, context.DeadlineExceeded) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
+-			fail(i18n.T("vm_backup.m027", e.settings.TimeoutHours))
+-			return
+-		}
+-		fail(i18n.T("vm_backup.m018", copyErr))
+-		return
+-	}
+-
+-	// ── 스트림 종료 ≠ 성공 보장 — Task 최종 상태로 판정 (중간 절단 감지) ──
+-	finalStatus := ""
+-	for i := 0; i < 12; i++ {
+-		st, serr := vmClient.TaskGetStatus(ctx, taskRef)
+-		if serr != nil {
+-			break // task 조회 불가 시 스트림 완료를 신뢰
++		_ = os.Remove(partial)
++		var xe *Error
++		if errors.As(copyErr, &xe) {
++			return ExportResult{}, xe
+ 		}
+-		finalStatus = st
+-		if st != "pending" && st != "cancelling" {
+-			break
++		if e := ctxError(ctx); e != nil {
++			return ExportResult{}, e
+ 		}
+-		time.Sleep(time.Second)
+-	}
+-	if finalStatus == "failure" || finalStatus == "cancelled" {
+-		errInfo, _ := vmClient.TaskGetErrorInfo(ctx, taskRef)
+-		e.removePartial(req, partial)
+-		fail(i18n.T("vm_backup.m019", errInfo))
+-		return
++		return ExportResult{}, &Error{Code: CodeFileIO, Err: copyErr}
+ 	}
+-
+-	// ── .partial → 최종 파일 rename ───────────────────────────
+-	if overwrite {
+-		// Windows에서 rename은 기존 파일을 덮지 못하므로 선제 삭제
+-		_ = os.Remove(outputPath)
++	if p.Overwrite {
++		_ = os.Remove(p.OutputPath) // Windows 의 rename 은 기존 파일을 덮지 못한다
+ 	}
+-	if err := os.Rename(partial, outputPath); err != nil {
+-		e.removePartial(req, partial)
+-		fail(i18n.T("vm_backup.m020", err))
+-		return
++	if err := os.Rename(partial, p.OutputPath); err != nil {
++		_ = os.Remove(partial)
++		return ExportResult{}, &Error{Code: CodeFileIO, Err: errorf("backup file rename failed: %v", err)}
+ 	}
+-
+-	cleanupSnapshot()
+-
+-	// 🆕 2026-10-16: zstd는 이제 다운로드와 동시에 압축되므로 counter(다운로드 바이트 수)는
+-	// 압축 전 원본 크기를 가리킨다 — 실제 산출물 크기는 완성된 파일을 stat해서 구한다.
+-	// stat 실패 시에만 counter로 폴백(비압축 경로에서는 어차피 둘이 동일한 값).
+-	fileSize := atomic.LoadInt64(&counter.n)
+-	if info, statErr := os.Stat(outputPath); statErr == nil {
+-		fileSize = info.Size()
++	_ = os.Chmod(p.OutputPath, exportFileMode)
++	size := atomic.LoadInt64(&counter.n)
++	if info, err := os.Stat(p.OutputPath); err == nil {
++		size = info.Size()
+ 	}
+-	checksum := hex.EncodeToString(hasher.Sum(nil))
+-	durationSec := int(time.Since(start).Seconds())
+-
+-	e.log.Info(i18n.T("vm_backup.l005"),
+-		"taskId", req.TaskID,
+-		"filePath", outputPath,
+-		"fileSizeBytes", fileSize,
+-		"sha256", checksum,
+-		"durationSec", durationSec,
+-	)
++	return ExportResult{Size: size, SHA256: sum, Duration: time.Since(start)}, nil
++}
+ 
+-	options := map[string]interface{}{
+-		"file_path":        outputPath,
+-		"file_size_bytes":  fileSize,
+-		"checksum_sha256":  checksum,
+-		"format":           "xva",
+-		"compression":      compression,
+-		"exported_uuid":    exportUUID,
+-		"power_state":      powerState,
+-		"snapshot_used":    snapshotUsed,
+-		"duration_seconds": durationSec,
+-		"completedAt":      completedAt(),
+-	}
+-	if powerState == "suspended" {
+-		// suspend 메모리는 VBD 미연결이라 export에 자동 포함되지 않음 — disk 기준 백업임을 명시.
+-		// memory 포함 옵션(include_memory)은 17.4절 향후 계획, 이 필드는 그때도 그대로 사용 예정.
+-		options["memory_included"] = false
++// writePartial 은 스트림을 partial 파일에 쓰고 디스크에 남는 내용의 SHA256 을 돌려준다.
++// zstd 면 받으면서 압축한다(ncc-xen 2026-10-16 동시 압축). counter 는 받은 바이트(압축 전)를 센다.
++func writePartial(partial string, body io.Reader, counter *countingWriter, compression string) (string, error) {
++	out, err := os.OpenFile(partial, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, exportFileMode)
++	if err != nil {
++		return "", errorf("backup file create failed: %v", err)
+ 	}
+-	if keepSnapshot && tempSnapUUID != "" {
+-		options["snapshot_uuid"] = tempSnapUUID
++	hasher := sha256.New()
++	var copyErr error
++	if compression == CompressionZstd {
++		enc, encErr := zstd.NewWriter(io.MultiWriter(out, hasher))
++		if encErr != nil {
++			_ = out.Close()
++			return "", errorf("zstd encoder failed: %v", encErr)
++		}
++		_, copyErr = io.Copy(io.MultiWriter(enc, counter), body)
++		if cerr := enc.Close(); cerr != nil && copyErr == nil {
++			copyErr = cerr
++		}
++	} else {
++		_, copyErr = io.Copy(io.MultiWriter(out, hasher, counter), body)
+ 	}
+-	if snapshotCleanupErr != "" {
+-		// 정리 실패는 job 성공 유지 + Middleware가 후속 정리할 수 있도록 원문 에러 포함 (합의 사항)
+-		options["snapshot_cleanup_failed"] = tempSnapUUID
+-		options["snapshot_cleanup_error"] = snapshotCleanupErr
++	if cerr := out.Close(); copyErr == nil {
++		copyErr = cerr // 닫기 오류(디스크 가득 등)도 실패로 본다
+ 	}
+-	e.sendSuccess(ctx, req, "VM", vmUUID, i18n.T("vm_backup.m021", outputPath), options)
+-}
+-
+-func (e *VMBackupExecutor) removePartial(req Request, partial string) {
+-	if rerr := os.Remove(partial); rerr != nil && !os.IsNotExist(rerr) {
+-		e.log.Warn(i18n.T("vm_backup.l011"), "taskId", req.TaskID, "path", partial, "error", rerr)
++	if copyErr != nil {
++		return "", copyErr
+ 	}
++	return hex.EncodeToString(hasher.Sum(nil)), nil
+ }
+-
+-// ─────────────────────────────────────────────────────────────────
+-// OVF/OVA export (3단계, 실기검증 전)
+-// ─────────────────────────────────────────────────────────────────
+-
+
+######## CP-VM-06  backend/internal/job/vm_backup_restore.go  ->  go/internal/xva/import.go
+ .../internal/xva/import.go                         | 449 +++------------------
+ 1 file changed, 60 insertions(+), 389 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_restore.go b/go/internal/xva/import.go
+index 0527399..91996a0 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_restore.go
++++ b/go/internal/xva/import.go
+@@ -1,435 +1,106 @@
+-package job
++// copied from ncc-xen backend/internal/job/vm_backup_restore.go runImport 158~320행 @043c6d5 (CP-VM-06), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-06):
++//   - 경로 해석·zstd 해제·SR 조회·결과 VM 후처리는 vm 패키지로 옮기고, 이 함수는 "파일을 올려 VM 참조 받기"만 한다.
++//   - 규약 2 processing 송신 대신 Progress 콜백을 부른다.
++//   - 작업이 취소되면 XAPI task 를 취소한다(1단계 agent/transfer.go watchCancel).
++//   - 오류를 i18n 문장 대신 코드가 있는 *Error 로 돌려준다.
+ 
+-// vm_backup_restore.go — VM_BACKUP action=restore (XVA import)
+-// 🆕 2026-09-01: vm_backup.go에서 기계적으로 분리됨 (로직 변경 없음).
+-// 원본 설계 주석(restore 파라미터, is_a_template 후처리 함정 등)은
+-// vm_backup.go 상단 참고.
++package xva
+ 
+ import (
+ 	"context"
+-	"crypto/tls"
+-	"fmt"
+ 	"io"
+ 	"net/http"
+ 	"net/url"
+ 	"os"
+-	"path/filepath"
+ 	"strconv"
+ 	"strings"
+ 	"sync/atomic"
+ 	"time"
+ 
+-	"github.com/ncc/xen-backend/internal/i18n"
+-	"github.com/ncc/xen-backend/pkg/xapi/mixins"
++	"ncc-vbr/internal/xapi"
+ )
+ 
+-func (e *VMBackupExecutor) runImport(ctx context.Context, req Request) {
+-	filePathOpt, _ := strOpt(req.Payload.Options, "file_path")
+-	if filePathOpt == "" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m029"))
+-		return
+-	}
+-	srUUID, _ := strOpt(req.Payload.Options, "sr_uuid")
+-	if srUUID == "" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m030"))
+-		return
+-	}
+-	nameLabel, _ := strOpt(req.Payload.Options, "name_label")
+-	restoreOriginalUUID := boolOpt(req.Payload.Options, "restore_original_uuid", false)
+-	force := boolOpt(req.Payload.Options, "force", false)
+-	// 🆕 2026-09-10 (프론트 요청) — home_server_uuid(선택) — XenCenter의 Home
+-	// Server 지정과 동일한 목적. 복원 완료 후 VM.set_affinity 호출
+-	// (vm_create.go template_create의 home_server_uuid와 동일한 best-effort
+-	// 정책 — 실패해도 restore job 자체는 실패시키지 않음). 미지정 시 기존
+-	// 동작(affinity 설정 안 함) 그대로 유지.
+-	homeServerUUID, hasHomeServer := strOpt(req.Payload.Options, "home_server_uuid")
+-
+-	// ── 경로 해석 및 검증 (verify와 동일 규칙) ─────────────────
+-	fullPath := filepath.Clean(filePathOpt)
+-	if containsParentRef(fullPath) {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m008", filePathOpt))
+-		return
+-	}
+-	// ── 경로 해석 및 검증 ────────────────────────────────────
+-	if !filepath.IsAbs(fullPath) {
+-		fullPath = filepath.Join(e.settings.BasePath, fullPath)
+-	} else {
+-		// 2026-09-18: 절대경로는 SandboxMode=true일 때만 BasePath/
+-		// AllowedAbsolutePaths 하위로 제한(vm_backup_util.go 참고).
+-		if _, ok := resolvePathWithSandbox(e.settings, fullPath); !ok {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m106", filePathOpt))
+-			return
+-		}
+-	}
+-	fileInfo, statErr := os.Stat(fullPath)
+-	if statErr != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m031", statErr))
+-		return
+-	}
+-	fileSize := fileInfo.Size()
+-
+-	// 🆕 2026-08-21: zstd 압축 파일 자동 감지 — XAPI /import는 zstd를 모르므로
+-	// 업로드 전 임시파일로 전체 압축해제한다(스트리밍 해제는 Content-Length를 미리 알 수 없어
+-	// 실기검증된 아래 업로드 로직을 건드려야 해서 채택하지 않음 — 임시파일 방식으로 기존 업로드 경로 완전 무변경 유지).
+-	// gzip은 XAPI가 서버측에서 자동 인식하므로(기존 동작) 이 분기와 무관 — 그대로 fullPath를 업로드.
+-	restorePath := fullPath
+-	restoreSize := fileSize
+-	isZstdRestore := false
+-
+-	// 🆕 2026-08-21 수정: 압축해제 단계 진행률 보고 추가.
+-	// export의 zstd 압축 단계와 동일한 문제(진행률 보고 없이 조용히 돌다가 갑자기 완료되는 것처럼 보임)가
+-	// 여기도 구조적으로 동일하게 발생할 수 있어 실기테스트 전에 선제 수정(SK 2026-08-21 export 케이스 실기확인).
+-	// zstd가 아닌 파일이면 decompressZstdIfNeeded가 매직바이트만 확인하고 거의 즉시 반환되므로
+-	// 아래 ticker는 사실상 발동하지 않는다.
+-	var decompProgress int64
+-	decompStopProgress := make(chan struct{})
+-	go func() {
+-		ticker := time.NewTicker(5 * time.Second)
+-		defer ticker.Stop()
+-		for {
+-			select {
+-			case <-decompStopProgress:
+-				return
+-			case <-ctx.Done():
+-				return
+-			case <-ticker.C:
+-				read := atomic.LoadInt64(&decompProgress)
+-				percent := 1
+-				if fileSize > 0 {
+-					percent = int(float64(read)/float64(fileSize)*98) + 1
+-					if percent < 1 {
+-						percent = 1
+-					}
+-					if percent > 99 {
+-						percent = 99
+-					}
+-				}
+-				e.log.Info(i18n.T("vm_backup.l059"),
+-					"taskId", req.TaskID, "percent", percent, "bytesRead", read)
+-				_ = e.gw.SendProcessing(ctx,
+-					req.TaskID, "VM_BACKUP", req.Action, "FILE", req.Payload.TargetUUID,
+-					i18n.T("vm_backup.m105", percent), percent,
+-					map[string]interface{}{"step": "decompressing", "file_path": fullPath})
+-			}
+-		}
+-	}()
+-	zPath, zSize, zDetected, zErr := decompressZstdIfNeeded(fullPath, &decompProgress)
+-	close(decompStopProgress)
+-	if zErr != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m103", zErr))
+-		return
+-	} else if zDetected {
+-		restorePath = zPath
+-		restoreSize = zSize
+-		isZstdRestore = true
+-		defer os.Remove(zPath)
+-		e.log.Info(i18n.T("vm_backup.l057"),
+-			"taskId", req.TaskID, "originalPath", fullPath, "tempPath", zPath, "decompressedSizeBytes", zSize)
+-		// 🆕 2026-10-16: decompressing 단계 종료를 100%로 명시 전송 — 이게 없으면 바로 뒤의
+-		// importing 단계가 1%부터 다시 시작해 Middleware 입장에서 99%→1%로 역행하는 것처럼
+-		// 보이는 문제가 있었다(export의 구 zstd 2-pass 구조에서 발견된 것과 동일한 패턴).
+-		_ = e.gw.SendProcessing(ctx,
+-			req.TaskID, "VM_BACKUP", req.Action, "FILE", req.Payload.TargetUUID,
+-			i18n.T("vm_backup.m105", 100), 100,
+-			map[string]interface{}{"step": "decompressing", "file_path": fullPath})
+-	}
+-
+-	// ── Pool 세션 ────────────────────────────────────────────
+-	session, err := e.findSession(req.Payload.MasterIP, req.Payload.PoolUUID)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m002", err))
+-		return
+-	}
+-	client, err := e.ensureConnected(ctx, session)
+-	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m003", err))
+-		return
+-	}
+-	vmClient := mixins.NewVMClient(client)
+-	srClient := mixins.NewSRClient(client)
++// ImportParams 는 가져오기 하나의 입력이다.
++type ImportParams struct {
++	Client    *xapi.Client
++	VM        *xapi.VMClient
++	HTTP      *http.Client
++	Path      string // 올릴 파일(gzip·비압축. zstd 는 미리 풀어 둔 임시 파일)
++	SRRef     string // SR OpaqueRef(SR.get_by_uuid 결과)
++	Restore   bool   // XAPI restore 파라미터(= restore_original_uuid, 기존 preserve)
++	Force     bool
++	TaskLabel string
++	Interval  time.Duration
++	Progress  Progress
++}
+ 
+-	// ── 대상 SR (OpaqueRef 필요 — SR 관련 XAPI 확정 동작) ──────
+-	srRef, err := srClient.GetByUUID(ctx, srUUID)
++// Import 는 XVA 파일을 /import 로 올리고 XAPI task 결과의 VM 참조 목록을 돌려준다.
++// 업로드가 HTTP 200 으로 끝나도 XAPI 가 디스크를 계속 처리하므로 task 최종 상태까지 기다린다.
++func Import(ctx context.Context, p ImportParams) ([]string, error) {
++	f, err := os.Open(p.Path)
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m032", err))
+-		return
++		return nil, &Error{Code: CodeFileIO, Err: errorf("restore file open failed: %v", err)}
+ 	}
+-
+-	f, err := os.Open(restorePath) // 🆕 2026-08-21: zstd였으면 압축해제된 임시파일 경로 사용 (아니면 기존과 동일하게 fullPath)
++	defer f.Close()
++	info, err := f.Stat()
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m031", err))
+-		return
++		return nil, &Error{Code: CodeFileIO, Err: errorf("restore file stat failed: %v", err)}
+ 	}
+-	defer f.Close()
+ 
+-	// ── XAPI Task 생성 (진행률 추적용) ────────────────────────
+-	taskRef, err := vmClient.TaskCreate(ctx, "NCC-Xen VM Restore", "VM_BACKUP restore taskId="+req.TaskID)
++	taskRef, err := p.VM.TaskCreate(ctx, p.TaskLabel, "vbr_vm import "+p.Path)
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m015", err))
+-		return
++		return nil, &Error{Code: CodeXAPI, Err: err}
+ 	}
+-	defer func() {
+-		dctx, dcancel := context.WithTimeout(context.Background(), 15*time.Second)
+-		defer dcancel()
+-		if derr := vmClient.TaskDestroy(dctx, taskRef); derr != nil {
+-			e.log.Warn(i18n.T("vm_backup.l017"), "taskId", req.TaskID, "error", derr)
+-		}
+-	}()
++	defer destroyTask(p.VM, taskRef)
++	stopWatch := watchCancel(ctx, p.VM, taskRef)
++	defer stopWatch()
+ 
+-	// ── import URL 구성 ────────────────────────────────────────
+-	// ⚠ sr_id/restore/force 파라미터명은 실기검증 전 — 확인 후 조정 가능
+ 	q := url.Values{}
+-	q.Set("session_id", client.SessionRef())
++	q.Set("session_id", p.Client.SessionRef())
+ 	q.Set("task_id", taskRef)
+-	q.Set("sr_id", srRef)
+-	q.Set("restore", strconv.FormatBool(restoreOriginalUUID))
+-	if force {
++	q.Set("sr_id", p.SRRef)
++	q.Set("restore", strconv.FormatBool(p.Restore))
++	if p.Force {
+ 		q.Set("force", "true")
+ 	}
+-	importURL := fmt.Sprintf("https://%s/import?%s", session.masterIP, q.Encode())
+-
+-	e.log.Info(i18n.T("vm_backup.l013"),
+-		"taskId", req.TaskID,
+-		"filePath", fullPath,
+-		"srUUID", srUUID,
+-		"restoreOriginalUUID", restoreOriginalUUID,
+-	)
+-
+-	// ── HTTP 스트리밍 업로드 ────────────────────────────────────
+-	httpClient := &http.Client{
+-		Transport: &http.Transport{
+-			TLSClientConfig: &tls.Config{InsecureSkipVerify: !session.verifySSL},
+-		},
++	importURL, err := endpoint(p.Client, "/import", q)
++	if err != nil {
++		return nil, &Error{Code: CodeXAPI, Err: err}
+ 	}
+ 	counter := &countingReader{r: f}
+ 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPut, importURL, counter)
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m033", err))
+-		return
++		return nil, &Error{Code: CodeXAPI, Err: err}
+ 	}
+-	httpReq.ContentLength = restoreSize // 🆕 2026-08-21: zstd 해제 시 실제로 전송되는 바이트 수(압축 전 원본 크기)로 정확히 설정
+-
+-	stopProgress := make(chan struct{})
+-	start := time.Now()
+-	go func() {
+-		ticker := time.NewTicker(5 * time.Second)
+-		defer ticker.Stop()
+-		for {
+-			select {
+-			case <-stopProgress:
+-				return
+-			case <-ctx.Done():
+-				return
+-			case <-ticker.C:
+-				progress, perr := vmClient.TaskGetProgress(ctx, taskRef)
+-				if perr != nil {
+-					// 기존에는 무음으로 continue하여 진행 실패 원인을 알 수 없었음(2026-07-28 실기테스트 확인).
+-					// 원인 파악을 위해 경고 로그로 남긴다 (재시도 로직 자체는 변경 없음).
+-					e.log.Warn(i18n.T("vm_backup.l021"), "taskId", req.TaskID, "error", perr)
+-					continue
+-				}
+-				percent := int(progress*98) + 1
+-				if percent < 1 {
+-					percent = 1
+-				}
+-				if percent > 99 {
+-					percent = 99
+-				}
+-				e.log.Info(i18n.T("vm_backup.l014"),
+-					"taskId", req.TaskID, "percent", percent,
+-					"bytesSent", atomic.LoadInt64(&counter.n))
+-				_ = e.gw.SendProcessing(ctx,
+-					req.TaskID, "VM_BACKUP", req.Action, "FILE", req.Payload.TargetUUID,
+-					i18n.T("vm_backup.m041", percent), percent,
+-					map[string]interface{}{
+-						"step":      "importing",
+-						"file_path": fullPath,
+-					})
+-			}
+-		}
+-	}()
++	httpReq.ContentLength = info.Size()
+ 
+-	e.log.Info(i18n.T("vm_backup.l020"), "taskId", req.TaskID, "url", importURL, "fileSizeBytes", fileSize)
++	// 진행률은 최종 대기 구간까지 계속 본다(ncc-xen 2026-07-28: 실제 시간의 대부분이 그 구간).
++	stopProgress := pollTask(ctx, p.VM, taskRef, p.Interval, func() int64 { return atomic.LoadInt64(&counter.n) }, p.Progress)
++	defer stopProgress()
+ 
+-	resp, err := httpClient.Do(httpReq)
++	resp, err := p.HTTP.Do(httpReq)
+ 	if err != nil {
+-		close(stopProgress)
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m033", err))
+-		return
++		if e := ctxError(ctx); e != nil {
++			return nil, e
++		}
++		return nil, &Error{Code: CodeXAPI, Err: errorf("import request failed: %v", err)}
+ 	}
+ 	defer resp.Body.Close()
+-	bytesSent := atomic.LoadInt64(&counter.n)
+-	e.log.Info(i18n.T("vm_backup.l022"),
+-		"taskId", req.TaskID, "statusCode", resp.StatusCode,
+-		"bytesSent", bytesSent, "fileSizeBytes", fileSize)
+ 	if resp.StatusCode != http.StatusOK {
+ 		body, _ := io.ReadAll(io.LimitReader(resp.Body, 2048))
+-		close(stopProgress)
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m034", resp.StatusCode, strings.TrimSpace(string(body))))
+-		return
+-	}
+-	// ⚠ 2026-07-28 실기테스트 확인: HTTP 200 시점의 bytesSent가 fileSize보다 작아도
+-	// Go http.Transport가 백그라운드에서 나머지 body를 계속 전송하며, 실제로 6GB 파일이
+-	// 56초 뒤 정상적으로 task 완료(success)까지 이어졌다. 즉 이 시점의 bytesSent는
+-	// "최종 전송량"이 아니라 "Do() 반환 시점의 스냅샷"일 뿐이므로 여기서 실패 처리하면 안 된다.
+-	// (이전 커밋에서 추가했던 조기 실패 로직은 이 확인에 따라 제거함 — 로그만 남긴다.)
+-
+-	// ── 업로드 종료 ≠ import 완료 — Task 최종 상태로 판정 ─────
+-	// 대용량 VM은 스트림 종료 후에도 서버 측 disk import 처리가 계속될 수 있어
+-	// export의 12회(12초) 폴백보다 넉넉한 주기로 대기한다 (외부 상한은 ctx의
+-	// settings.TimeoutHours가 담당 — 실기검증 후 주기 조정 가능).
+-	// ⚠ 진행률 고루틴(stopProgress)은 여기서 닫지 않고 최종 상태 확정 후에 닫는다 —
+-	// 실제 소요 시간의 대부분이 이 대기 구간이라, 여기서 먼저 닫으면 진행률이 전혀
+-	// 안 보이는 문제가 있었다(2026-07-28 실기테스트 확인: 60초 가까이 진행률 로그 0건).
+-	finalStatus := ""
+-	for {
+-		select {
+-		case <-ctx.Done():
+-			close(stopProgress)
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m027", e.settings.TimeoutHours))
+-			return
+-		default:
+-		}
+-		st, serr := vmClient.TaskGetStatus(ctx, taskRef)
+-		if serr != nil {
+-			e.log.Warn(i18n.T("vm_backup.l023"), "taskId", req.TaskID, "error", serr)
+-			break // task 조회 불가 시 스트림 완료(HTTP 200)를 신뢰
+-		}
+-		finalStatus = st
+-		if st != "pending" && st != "cancelling" {
+-			break
+-		}
+-		time.Sleep(2 * time.Second)
+-	}
+-	close(stopProgress)
+-	if finalStatus == "failure" || finalStatus == "cancelled" {
+-		errInfo, _ := vmClient.TaskGetErrorInfo(ctx, taskRef)
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m040", errInfo))
+-		return
++		return nil, &Error{Code: CodeXAPI,
++			Err: errorf("import HTTP %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))}
+ 	}
+-
+-	// ── import 결과 VM ref 조회 ─────────────────────────────────
+-	refs, rErr := vmClient.TaskGetResultRefs(ctx, taskRef)
+-	if rErr != nil || len(refs) == 0 {
+-		// 원문 진단 로그: TaskGetResultRefs의 정규식이 실제 XAPI 응답 포맷과
+-		// 맞지 않을 가능성이 있어, 다음 조정을 위해 raw 값을 그대로 남긴다.
+-		raw, rawErr := vmClient.TaskGetRawResult(ctx, taskRef)
+-		e.log.Warn(i18n.T("vm_backup.l024"), "taskId", req.TaskID, "rawResult", raw, "rawResultError", rawErr)
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m035", req.TaskID))
+-		return
+-	}
+-	if len(refs) > 1 {
+-		e.log.Warn(i18n.T("vm_backup.l018"), "taskId", req.TaskID, "refCount", len(refs))
++	if err := waitTask(ctx, p.VM, taskRef, 2*time.Second, CodeXAPI); err != nil {
++		return nil, err
+ 	}
+-	newVMRef := refs[0]
+-
+-	record, err := vmClient.GetRecord(ctx, newVMRef)
++	refs, err := p.VM.TaskGetResultRefs(ctx, taskRef)
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m036", err))
+-		return
++		return nil, &Error{Code: CodeXAPI, Err: err}
+ 	}
+-	newVMUUID, _ := record["uuid"].(string)
+-
+-	// ── 알려진 함정 후처리: 스냅샷 기반 XVA는 is_a_template=true로 생성됨 ──
+-	isTemplateFixed := false
+-	var templateFixErr string
+-	var allowedOpsFixErr string // 🆕 2026-08-21: UpdateAllowedOperations 실패 시 원문 에러 보관
+-	if xapiBoolField(record["is_a_template"]) {
+-		e.log.Info(i18n.T("vm_backup.l016"), "taskId", req.TaskID, "vmUUID", newVMUUID)
+-		if serr := vmClient.SetIsATemplate(ctx, newVMRef, false); serr != nil {
+-			templateFixErr = serr.Error()
+-			e.log.Warn(i18n.T("vm_backup.l019"), "taskId", req.TaskID, "vmUUID", newVMUUID, "error", serr)
+-		} else {
+-			isTemplateFixed = true
+-			// 🆕 2026-08-21: zstd restore 실기테스트 중 발견 — SetIsATemplate(false)만으로는
+-			// allowed_operations가 재계산되지 않아 "provision"(템플릿 전용)은 남고 "start"는
+-			// 빠진 채로 고정되어 XenCenter Start 버튼이 비활성화되는 XAPI 동작 확인.
+-			// 반드시 명시적으로 재계산을 요청해야 함 — 압축방식(zstd/gzip/none)과 무관한 공통 버그.
+-			if uErr := vmClient.UpdateAllowedOperations(ctx, newVMRef); uErr != nil {
+-				allowedOpsFixErr = uErr.Error()
+-				e.log.Warn(i18n.T("vm_backup.l060"), "taskId", req.TaskID, "vmUUID", newVMUUID, "error", uErr)
+-			}
+-		}
+-	}
+-
+-	var nameLabelErr string
+-	if nameLabel != "" {
+-		if lerr := vmClient.SetNameLabelByRef(ctx, newVMRef, nameLabel); lerr != nil {
+-			nameLabelErr = lerr.Error()
+-		}
+-	}
+-
+-	// 🆕 2026-09-10 — Home Server 지정 (선택, best-effort).
+-	// vm_create.go template_create의 home_server_uuid와 완전히 동일한 정책:
+-	// VM.set_affinity 실패해도 restore job 자체는 성공 유지.
+-	var homeServerErr string
+-	homeServerApplied := false
+-	if hasHomeServer && homeServerUUID != "" {
+-		if err := vmClient.SetAffinity(ctx, newVMUUID, homeServerUUID); err != nil {
+-			homeServerErr = err.Error()
+-			e.log.Warn(i18n.T("vm_backup.l062"), "taskId", req.TaskID, "vmUUID", newVMUUID, "homeServerUUID", homeServerUUID, "error", err)
+-		} else {
+-			homeServerApplied = true
+-			e.log.Info(i18n.T("vm_backup.l061"), "taskId", req.TaskID, "vmUUID", newVMUUID, "homeServerUUID", homeServerUUID)
+-		}
++	if len(refs) == 0 {
++		return nil, &Error{Code: CodeXAPI, Err: errorf("VM import result has no VM reference")}
+ 	}
+-
+-	durationSec := int(time.Since(start).Seconds())
+-	e.log.Info(i18n.T("vm_backup.l015"),
+-		"taskId", req.TaskID,
+-		"vmUUID", newVMUUID,
+-		"srUUID", srUUID,
+-		"durationSec", durationSec,
+-	)
+-
+-	options := map[string]interface{}{
+-		"vm_uuid":               newVMUUID,
+-		"sr_uuid":               srUUID,
+-		"file_path":             fullPath,
+-		"file_size_bytes":       fileSize,
+-		"restore_original_uuid": restoreOriginalUUID,
+-		"is_a_template_fixed":   isTemplateFixed,
+-		"duration_seconds":      durationSec,
+-		"completedAt":           completedAt(),
+-	}
+-	if nameLabel != "" {
+-		options["name_label"] = nameLabel
+-	}
+-	if templateFixErr != "" {
+-		// 후처리 실패는 restore job 자체는 성공 유지 + Middleware 후속 조치용 원문 에러 포함 (합의 사항과 동일 패턴)
+-		options["is_a_template_fix_error"] = templateFixErr
+-	}
+-	if allowedOpsFixErr != "" {
+-		// 🆕 2026-08-21: allowed_operations 재계산 실패 — job은 성공 유지, Middleware/사용자가
+-		// 수동으로 VM.update_allowed_operations를 재시도하거나 XenCenter에서 새로고침 필요할 수 있음
+-		options["allowed_operations_fix_error"] = allowedOpsFixErr
+-	}
+-	if nameLabelErr != "" {
+-		options["name_label_set_error"] = nameLabelErr
+-	}
+-	if hasHomeServer && homeServerUUID != "" {
+-		options["home_server_uuid"] = homeServerUUID
+-		options["home_server_applied"] = homeServerApplied
+-		if homeServerErr != "" {
+-			// 후처리 실패는 restore job 자체는 성공 유지 + 원문 에러 포함(기존 name_label_set_error와 동일 패턴)
+-			options["home_server_set_error"] = homeServerErr
+-		}
+-	}
+-	if len(refs) > 1 {
+-		options["additional_vm_refs_ignored"] = len(refs) - 1
+-	}
+-	if isZstdRestore {
+-		// 🆕 2026-08-21: file_size_bytes는 기존 계약 유지(원본 파일=.zst 크기) — 압축해제 후 실제
+-		// 업로드된 크기는 별도 필드로 투명하게 노출
+-		options["compression_detected"] = "zstd"
+-		options["decompressed_size_bytes"] = restoreSize
+-	}
+-
+-	e.sendSuccess(ctx, req, "VM", newVMUUID, i18n.T("vm_backup.m038", fullPath), options)
++	return refs, nil
+ }
+-
+-// ─────────────────────────────────────────────────────────────────
+-// 내부 헬퍼
+-// ─────────────────────────────────────────────────────────────────
+-
+-// countingWriter는 쓰여진 바이트 수를 원자적으로 집계합니다 (진행률 로그용).
+
+######## CP-VM-07  backend/internal/job/vm_backup_verify.go  ->  go/internal/xva/verify.go
+ .../internal/xva/verify.go                         | 275 ++++++++-------------
+ 1 file changed, 108 insertions(+), 167 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_verify.go b/go/internal/xva/verify.go
+index 499a380..74f6ea2 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_verify.go
++++ b/go/internal/xva/verify.go
+@@ -1,248 +1,189 @@
+-package job
++// copied from ncc-xen backend/internal/job/vm_backup_verify.go runVerify @043c6d5 (CP-VM-07), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-07):
++//   - 경로 해석과 결과 보고는 vm 패키지로 옮기고, 이 함수는 "열린 파일 검증"만 한다.
++//   - 실패 사유 문장을 i18n 키 대신 고정 영어 문장으로 쓴다(사유는 기계가 읽는 진단이라 번역하지 않는다).
++//   - 규약 2 processing 송신 대신 Progress 콜백, ctx 취소를 읽기마다 본다(새로 더함).
++//   - 검증 판정 규칙(파일 열기 실패만 오류, 손상은 Verified=false)은 그대로다.
+ 
+-// vm_backup_verify.go — VM_BACKUP action=verify (XVA 무결성 검증, gzip/zstd 압축 자동 감지)
+-// 🆕 2026-09-01: vm_backup.go에서 기계적으로 분리됨 (로직 변경 없음).
+-// 원본 설계 주석은 vm_backup.go 상단 참고.
++package xva
+ 
+ import (
+ 	"archive/tar"
+ 	"bufio"
+ 	"compress/gzip"
+ 	"context"
+-	"crypto/sha1"
++	"crypto/sha1" //nolint:gosec // XVA 내부 .checksum 형식이 SHA1 이다
+ 	"crypto/sha256"
+ 	"encoding/hex"
+ 	"io"
+ 	"os"
+-	"path/filepath"
+ 	"regexp"
+ 	"strings"
+ 	"sync/atomic"
+ 	"time"
+ 
+ 	"github.com/klauspost/compress/zstd"
+-	"github.com/ncc/xen-backend/internal/i18n"
+ )
+ 
+ var xvaChunkNamePattern = regexp.MustCompile(`^Ref:\d+/\d+$`)
+ 
+-func (e *VMBackupExecutor) runVerify(ctx context.Context, req Request) {
+-	filePathOpt, _ := strOpt(req.Payload.Options, "file_path")
+-	if filePathOpt == "" {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m023"))
+-		return
+-	}
+-	fullPath := filepath.Clean(filePathOpt)
+-	if containsParentRef(fullPath) {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m008", filePathOpt))
+-		return
+-	}
+-	if !filepath.IsAbs(fullPath) {
+-		fullPath = filepath.Join(e.settings.BasePath, fullPath)
+-	} else {
+-		if _, ok := resolvePathWithSandbox(e.settings, fullPath); !ok {
+-			e.sendFailure(ctx, req, i18n.T("vm_backup.m106", filePathOpt))
+-			return
+-		}
+-	}
++// maxReasons 는 실패 사유를 이만큼 모으면 검사를 멈추는 수다(ncc-xen 과 같다).
++const maxReasons = 10
++
++// VerifyResult 는 검증 결과다(05 문서 verify 결과 필드).
++type VerifyResult struct {
++	Verified            bool
++	ChunkCount          int
++	ChecksumEntries     int
++	CompressionDetected string
++	SHA256              string // 끝까지 읽었고 통과했을 때만
++	Size                int64
++	Reasons             []string
++}
+ 
+-	f, err := os.Open(fullPath)
++// Verify 는 XVA 파일의 압축 형식을 알아내고 tar 구조, ova.xml, 청크 SHA1 과 .checksum 을 대조한다.
++// 파일을 열 수 없을 때만 오류다. 손상은 Verified=false 와 Reasons 로 알린다.
++func Verify(ctx context.Context, path string, interval time.Duration, progress Progress) (VerifyResult, error) {
++	f, err := os.Open(path)
+ 	if err != nil {
+-		e.sendFailure(ctx, req, i18n.T("vm_backup.m024", err))
+-		return
++		return VerifyResult{}, &Error{Code: CodeFileIO, Err: err}
+ 	}
+ 	defer f.Close()
+-	totalSize := int64(0)
+-	if st, sErr := f.Stat(); sErr == nil {
+-		totalSize = st.Size()
++	res := VerifyResult{CompressionDetected: CompressionNone}
++	if st, err := f.Stat(); err == nil {
++		res.Size = st.Size()
+ 	}
+-
+-	e.log.Info(i18n.T("vm_backup.l008"), "taskId", req.TaskID, "filePath", fullPath, "fileSizeBytes", totalSize)
+-
+-	// 읽기 체인: file → countingReader(진행률) → TeeReader(SHA256) → bufio(매직바이트 Peek) → [gzip] → tar
+-	cr := &countingReader{r: f}
++	cr := &countingReader{r: ctxReader{ctx: ctx, r: f}}
+ 	hasher := sha256.New()
+ 	br := bufio.NewReaderSize(io.TeeReader(cr, hasher), 1<<20)
++	stop := pollRead(ctx, interval, res.Size, func() int64 { return atomic.LoadInt64(&cr.n) }, progress)
++	defer stop()
+ 
+-	// 진행률 goroutine (읽은 바이트 / 파일 크기)
+-	stopProgress := make(chan struct{})
+-	go func() {
+-		ticker := time.NewTicker(5 * time.Second)
+-		defer ticker.Stop()
+-		for {
+-			select {
+-			case <-stopProgress:
+-				return
+-			case <-ctx.Done():
+-				return
+-			case <-ticker.C:
+-				if totalSize <= 0 {
+-					continue
+-				}
+-				read := atomic.LoadInt64(&cr.n)
+-				percent := int(float64(read)/float64(totalSize)*98) + 1
+-				if percent < 1 {
+-					percent = 1
+-				}
+-				if percent > 99 {
+-					percent = 99
+-				}
+-				_ = e.gw.SendProcessing(ctx,
+-					req.TaskID, "VM_BACKUP", req.Action, req.Payload.TargetType, req.Payload.TargetUUID,
+-					i18n.T("vm_backup.m028", percent), percent,
+-					map[string]interface{}{"step": "verifying", "file_path": fullPath})
+-			}
+-		}
+-	}()
+-	defer close(stopProgress)
+-
+-	compressionDetected := "none"
+ 	var src io.Reader = br
+-	// 🆕 2026-08-21: zstd 매직바이트(28 B5 2F FD, 4바이트) 자동 감지 추가.
+-	// gzip(2바이트 매직)과 서로 겹치지 않으므로 zstd를 먼저 확인 후 기존 gzip 분기로 폴백 — 기존 gzip 로직 자체는 무변경.
+-	if magic, pErr := br.Peek(4); pErr == nil && len(magic) == 4 &&
++	if magic, err := br.Peek(4); err == nil && len(magic) == 4 &&
+ 		magic[0] == 0x28 && magic[1] == 0xB5 && magic[2] == 0x2F && magic[3] == 0xFD {
+ 		zr, zErr := zstd.NewReader(br)
+ 		if zErr != nil {
+-			e.sendVerifyResult(ctx, req, fullPath, totalSize, "", "zstd", false, 0, 0,
+-				[]string{i18n.T("vm_backup.e005", zErr)})
+-			return
++			res.CompressionDetected = CompressionZstd
++			res.Reasons = []string{"zstd reader failed: " + zErr.Error()}
++			return res, nil
+ 		}
+ 		defer zr.Close()
+ 		src = zr
+-		compressionDetected = "zstd"
+-	} else if magic, pErr := br.Peek(2); pErr == nil && len(magic) == 2 && magic[0] == 0x1f && magic[1] == 0x8b {
++		res.CompressionDetected = CompressionZstd
++	} else if magic, err := br.Peek(2); err == nil && len(magic) == 2 && magic[0] == 0x1f && magic[1] == 0x8b {
+ 		gz, gErr := gzip.NewReader(br)
+ 		if gErr != nil {
+-			e.sendVerifyResult(ctx, req, fullPath, totalSize, "", "gzip", false, 0, 0,
+-				[]string{i18n.T("vm_backup.e004", gErr)})
+-			return
++			res.CompressionDetected = CompressionGzip
++			res.Reasons = []string{"gzip reader failed: " + gErr.Error()}
++			return res, nil
+ 		}
+ 		defer gz.Close()
+ 		src = gz
+-		compressionDetected = "gzip"
++		res.CompressionDetected = CompressionGzip
+ 	}
+ 
++	fullyRead := scanTar(src, &res)
++	if err := ctx.Err(); err != nil {
++		return VerifyResult{}, ctxError(ctx)
++	}
++	res.Verified = len(res.Reasons) == 0
++	if res.Verified && fullyRead {
++		if _, err := io.Copy(io.Discard, br); err == nil {
++			res.SHA256 = hex.EncodeToString(hasher.Sum(nil))
++		}
++	}
++	return res, nil
++}
++
++// scanTar 는 tar 항목을 돌며 청크 SHA1 을 .checksum 과 대조한다. 끝까지 읽었으면 참이다.
++func scanTar(src io.Reader, res *VerifyResult) bool {
+ 	tr := tar.NewReader(src)
+-	chunkSums := map[string]string{} // 청크명 → SHA1 hex (직후의 .checksum 항목과 대조 후 삭제)
+-	reasons := []string{}
++	chunkSums := map[string]string{}
+ 	ovaFound := false
+-	chunkCount := 0
+-	checksumEntries := 0
+ 	fullyRead := true
+-
++	fail := func(name string, err error) {
++		res.Reasons = append(res.Reasons, "read failed ["+name+"]: "+err.Error())
++		fullyRead = false
++	}
+ 	for {
+-		hdr, tErr := tr.Next()
+-		if tErr == io.EOF {
++		hdr, err := tr.Next()
++		if err == io.EOF {
+ 			break
+ 		}
+-		if tErr != nil {
+-			reasons = append(reasons, i18n.T("vm_backup.e001", "", tErr))
+-			fullyRead = false
++		if err != nil {
++			fail("", err)
+ 			break
+ 		}
+ 		name := strings.TrimPrefix(hdr.Name, "./")
+ 		switch {
+ 		case name == "ova.xml":
+ 			ovaFound = true
+-			if _, cErr := io.Copy(io.Discard, tr); cErr != nil {
+-				reasons = append(reasons, i18n.T("vm_backup.e001", name, cErr))
+-				fullyRead = false
++			if _, err := io.Copy(io.Discard, tr); err != nil {
++				fail(name, err)
+ 			}
+ 		case strings.HasSuffix(name, ".checksum"):
+-			checksumEntries++
+-			buf, rErr := io.ReadAll(io.LimitReader(tr, 256))
+-			if rErr != nil {
+-				reasons = append(reasons, i18n.T("vm_backup.e001", name, rErr))
+-				fullyRead = false
++			res.ChecksumEntries++
++			buf, err := io.ReadAll(io.LimitReader(tr, 256))
++			if err != nil {
++				fail(name, err)
+ 				continue
+ 			}
+ 			want := strings.TrimSpace(string(buf))
+ 			base := strings.TrimSuffix(name, ".checksum")
+ 			got, ok := chunkSums[base]
+ 			if !ok || !strings.EqualFold(got, want) {
+-				reasons = append(reasons, i18n.T("vm_backup.e002", base, want, got))
++				res.Reasons = append(res.Reasons, "checksum mismatch ["+base+"] want="+want+" got="+got)
+ 			}
+ 			delete(chunkSums, base)
+ 		case xvaChunkNamePattern.MatchString(name):
+-			chunkCount++
+-			h := sha1.New()
+-			if _, cErr := io.Copy(h, tr); cErr != nil {
+-				reasons = append(reasons, i18n.T("vm_backup.e001", name, cErr))
+-				fullyRead = false
++			res.ChunkCount++
++			h := sha1.New() //nolint:gosec // XVA 형식
++			if _, err := io.Copy(h, tr); err != nil {
++				fail(name, err)
+ 				continue
+ 			}
+ 			chunkSums[name] = hex.EncodeToString(h.Sum(nil))
+ 		default:
+-			// 알 수 없는 항목은 건너뜀 (형식 확장 대비)
+-			if _, cErr := io.Copy(io.Discard, tr); cErr != nil {
+-				reasons = append(reasons, i18n.T("vm_backup.e001", name, cErr))
+-				fullyRead = false
++			if _, err := io.Copy(io.Discard, tr); err != nil {
++				fail(name, err)
+ 			}
+ 		}
+-		if len(reasons) >= 10 {
+-			// 사유가 과도하게 누적되면 조기 종료 (손상 파일)
+-			fullyRead = false
+-			break
++		if len(res.Reasons) >= maxReasons {
++			return false
+ 		}
+ 	}
+-
+ 	if !ovaFound {
+-		reasons = append(reasons, i18n.T("vm_backup.e003"))
+-	}
+-	if checksumEntries == 0 && ovaFound && len(reasons) == 0 {
+-		// .checksum 항목이 없는 XVA — tar 구조 검증만으로 판정 (설계상 폴백)
+-		e.log.Info(i18n.T("vm_backup.l012"), "taskId", req.TaskID, "filePath", fullPath)
++		res.Reasons = append(res.Reasons, "ova.xml not found")
+ 	}
+-
+-	verified := len(reasons) == 0
+-
+-	// SHA256은 전체를 읽었을 때만 유효 (gzip 사용 시 잔여 바이트까지 소진)
+-	checksum := ""
+-	if verified && fullyRead {
+-		if _, dErr := io.Copy(io.Discard, br); dErr == nil {
+-			checksum = hex.EncodeToString(hasher.Sum(nil))
+-		}
+-	}
+-
+-	e.sendVerifyResult(ctx, req, fullPath, totalSize, checksum, compressionDetected,
+-		verified, chunkCount, checksumEntries, reasons)
++	return fullyRead
+ }
+ 
+-func (e *VMBackupExecutor) sendVerifyResult(ctx context.Context, req Request,
+-	fullPath string, totalSize int64, checksum, compressionDetected string,
+-	verified bool, chunkCount, checksumEntries int, reasons []string,
+-) {
+-	e.log.Info(i18n.T("vm_backup.l009"),
+-		"taskId", req.TaskID,
+-		"filePath", fullPath,
+-		"verified", verified,
+-		"chunkCount", chunkCount,
+-		"checksumEntries", checksumEntries,
+-	)
+-	options := map[string]interface{}{
+-		"file_path":            fullPath,
+-		"file_size_bytes":      totalSize,
+-		"verified":             verified,
+-		"chunk_count":          chunkCount,
+-		"checksum_entries":     checksumEntries,
+-		"compression_detected": compressionDetected,
+-		"format":               "xva",
+-		"completedAt":          completedAt(),
+-	}
+-	if checksum != "" {
+-		options["checksum_sha256"] = checksum
++// pollRead 는 interval 마다 읽은 바이트 / 전체 크기로 진행률을 알린다.
++func pollRead(ctx context.Context, interval time.Duration, total int64, read func() int64, report Progress) func() {
++	if report == nil || total <= 0 {
++		return func() {}
+ 	}
+-	message := i18n.T("vm_backup.m025", fullPath)
+-	if !verified {
+-		options["failure_reasons"] = reasons
+-		message = i18n.T("vm_backup.m026", reasons[0])
++	stop := make(chan struct{})
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		t := time.NewTicker(interval)
++		defer t.Stop()
++		for {
++			select {
++			case <-stop:
++				return
++			case <-ctx.Done():
++				return
++			case <-t.C:
++				n := read()
++				report(percentOf(float64(n)/float64(total)), n)
++			}
++		}
++	}()
++	return func() {
++		close(stop)
++		<-done
+ 	}
+-	// 검증 불일치도 verify 작업 자체는 success — verified 필드로 결과 전달 (합의 사항)
+-	e.sendSuccess(ctx, req, "FILE", req.Payload.TargetUUID, message, options)
+ }
+-
+-// ─────────────────────────────────────────────────────────────────
+-// restore (XVA import, 2단계 신규 — 실기검증 전)
+-// ─────────────────────────────────────────────────────────────────
+-
+
+######## CP-VM-08  backend/internal/job/vm_backup_compress.go  ->  go/internal/xva/zstd.go
+ .../internal/xva/zstd.go                           | 183 ++++++---------------
+ 1 file changed, 49 insertions(+), 134 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_compress.go b/go/internal/xva/zstd.go
+index 9b49925..be92216 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_compress.go
++++ b/go/internal/xva/zstd.go
+@@ -1,20 +1,14 @@
+-package job
++// copied from ncc-xen backend/internal/job/vm_backup_compress.go decompressZstdIfNeeded @043c6d5 (CP-VM-08), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-08):
++//   - 쓰지 않는 2-pass 압축 함수(compressFileZstd)는 가져오지 않았다(ncc-xen 2026-10-16 이후 미사용).
++//   - 임시 파일 이름 접두를 ".ncc-zstd-restore-" 에서 ".vbr-vm-zstd-" 로 바꿨다.
++//   - 해제 중 ctx 취소를 본다(새로 더함). 취소되면 임시 파일을 지운다.
+ 
+-// vm_backup_compress.go — zstd 압축/해제 헬퍼 (🆕 2026-08-21, VM_BACKUP 전용)
+-// 🆕 2026-09-01: vm_backup.go에서 기계적으로 분리됨 (로직 변경 없음).
+-//
+-// XAPI 네이티브 zstd(use_compression=zstd)는 XCP-ng/Xen Orchestra 전용 확장이며
+-// Citrix XenServer(8.2 CU1/9)엔 없음(2026-08-19 조사 결론). 따라서 XAPI 압축
+-// 옵션에 기대지 않고, 클라이언트(Go, klauspost/compress/zstd 순수 구현) 측에서
+-// 로컬로 압축·해제한다. export는 다운로드 완료 후 로컬 압축, restore/verify는
+-// 매직바이트(28 B5 2F FD) 자동 감지 후 임시파일로 압축 해제하는 방식.
+-//
+-// 다음 zstd 관련 작업은 이 파일만 보면 됩니다.
++package xva
+ 
+ import (
+ 	"bytes"
+-	"crypto/sha256"
+-	"encoding/hex"
++	"context"
+ 	"io"
+ 	"os"
+ 	"path/filepath"
+@@ -23,155 +17,76 @@ import (
+ 	"github.com/klauspost/compress/zstd"
+ )
+ 
+-type countingWriter struct{ n int64 }
+-
+-func (w *countingWriter) Write(p []byte) (int, error) {
+-	atomic.AddInt64(&w.n, int64(len(p)))
+-	return len(p), nil
+-}
+-
+-// countingReader는 읽은 바이트 수를 원자적으로 집계합니다 (verify 진행률용).
+-type countingReader struct {
+-	r io.Reader
+-	n int64
+-}
+-
+-func (r *countingReader) Read(p []byte) (int, error) {
+-	n, err := r.r.Read(p)
+-	atomic.AddInt64(&r.n, int64(n))
+-	return n, err
+-}
+-
+-// ── zstd 압축/해제 헬퍼 (🆕 2026-08-21) ──────────────────────────────
+-// XAPI 네이티브 zstd(use_compression=zstd)는 XCP-ng/Xen Orchestra 전용 확장이며
+-// Citrix XenServer(현재 타겟 8.2 CU1 / 9)엔 없음 — 2026-08-19 조사 결론.
+-// 따라서 export/verify/restore의 기존 실기검증된 raw 다운로드·업로드 경로는 그대로 두고,
+-// 클라이언트(Go, klauspost/compress/zstd 순수 구현) 측에서 로컬로 압축·해제한다.
+-
+-// zstdMagic은 zstd 프레임의 매직바이트입니다 (RFC 8878).
+ var zstdMagic = []byte{0x28, 0xB5, 0x2F, 0xFD}
+ 
+-// progressReader는 읽은 바이트 수를 외부 atomic 카운터에 누적합니다
+-// (zstd 압축/압축해제 진행률 보고용, 2026-08-21 신규 — countingReader와 달리 외부에서
+-// 공유하는 *int64를 갱신하므로 별도 goroutine이 진행 중에도 값을 폴링할 수 있습니다).
+-type progressReader struct {
+-	r        io.Reader
+-	progress *int64
++// ctxReader 는 읽을 때마다 ctx 를 확인한다.
++type ctxReader struct {
++	ctx context.Context
++	r   io.Reader
+ }
+ 
+-func (pr *progressReader) Read(p []byte) (int, error) {
+-	n, err := pr.r.Read(p)
+-	if pr.progress != nil && n > 0 {
+-		atomic.AddInt64(pr.progress, int64(n))
++func (c ctxReader) Read(p []byte) (int, error) {
++	if err := c.ctx.Err(); err != nil {
++		return 0, err
+ 	}
+-	return n, err
++	return c.r.Read(p)
+ }
+ 
+-// compressFileZstd는 srcPath 파일을 압축레벨 기본값(SpeedDefault)으로 압축하여 dstPath에
+-// 저장하고, 압축된 파일의 크기와 SHA256을 단일 패스로 반환합니다 (export 완료 후 후처리 단계).
+-// progress가 non-nil이면 srcPath에서 읽은 바이트 수를 실시간으로 누적합니다 (진행률 보고용,
+-// 2026-08-21 추가 — 호출부에서 별도 goroutine으로 폴링).
+-// 실패 시 dstPath에 남은 부분 파일은 정리합니다. srcPath(압축 전 원본)는 이 함수 안에서
+-// 건드리지 않습니다 — 삭제는 호출부(runExport)의 책임입니다.
+-func compressFileZstd(srcPath, dstPath string, progress *int64) (size int64, checksum string, err error) {
+-	src, err := os.Open(srcPath)
+-	if err != nil {
+-		return 0, "", err
+-	}
+-	defer src.Close()
+-
+-	dst, err := os.Create(dstPath)
++// DecompressIfZstd 는 파일이 zstd 면 같은 디렉터리에 임시 파일로 전부 풀고 (임시 경로, 푼 크기, 참)을 돌려준다.
++// zstd 가 아니면 ("", 0, 거짓)이다. XAPI /import 는 zstd 를 모르기 때문이다(gzip 은 XAPI 가 안다).
++// read 가 nil 이 아니면 원본에서 읽은 바이트를 누적한다(진행률용).
++func DecompressIfZstd(ctx context.Context, path string, read *int64) (string, int64, bool, error) {
++	f, err := os.Open(path)
+ 	if err != nil {
+-		return 0, "", err
+-	}
+-	cleanup := func() {
+-		_ = dst.Close()
+-		_ = os.Remove(dstPath)
+-	}
+-
+-	hasher := sha256.New()
+-	counter := &countingWriter{}
+-	enc, err := zstd.NewWriter(io.MultiWriter(dst, hasher, counter))
+-	if err != nil {
+-		cleanup()
+-		return 0, "", err
+-	}
+-	var srcReader io.Reader = src
+-	if progress != nil {
+-		srcReader = &progressReader{r: src, progress: progress}
+-	}
+-	if _, err := io.Copy(enc, srcReader); err != nil {
+-		_ = enc.Close()
+-		cleanup()
+-		return 0, "", err
+-	}
+-	if err := enc.Close(); err != nil {
+-		cleanup()
+-		return 0, "", err
+-	}
+-	if err := dst.Close(); err != nil {
+-		_ = os.Remove(dstPath)
+-		return 0, "", err
+-	}
+-	return atomic.LoadInt64(&counter.n), hex.EncodeToString(hasher.Sum(nil)), nil
+-}
+-
+-// decompressZstdIfNeeded는 fullPath 파일의 매직바이트를 확인해 zstd 압축 파일이면
+-// fullPath와 같은 디렉토리에 임시파일로 전체 압축해제하고 (임시경로, 해제된 크기, true, nil)을
+-// 반환합니다. zstd가 아니면 ("", 0, false, nil)을 반환합니다 (gzip은 XAPI가 서버측에서
+-// 자동 인식하므로 이 함수의 대상이 아님 — 기존 동작 그대로).
+-// progress가 non-nil이면 압축 해제를 위해 fullPath에서 읽은(=압축된 원본 기준) 바이트 수를
+-// 실시간으로 누적합니다 (진행률 보고용, 2026-08-21 추가 — 호출부에서 별도 goroutine으로 폴링).
+-// 스트리밍 해제(임시파일 없이 바로 업로드)가 아니라 임시파일 방식을 쓰는 이유: 압축해제 후
+-// 크기를 미리 알 수 없으면 restore 업로드의 실기검증된 Content-Length 설정 로직을 바꿔야
+-// 하므로, 그 대신 이 함수가 앞단에서 완결된 파일을 만들어 기존 업로드 경로를 무변경으로 유지한다.
+-func decompressZstdIfNeeded(fullPath string, progress *int64) (tempPath string, size int64, isZstd bool, err error) {
+-	f, err := os.Open(fullPath)
+-	if err != nil {
+-		return "", 0, false, err
++		return "", 0, false, &Error{Code: CodeFileIO, Err: err}
+ 	}
+ 	defer f.Close()
+-
+ 	magic := make([]byte, 4)
+ 	n, rErr := io.ReadFull(f, magic)
+ 	if rErr != nil && rErr != io.ErrUnexpectedEOF && rErr != io.EOF {
+-		return "", 0, false, rErr
++		return "", 0, false, &Error{Code: CodeFileIO, Err: rErr}
+ 	}
+ 	if n < 4 || !bytes.Equal(magic, zstdMagic) {
+ 		return "", 0, false, nil
+ 	}
+ 	if _, err := f.Seek(0, io.SeekStart); err != nil {
+-		return "", 0, false, err
++		return "", 0, false, &Error{Code: CodeFileIO, Err: err}
+ 	}
+-
+-	var fileReader io.Reader = f
+-	if progress != nil {
+-		fileReader = &progressReader{r: f, progress: progress}
++	var src io.Reader = ctxReader{ctx: ctx, r: f}
++	if read != nil {
++		src = &progressReader{r: src, n: read}
+ 	}
+-	dec, err := zstd.NewReader(fileReader)
++	dec, err := zstd.NewReader(src)
+ 	if err != nil {
+-		return "", 0, false, err
++		return "", 0, false, &Error{Code: CodeFileIO, Err: err}
+ 	}
+ 	defer dec.Close()
+-
+-	tmp, err := os.CreateTemp(filepath.Dir(fullPath), ".ncc-zstd-restore-*.xva")
++	tmp, err := os.CreateTemp(filepath.Dir(path), ".vbr-vm-zstd-*.xva")
+ 	if err != nil {
+-		return "", 0, false, err
++		return "", 0, false, &Error{Code: CodeFileIO, Err: err}
+ 	}
+ 	tmpPath := tmp.Name()
+-
+-	counter := &countingWriter{}
+-	if _, err := io.Copy(io.MultiWriter(tmp, counter), dec); err != nil {
+-		_ = tmp.Close()
+-		_ = os.Remove(tmpPath)
+-		return "", 0, false, err
++	size, err := io.Copy(tmp, dec)
++	if cerr := tmp.Close(); err == nil {
++		err = cerr
+ 	}
+-	if err := tmp.Close(); err != nil {
++	if err != nil {
+ 		_ = os.Remove(tmpPath)
+-		return "", 0, false, err
++		if e := ctxError(ctx); e != nil {
++			return "", 0, false, e
++		}
++		return "", 0, false, &Error{Code: CodeFileIO, Err: errorf("zstd decompress failed: %v", err)}
+ 	}
+-	return tmpPath, atomic.LoadInt64(&counter.n), true, nil
++	return tmpPath, size, true, nil
+ }
+ 
+-// isValidBackupFileName은 파일명에 경로 구분자 및 OS 금지 문자가 없는지 확인합니다.
+-// (Windows 금지 문자 집합 기준 — 양쪽 OS 모두 안전)
++type progressReader struct {
++	r io.Reader
++	n *int64
++}
++
++func (p *progressReader) Read(b []byte) (int, error) {
++	n, err := p.r.Read(b)
++	atomic.AddInt64(p.n, int64(n))
++	return n, err
++}
+
+######## CP-VM-09  backend/internal/job/vm_backup_util.go  ->  go/internal/xva/path.go
+ .../vm_backup_util.go => go/internal/xva/path.go   | 109 +++++++++------------
+ 1 file changed, 46 insertions(+), 63 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_util.go b/go/internal/xva/path.go
+index 62eb1ab..886236c 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_util.go
++++ b/go/internal/xva/path.go
+@@ -1,21 +1,33 @@
+-package job
++// copied from ncc-xen backend/internal/job/vm_backup_util.go @043c6d5 (CP-VM-09), 2026-11-19.
++// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-09):
++//   - BackupSettings 대신 이 패키지의 Settings 를 받는다.
++//   - 실패를 bool 대신 오류 코드가 있는 *Error 로 돌려준다.
++//   - export 디렉터리·파일 이름 결합(ResolveOutput)과 확장자 규칙을 이 파일로 모았다(원본은 runExport 안).
++//   - xapiBoolField 는 vm 패키지로 옮겼다.
+ 
+-// vm_backup_util.go — VM_BACKUP 공용 유틸리티 (경로 검증, XAPI bool 필드 파싱)
+-// 🆕 2026-09-01: vm_backup.go에서 기계적으로 분리됨 (로직 변경 없음).
++package xva
+ 
+ import (
+ 	"path/filepath"
+ 	"strings"
+ )
+ 
+-func isValidBackupFileName(name string) bool {
++// Settings 는 경로 규칙에 쓰는 설정이다(sysconfig.yaml backup.*).
++type Settings struct {
++	BasePath             string
++	SandboxMode          bool
++	AllowedAbsolutePaths []string
++}
++
++// ValidFileName 은 파일 이름에 경로 구분자·금지 문자·".." 가 없는지 본다(Windows 금지 문자 기준).
++func ValidFileName(name string) bool {
+ 	if name == "" || strings.Contains(name, "..") {
+ 		return false
+ 	}
+ 	return !strings.ContainsAny(name, `\/:*?"<>|`)
+ }
+ 
+-// containsParentRef는 경로에 상위 디렉토리 참조("..")가 포함되어 있는지 확인합니다.
++// containsParentRef 는 경로에 상위 디렉터리 참조("..")가 있는지 본다.
+ func containsParentRef(cleaned string) bool {
+ 	for _, seg := range strings.FieldsFunc(cleaned, func(r rune) bool { return r == '/' || r == '\\' }) {
+ 		if seg == ".." {
+@@ -25,47 +37,38 @@ func containsParentRef(cleaned string) bool {
+ 	return false
+ }
+ 
+-// ─────────────────────────────────────────────
+-// 파일시스템 sandbox 경계 검사 (2026-09-18, 코드 리뷰 지적 대응)
+-//
+-// 배경: export_path/file_path가 절대경로면 base_path와 무관하게 그대로
+-// 허용해왔음(vm_backup.go 상단 "경로 규칙" 주석 참고 — 의도된 설계였음).
+-// API 인증이 뚫리면 이 절대경로 허용을 통해 Backend OS 권한 범위 내 임의
+-// 위치에 대용량 백업 파일을 쓰거나, 임의 위치의 파일을 OVF로 읽어 파싱
+-// 시도하는 것이 가능했음.
+-//
+-// resolvePathWithSandbox가 새 진입점입니다. settings.SandboxMode가
+-// false(기본값 — sysconfig.yaml에 명시하지 않으면 기존 동작 그대로
+-// 유지)면 이전과 동일하게 절대경로를 그대로 허용합니다. true로 켜면
+-// base_path 또는 settings.AllowedAbsolutePaths에 명시된 경로 하위로
+-// symlink까지 해석한 실제 경로(realpath) 기준으로 귀속되는 경우에만
+-// 허용합니다.
+-// ─────────────────────────────────────────────
+-
+-// resolvePathWithSandbox는 cleanedPath(이미 filepath.Clean + containsParentRef
+-// 검사를 통과한 값)를 최종 파일시스템 경로로 해석합니다. 실패 시 ok=false를
+-// 반환하며, 호출부는 각자의 i18n 메시지로 실패를 보고해야 합니다(이 함수
+-// 자체는 로케일 문자열을 만들지 않습니다 — VM_BACKUP/ovf_inspector 등 서로
+-// 다른 i18n 네임스페이스에서 공용으로 쓰기 위함).
+-func resolvePathWithSandbox(settings BackupSettings, cleanedPath string) (resolved string, ok bool) {
+-	if !filepath.IsAbs(cleanedPath) {
+-		return filepath.Join(settings.BasePath, cleanedPath), true
++// Resolve 는 요청의 경로를 실제 경로로 바꾼다. 상대 경로는 BasePath 아래, 절대 경로는 그대로다.
++// SandboxMode 면 절대 경로가 BasePath 나 AllowedAbsolutePaths 아래(심볼릭 링크를 푼 실제 경로 기준)여야 한다.
++func Resolve(s Settings, p string) (string, error) {
++	cleaned := filepath.Clean(p)
++	if containsParentRef(cleaned) {
++		return "", &Error{Code: CodeInvalidPath, Err: errorf("path contains '..': %s", p)}
++	}
++	if !filepath.IsAbs(cleaned) {
++		return filepath.Join(s.BasePath, cleaned), nil
+ 	}
+-	if !settings.SandboxMode {
+-		return cleanedPath, true // 기존 동작(절대경로 그대로 허용) 유지
++	if !s.SandboxMode {
++		return cleaned, nil
+ 	}
+-	roots := make([]string, 0, 1+len(settings.AllowedAbsolutePaths))
+-	roots = append(roots, settings.BasePath)
+-	roots = append(roots, settings.AllowedAbsolutePaths...)
+-	if isPathWithinAny(cleanedPath, roots) {
+-		return cleanedPath, true
++	roots := append([]string{s.BasePath}, s.AllowedAbsolutePaths...)
++	if isPathWithinAny(cleaned, roots) {
++		return cleaned, nil
+ 	}
+-	return "", false
++	return "", &Error{Code: CodePathNotAllowed, Err: errorf("path is outside the allowed roots: %s", p)}
+ }
+ 
+-// isPathWithinAny는 candidate가 roots 중 하나의 실제 경로(symlink 해석
+-// 후) 하위에 포함되는지 확인합니다 — symlink로 sandbox를 우회(base_path
+-// 안에 만든 symlink가 밖을 가리키는 경우 등)하는 것을 막기 위함입니다.
++// OutputName 은 내보낼 파일 이름에 확장자를 붙인다. ".xva" 가 없으면 붙이고, zstd 면 ".zst" 를 더 붙인다.
++func OutputName(fileName, compression string) string {
++	if !strings.HasSuffix(strings.ToLower(fileName), ".xva") {
++		fileName += ".xva"
++	}
++	if compression == CompressionZstd {
++		fileName += ".zst"
++	}
++	return fileName
++}
++
++// isPathWithinAny 는 candidate 가 roots 가운데 하나의 실제 경로 아래인지 본다.
+ func isPathWithinAny(candidate string, roots []string) bool {
+ 	candReal := realpathOrClean(candidate)
+ 	for _, root := range roots {
+@@ -79,12 +82,7 @@ func isPathWithinAny(candidate string, roots []string) bool {
+ 	return false
+ }
+ 
+-// realpathOrClean은 p의 symlink를 해석한 실제 경로를 반환합니다. p가 아직
+-// 존재하지 않는 파일(예: 이제 막 생성할 export 대상)이면 EvalSymlinks가
+-// 실패하므로, 존재하는 가장 가까운 상위 디렉토리까지만 실제 경로로 해석해
+-// 그 위에 나머지 경로를 이어 붙입니다. 그마저도 실패하면(상위 디렉토리
+-// 전부 없음) 최소한 filepath.Clean 결과로 폴백합니다 — 이 경우 symlink
+-// 우회까지는 못 막지만, 접두사 검사 자체는 여전히 유효합니다.
++// realpathOrClean 은 심볼릭 링크를 푼 실제 경로다. 아직 없는 파일이면 부모 디렉터리까지만 푼다.
+ func realpathOrClean(p string) string {
+ 	if real, err := filepath.EvalSymlinks(p); err == nil {
+ 		return real
+@@ -96,9 +94,7 @@ func realpathOrClean(p string) string {
+ 	return filepath.Clean(p)
+ }
+ 
+-// pathHasPrefix는 candidate가 root 디렉토리 하위인지, 경로 구분자 경계를
+-// 지켜서 확인합니다("/mnt/backup2"가 "/mnt/backup"의 접두사로 잘못
+-// 매칭되는 문자열 접두사 버그를 방지).
++// pathHasPrefix 는 candidate 가 root 디렉터리 아래인지 경로 구분자 경계를 지켜 본다.
+ func pathHasPrefix(candidate, root string) bool {
+ 	candidate = filepath.Clean(candidate)
+ 	root = filepath.Clean(root)
+@@ -107,16 +103,3 @@ func pathHasPrefix(candidate, root string) bool {
+ 	}
+ 	return strings.HasPrefix(candidate, root+string(filepath.Separator))
+ }
+-
+-// xapiBoolField는 XAPI 레코드의 boolean 필드를 안전하게 해석합니다.
+-// (XAPI는 bool 또는 "0"/"1"/"true"/"false" 문자열 두 형태 모두 반환할 수 있음)
+-func xapiBoolField(v interface{}) bool {
+-	switch val := v.(type) {
+-	case bool:
+-		return val
+-	case string:
+-		return val == "1" || strings.EqualFold(val, "true")
+-	}
+-	return false
+-}
+-
+
+######## CP-VM-10  backend/internal/i18n/i18n.go  ->  go/internal/i18n/i18n.go
+ {docs/evidence/vm/copied-original/backend => go}/internal/i18n/i18n.go | 2 ++
+ 1 file changed, 2 insertions(+)
+diff --git a/docs/evidence/vm/copied-original/backend/internal/i18n/i18n.go b/go/internal/i18n/i18n.go
+index 2049f0c..1d6da45 100644
+--- a/docs/evidence/vm/copied-original/backend/internal/i18n/i18n.go
++++ b/go/internal/i18n/i18n.go
+@@ -1,3 +1,5 @@
++// copied from ncc-xen backend/internal/i18n/i18n.go @043c6d5 (CP-VM-10), 2026-11-19.
++// 변경: 머리 주석만 더함. locale 감시(watch.go)는 복사하지 않고 vmconfig 가 SetLocale 을 부른다.
+ // Package i18n은 sendSuccess/sendFailure의 message 필드와 실행 로그(log.Info 등의
+ // 첫 인자)에 쓰이는 문구를 locale(ko/en/ja)에 따라 조회하는 기능을 제공합니다.
+ //
+
+######## CP-VM-11  stdlogger/logger  ->  go/internal/stdlogger
+ .../stdlogger/logger => go/internal/stdlogger}/api.go   |  1 +
+ .../stdlogger/logger => go/internal/stdlogger}/build.go |  1 +
+ .../logger => go/internal/stdlogger}/config.go          |  7 ++++---
+ .../logger => go/internal/stdlogger}/handler_custom.go  | 17 +++++++++--------
+ .../stdlogger/logger => go/internal/stdlogger}/init.go  |  1 +
+ .../logger => go/internal/stdlogger}/init_test.go       |  1 +
+ .../logger => go/internal/stdlogger}/manager.go         |  1 +
+ .../logger => go/internal/stdlogger}/slog_default.go    |  1 +
+ .../stdlogger/logger => go/internal/stdlogger}/watch.go |  1 +
+ 9 files changed, 20 insertions(+), 11 deletions(-)
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/api.go b/go/internal/stdlogger/api.go
+index a696ce6..15b206b 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/api.go
++++ b/go/internal/stdlogger/api.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/api.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/build.go b/go/internal/stdlogger/build.go
+index 9b55d06..56df34e 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/build.go
++++ b/go/internal/stdlogger/build.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/build.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/config.go b/go/internal/stdlogger/config.go
+index 2a9eb9a..582cb04 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/config.go
++++ b/go/internal/stdlogger/config.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/config.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import "time"
+@@ -45,9 +46,9 @@ type Config struct {
+ 
+ // LoggingConfig defines the standard logger settings.
+ type LoggingConfig struct {
+-	Level      string `mapstructure:"level"`      // trace|debug|info|warn|error
+-	Format     string `mapstructure:"format"`     // text|json|custom
+-	Output     string `mapstructure:"output"`     // stdout|file|both
++	Level      string `mapstructure:"level"`  // trace|debug|info|warn|error
++	Format     string `mapstructure:"format"` // text|json|custom
++	Output     string `mapstructure:"output"` // stdout|file|both
+ 	FileName   string `mapstructure:"file_name"`
+ 	MaxSizeMB  int    `mapstructure:"max_size_mb"`
+ 	MaxBackups int    `mapstructure:"max_backups"`
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/handler_custom.go b/go/internal/stdlogger/handler_custom.go
+index 4ad6f84..8a428d1 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/handler_custom.go
++++ b/go/internal/stdlogger/handler_custom.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/handler_custom.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (
+@@ -34,14 +35,14 @@ import (
+ //	"[{time}][{level}] {source} {msg} {attrs}"
+ //	  → [2026-04-09 11:40:31.741][INFO] main.go:42 service started service=ncc-xen
+ type CustomHandler struct {
+-	w         io.Writer
+-	opts      *slog.HandlerOptions
+-	pattern   string      // 예: "[{time}][{level}] {msg} {attrs}"
+-	layout    string      // resolveLayout(timeFormat) 결과
+-	loc       *time.Location
+-	preAttrs  []slog.Attr // WithAttrs()로 추가된 공통 속성
+-	groupPfx  string      // WithGroup()으로 누적된 그룹 접두사 (예: "db.")
+-	mu        sync.Mutex  // io.Writer 쓰기 직렬화용
++	w        io.Writer
++	opts     *slog.HandlerOptions
++	pattern  string // 예: "[{time}][{level}] {msg} {attrs}"
++	layout   string // resolveLayout(timeFormat) 결과
++	loc      *time.Location
++	preAttrs []slog.Attr // WithAttrs()로 추가된 공통 속성
++	groupPfx string      // WithGroup()으로 누적된 그룹 접두사 (예: "db.")
++	mu       sync.Mutex  // io.Writer 쓰기 직렬화용
+ }
+ 
+ // NewCustomHandler는 패턴 기반 핸들러를 생성합니다.
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/init.go b/go/internal/stdlogger/init.go
+index e172535..768abbe 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/init.go
++++ b/go/internal/stdlogger/init.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/init.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/init_test.go b/go/internal/stdlogger/init_test.go
+index 34d7ba3..3b979d9 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/init_test.go
++++ b/go/internal/stdlogger/init_test.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/init_test.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import "testing"
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/manager.go b/go/internal/stdlogger/manager.go
+index 431df0d..d46123d 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/manager.go
++++ b/go/internal/stdlogger/manager.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/manager.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/slog_default.go b/go/internal/stdlogger/slog_default.go
+index d2db63c..f1822f3 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/slog_default.go
++++ b/go/internal/stdlogger/slog_default.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/slog_default.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import "log/slog"
+diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/watch.go b/go/internal/stdlogger/watch.go
+index fe2b122..b9c204e 100644
+--- a/docs/evidence/vm/copied-original/stdlogger/logger/watch.go
++++ b/go/internal/stdlogger/watch.go
+@@ -1,3 +1,4 @@
++// copied from ncc-xen stdlogger/logger/watch.go @043c6d5 (CP-VM-11), 2026-11-19. 변경: 이 머리 주석과 gofmt 정렬(공백·줄바꿈)뿐, 코드는 그대로.
+ package logger
+ 
+ import (

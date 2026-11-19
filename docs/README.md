@@ -60,6 +60,9 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 | [T09-traceability.md](templates/T09-traceability.md) | 추적표(요건 → 원본 → 전환본 → 시험) | 각 서비스 `06`의 추적표 절 |
 | [T10-conversion-plan.md](templates/T10-conversion-plan.md) | 서비스별 전환 계획 | `agent/03` |
 | [T11-copied-code-register.md](templates/T11-copied-code-register.md) | 다른 프로젝트에서 복사해 고친 코드의 대장 | `agent/08` |
+| [01-migration-workbook.md](templates/01-migration-workbook.md) | 통합 작업서. 작은 서비스는 T01~T10 대신 이 한 파일에 쓴다 | - |
+
+양식은 세 가지 프로젝트 유형(A 전환, B 재설계, C 신규)에 쓴다. 유형별로 어느 절을 쓰는지는 [절차 0장](00-process/01-migration-process.md)에 있고, 양식을 고친 기록은 같은 문서 8장에 있다. 유형 B는 2단계 `vbr_vm`이 첫 적용 사례다.
 
 범위를 줄이거나 방향을 바꾸는 결정은 양식 없이 검토서 한 편으로 남긴다. 작성 예는 `agent/00`(결정 → 기능별 유지·삭제 → 원본 동작 대응 → 가져올 코드 → 남은 결정)이다.
 
@@ -85,6 +88,22 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 | 07 | [전환 계획과 운영 안내](cifs/07-cutover-operations.md) | [전환 계획과 운영 안내](remove/07-cutover-operations.md) | [전환 계획과 운영 안내](agent/07-cutover-operations.md) |
 | 08 | - | - | [복사 코드 대장(ncc-xen)](agent/08-copied-code-register.md) |
 | 09 | (공통 [03](common/03-config-spec.md)) | (공통 [03](common/03-config-spec.md)) | [설정 명세](agent/09-config-spec.md) |
+
+### 2단계: vbr_vm (`vm/`, 재설계 유형)
+
+`vbr_agent`의 백업·복구 기능을 ncc-xen 규약의 JSON API 서비스로 새로 만든다(2026-11-19 착수). `vbr_agent`는 그대로 둔다.
+
+| 번호 | 문서 | 상태 |
+|---|---|---|
+| 00 | [착수서](vm/00-charter.md): 목적, 범위, 착수 결정 DEC-VM-01~16, 문서 계획 | 작성 |
+| 01 | [요건 정의서](vm/01-requirements.md) | 확인됨 |
+| 02 | [기존·참조 분석서](vm/02-baseline-reference-analysis.md): 기존 기능, 실기 사실, ncc-xen 규약·복사 후보 | 확인됨 |
+| 03 | [목표 설계서](vm/03-tobe-design.md) | 구현 반영 |
+| 04 | [변경·결정 대장](vm/04-change-register.md): 변경 C-VM-01~20, 결정 DEC-VM-19~33, Q-VM-01·02 결정 | 구현 반영 |
+| 05 | [인터페이스 명세](vm/05-interface-spec.md): API, 오류 코드, `sysconfig.yaml` | 구현 반영 |
+| 06 | [시험 계획과 결과](vm/06-test-plan-report.md): 개발 검증 통과(Windows 76/4/0, Linux 75/1/0, 데모 자동 16/16, govulncheck 0) | 실기 남음 |
+| 07 | [설치와 운영 안내](vm/07-operations.md) | 작성(실기 전) |
+| 08 | [복사 코드 대장](vm/08-copied-code-register.md) | 복사·수정 완료 |
 
 ### 증거 (`evidence/`)
 
@@ -117,9 +136,9 @@ c:\dev\ncc-vbr-go
 ├─ node_info.cfg              개발 환경 설정 파일
 ├─ docs\                      이 문서들(history\ 는 통합 전 Codex 세션 기록)
 └─ go\                        전환본
-   ├─ cmd\vbr_cifs, vbr_remove, vbr_agent, vbr_secret   실행 파일의 시작점
-   ├─ internal\                       업무 패키지(cifs, remove, agent)와 공통 패키지(xapi, secret 은 ncc-xen 에서 복사)
-   ├─ test\                           Linux 시험 실행 스크립트, 원본 비교 시험(parity: cifs·remove, agent-parity: agent)
+   ├─ cmd\vbr_cifs, vbr_remove, vbr_agent, vbr_vm, vbr_secret   실행 파일의 시작점(vbr_vm 은 2단계)
+   ├─ internal\                       업무 패키지(cifs, remove, agent, vm)와 공통 패키지(xapi, secret, stdlogger, i18n 등은 ncc-xen 에서 복사)
+   ├─ test\                           Linux 시험 실행 스크립트, 원본 비교 시험(parity, agent-parity), vbr_vm 데모(vm\demo.ps1)
    ├─ build.ps1, build.sh             빌드 스크립트(원본 c1 대체)
    └─ bin\                            빌드 산출물
 ```

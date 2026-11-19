@@ -94,3 +94,7 @@
 | 2026-11-17 | 043c6d5 (복사 시점) | - | - |
 
 전환 뒤에는 `git -C c:\dev\ncc-xen log 043c6d5..HEAD -- backend/pkg/xapi backend/internal/job/vm_backup_export.go backend/internal/job/vm_backup_restore.go stdcrypto/secret`로 바뀐 것을 확인하고 이 표에 적는다(운영 절차 `07` 문서 6장).
+
+## 2단계에서 확장 (2026-11-19)
+
+`go/internal/xapi`는 1단계 agent와 2단계 vbr_vm이 같이 쓴다. vbr_vm 복구 후처리용으로 `restore_ops.go`(`SetNameLabelByRef`, `SetAffinityByRef`)를 더했다. 출처와 바뀐 부분은 [vm/08-copied-code-register.md](../vm/08-copied-code-register.md) CP-VM-12. agent 코드는 바뀌지 않았다.

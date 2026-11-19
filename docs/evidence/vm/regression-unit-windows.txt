@@ -1,0 +1,148 @@
+== 2026-11-19T12:27:40 go1.27.3 regression (DEC-VM-18/28)
+go version go1.27.3 windows/amd64
+== gofmt -l
+== go vet
+vet exit=0
+== go test
+?   	ncc-vbr/cmd/vbr_agent	[no test files]
+?   	ncc-vbr/cmd/vbr_cifs	[no test files]
+?   	ncc-vbr/cmd/vbr_remove	[no test files]
+=== RUN   TestReadPassword
+--- PASS: TestReadPassword (0.00s)
+PASS
+ok  	ncc-vbr/cmd/vbr_secret	0.083s
+=== RUN   TestMessageFrame
+--- PASS: TestMessageFrame (0.00s)
+=== RUN   TestTranLogFormatAndQuery
+--- PASS: TestTranLogFormatAndQuery (0.04s)
+=== RUN   TestAsyncBackupFlow
+--- PASS: TestAsyncBackupFlow (0.22s)
+=== RUN   TestAsyncResultOnOpenConnection
+--- PASS: TestAsyncResultOnOpenConnection (0.06s)
+=== RUN   TestQueryProcessingAndNotFound
+--- PASS: TestQueryProcessingAndNotFound (0.01s)
+=== RUN   TestCancel
+--- PASS: TestCancel (0.02s)
+=== RUN   TestRejects
+--- PASS: TestRejects (0.12s)
+=== RUN   TestArgumentErrors
+--- PASS: TestArgumentErrors (0.04s)
+=== RUN   TestBackupFailureResult
+--- PASS: TestBackupFailureResult (0.01s)
+=== RUN   TestPriorityOrder
+--- PASS: TestPriorityOrder (0.02s)
+=== RUN   TestRestartRecovery
+--- PASS: TestRestartRecovery (0.01s)
+=== RUN   TestAllowClient
+--- PASS: TestAllowClient (0.00s)
+=== RUN   TestShortMessage
+--- PASS: TestShortMessage (6.02s)
+=== RUN   TestXenBackup
+--- PASS: TestXenBackup (0.02s)
+=== RUN   TestXenPartialBackup
+--- PASS: TestXenPartialBackup (0.02s)
+=== RUN   TestXenExportFailure
+--- PASS: TestXenExportFailure (0.02s)
+=== RUN   TestXenSnapshotFailure
+--- PASS: TestXenSnapshotFailure (0.01s)
+=== RUN   TestXenRestore
+--- PASS: TestXenRestore (0.02s)
+PASS
+ok  	ncc-vbr/internal/agent	6.845s
+?   	ncc-vbr/internal/boot	[no test files]
+=== RUN   TestFirstRunCopiesEverything
+--- PASS: TestFirstRunCopiesEverything (0.05s)
+=== RUN   TestSecondRunCopiesNothing
+--- PASS: TestSecondRunCopiesNothing (0.01s)
+=== RUN   TestChangedFileKeepsOldVersion
+--- PASS: TestChangedFileKeepsOldVersion (0.01s)
+=== RUN   TestMissingTargetFileIsCopiedAgain
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.01s)
+=== RUN   TestUntouchedSourceIsNotCompared
+    cifs_test.go:182: depends on Linux atime/ctime
+--- SKIP: TestUntouchedSourceIsNotCompared (0.00s)
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/configured_Tuesday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/another_weekday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/default_Sunday
+=== RUN   TestFullScanDayComparesFilesOlderThanHistory/invalid_setting
+--- PASS: TestFullScanDayComparesFilesOlderThanHistory (0.02s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/configured_Tuesday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/another_weekday (0.00s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/default_Sunday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/invalid_setting (0.00s)
+=== RUN   TestExclusionAndSecondLevel
+--- PASS: TestExclusionAndSecondLevel (0.01s)
+=== RUN   TestDisabledFolderRenamesTarget
+--- PASS: TestDisabledFolderRenamesTarget (0.01s)
+=== RUN   TestDisabledFolderKeepsExistingData
+--- PASS: TestDisabledFolderKeepsExistingData (0.01s)
+=== RUN   TestDisabledFolderPreservesActiveSourceBackup
+--- PASS: TestDisabledFolderPreservesActiveSourceBackup (0.01s)
+=== RUN   TestErrorKeepsHistoryUnchanged
+--- PASS: TestErrorKeepsHistoryUnchanged (0.01s)
+=== RUN   TestMissingTargetRootStops
+--- PASS: TestMissingTargetRootStops (0.00s)
+=== RUN   TestSymlinkIsSkipped
+    cifs_test.go:366: symlink needs privilege on Windows
+--- SKIP: TestSymlinkIsSkipped (0.00s)
+=== RUN   TestHistoryFileName
+    cifs_test.go:383: Linux path rule
+--- SKIP: TestHistoryFileName (0.00s)
+PASS
+ok  	ncc-vbr/internal/cifs	0.209s
+=== RUN   TestSectionAndKeyRules
+--- PASS: TestSectionAndKeyRules (0.00s)
+=== RUN   TestLongLineIsNotTruncated
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+=== RUN   TestRealDevelopmentFile
+--- PASS: TestRealDevelopmentFile (0.00s)
+PASS
+ok  	ncc-vbr/internal/config	0.088s
+?   	ncc-vbr/internal/daemon	[no test files]
+?   	ncc-vbr/internal/fsx	[no test files]
+=== RUN   TestServerLogFormat
+--- PASS: TestServerLogFormat (0.04s)
+=== RUN   TestTransactionLogFormat
+--- PASS: TestTransactionLogFormat (0.00s)
+=== RUN   TestRotateWhenOverMaxSize
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+ok  	ncc-vbr/internal/logx	0.116s
+=== RUN   TestEncodeLayout
+--- PASS: TestEncodeLayout (0.04s)
+=== RUN   TestSendAndReceive
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+ok  	ncc-vbr/internal/portal	0.208s
+=== RUN   TestIsExpiredVersion
+--- PASS: TestIsExpiredVersion (0.00s)
+=== RUN   TestParseDays
+--- PASS: TestParseDays (0.00s)
+=== RUN   TestRunRejectsOverflowingDaysBeforeTraversing
+--- PASS: TestRunRejectsOverflowingDaysBeforeTraversing (0.00s)
+=== RUN   TestShellQuote
+--- PASS: TestShellQuote (0.00s)
+=== RUN   TestLogModeDeletesNothing
+--- PASS: TestLogModeDeletesNothing (0.01s)
+=== RUN   TestDeleteModeRemovesOnlyExpiredVersions
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.01s)
+=== RUN   TestMissingDirectoryFails
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+ok  	ncc-vbr/internal/remove	0.142s
+=== RUN   TestRoundTrip
+--- PASS: TestRoundTrip (0.00s)
+=== RUN   TestUnknownField
+--- PASS: TestUnknownField (0.00s)
+=== RUN   TestFileMode
+    secret_test.go:54: 권한 검사는 unix 에서만 한다(원본과 같다)
+--- SKIP: TestFileMode (0.00s)
+PASS
+ok  	ncc-vbr/internal/secret	0.113s
+?   	ncc-vbr/internal/testkit	[no test files]
+?   	ncc-vbr/internal/walk	[no test files]
+?   	ncc-vbr/internal/xapi	[no test files]
+?   	ncc-vbr/test/agent-parity/driver	[no test files]
+?   	ncc-vbr/test/agent-parity/fakexapi	[no test files]
+test exit=0

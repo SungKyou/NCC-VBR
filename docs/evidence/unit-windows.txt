@@ -1,0 +1,48 @@
+# 2026-11-17 13:17 Windows, go version go1.26.0 windows/amd64
+$ gofmt -l .
+$ go vet ./...
+$ GOOS=linux go vet ./...
+$ go test -count=1 -v ./...
+?   	ncc-vbr/cmd/vbr_cifs	[no test files]
+?   	ncc-vbr/cmd/vbr_remove	[no test files]
+?   	ncc-vbr/internal/boot	[no test files]
+--- PASS: TestFirstRunCopiesEverything (0.06s)
+--- PASS: TestSecondRunCopiesNothing (0.01s)
+--- PASS: TestChangedFileKeepsOldVersion (0.01s)
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.01s)
+--- SKIP: TestUntouchedSourceIsNotCompared (0.00s)
+--- PASS: TestExclusionAndSecondLevel (0.01s)
+--- PASS: TestDisabledFolderRenamesTarget (0.01s)
+--- PASS: TestDisabledFolderKeepsExistingData (0.01s)
+--- PASS: TestErrorKeepsHistoryUnchanged (0.01s)
+--- PASS: TestMissingTargetRootStops (0.00s)
+--- SKIP: TestSymlinkIsSkipped (0.00s)
+--- SKIP: TestHistoryFileName (0.00s)
+PASS
+ok  	ncc-vbr/internal/cifs	0.207s
+--- PASS: TestSectionAndKeyRules (0.00s)
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+--- PASS: TestRealDevelopmentFile (0.00s)
+PASS
+ok  	ncc-vbr/internal/config	0.141s
+?   	ncc-vbr/internal/daemon	[no test files]
+?   	ncc-vbr/internal/fsx	[no test files]
+--- PASS: TestServerLogFormat (0.04s)
+--- PASS: TestTransactionLogFormat (0.00s)
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+ok  	ncc-vbr/internal/logx	0.136s
+--- PASS: TestEncodeLayout (0.04s)
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+ok  	ncc-vbr/internal/portal	0.129s
+--- PASS: TestIsExpiredVersion (0.00s)
+--- PASS: TestParseDays (0.00s)
+--- PASS: TestShellQuote (0.00s)
+--- PASS: TestLogModeDeletesNothing (0.01s)
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.01s)
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+ok  	ncc-vbr/internal/remove	0.140s
+?   	ncc-vbr/internal/testkit	[no test files]
+?   	ncc-vbr/internal/walk	[no test files]

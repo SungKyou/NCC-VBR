@@ -1,0 +1,64 @@
+# 2026-11-17 WSL Ubuntu: go/test/run-linux-tests.sh (Windows 에서 GOOS=linux go test -c 로 만든 시험 실행 파일)
+== ./agent.test
+--- PASS: TestMessageFrame (0.00s)
+--- PASS: TestTranLogFormatAndQuery (0.00s)
+--- PASS: TestAsyncBackupFlow (0.21s)
+--- PASS: TestAsyncResultOnOpenConnection (0.05s)
+--- PASS: TestQueryProcessingAndNotFound (0.00s)
+--- PASS: TestCancel (0.00s)
+--- PASS: TestRejects (0.03s)
+--- PASS: TestArgumentErrors (0.01s)
+--- PASS: TestBackupFailureResult (0.00s)
+--- PASS: TestPriorityOrder (0.00s)
+--- PASS: TestRestartRecovery (0.00s)
+--- PASS: TestAllowClient (0.00s)
+--- PASS: TestShortMessage (6.00s)
+--- PASS: TestXenBackup (0.01s)
+--- PASS: TestXenPartialBackup (0.01s)
+--- PASS: TestXenExportFailure (0.00s)
+--- PASS: TestXenSnapshotFailure (0.00s)
+--- PASS: TestXenRestore (0.00s)
+PASS
+== ./cifs.test
+--- PASS: TestFirstRunCopiesEverything (0.00s)
+--- PASS: TestSecondRunCopiesNothing (0.00s)
+--- PASS: TestChangedFileKeepsOldVersion (0.00s)
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.00s)
+--- PASS: TestUntouchedSourceIsNotCompared (0.00s)
+--- PASS: TestExclusionAndSecondLevel (0.00s)
+--- PASS: TestDisabledFolderRenamesTarget (0.00s)
+--- PASS: TestDisabledFolderKeepsExistingData (0.00s)
+--- PASS: TestErrorKeepsHistoryUnchanged (0.00s)
+--- PASS: TestMissingTargetRootStops (0.00s)
+--- PASS: TestSymlinkIsSkipped (0.00s)
+--- PASS: TestHistoryFileName (0.00s)
+PASS
+== ./config.test
+--- PASS: TestSectionAndKeyRules (0.00s)
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+--- SKIP: TestRealDevelopmentFile (0.00s)
+PASS
+== ./logx.test
+--- PASS: TestServerLogFormat (0.00s)
+--- PASS: TestTransactionLogFormat (0.00s)
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+== ./portal.test
+--- PASS: TestEncodeLayout (0.00s)
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+== ./remove.test
+--- PASS: TestIsExpiredVersion (0.00s)
+--- PASS: TestParseDays (0.00s)
+--- PASS: TestShellQuote (0.00s)
+--- PASS: TestLogModeDeletesNothing (0.00s)
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.00s)
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+== ./secret.test
+--- PASS: TestRoundTrip (0.00s)
+--- PASS: TestUnknownField (0.00s)
+--- PASS: TestFileMode (0.00s)
+PASS
+## agent 시험 10회 반복 (WSL)
+PASS

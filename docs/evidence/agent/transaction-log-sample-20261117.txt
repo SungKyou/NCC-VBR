@@ -1,0 +1,23 @@
+# 운영 transaction 로그 표본 (사용자 제공, 2026-11-17 대화로 받음)
+# ^@ 는 NUL(0x00) 문자다. 원본 TRAN_LOG2가 줄 앞에 NUL을 쓴다(cifs의 logx.Tran과 같은 형식).
+# 화면 폭 80자에서 복사되어 줄이 접혀 있다. 접힌 줄은 원래 한 줄이다.
+# 원본 소스 대응: 1 = 829행, 2 = 1110행, 3 = 3683행, 5 = 3751행, 0 = 4256행
+
+^@[2026-11-17 00:10:01:726]20261117001001001 1:Message Receive
+^@B20261117001001001A0035BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 /BACKUP/
+17.xva^@
+^@[2026-11-17 00:10:01:836]20261117001001001 2:Queue saving
+^@B20261117001001001A0035BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 /BACKUP/
+17.xva^@
+^@[2026-11-17 00:10:01:836]20261117001001001 3:ASYNC Queue receive
+^@B20261117001001001A0035BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 /BACKUP/
+17.xva^@
+^@[2026-11-17 00:25:55:708]20261117001001001 5:ASYNC Queue result send finished
+^@B2026111700100100100035VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f
+71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a, backup filenam
+e=/BACKUP/17.xva
+^@
+^@[2026-11-17 00:25:55:709]20261117001001001 0:ASYNC RESULT send error
+^@B2026111700100100100035VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f
+71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-e39eb31d0d7a, backup filenam
+e=/BACKUP/17.xva

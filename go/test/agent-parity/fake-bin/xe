@@ -1,0 +1,43 @@
+#!/bin/sh
+# 원본 vbr_agent 비교 시험용 가짜 xe (읽기·쓰기 명령 모두 흉내만 낸다).
+# 같은 시험 자료를 go/test/agent-parity/fakexapi 가 XAPI 로 낸다. 두 쪽 값이 같아야 한다.
+#   VM uuid      : 22acc256-b431-f9df-6c44-b1f71e7912fc
+#   스냅샷 uuid  : 676ffe7e-c3f4-8913-f0ed-<스냅샷 이름의 16진 12자리>
+#   복구 VM uuid : cd5498f2-0342-db8e-749e-53a5e86744dd
+#   내보내기 지연: 스냅샷 이름 slow=12초, 그 밖 0초
+echo "xe $*" >> /p/xe.log
+VM=22acc256-b431-f9df-6c44-b1f71e7912fc
+cmd=$1
+shift
+arg() { for a in "$@"; do case "$a" in "$KEY="*) echo "${a#*=}"; return;; esac; done; }
+hexname() { printf %s "$1" | od -An -tx1 | tr -d ' \n' | cut -c1-12 | awk '{printf "%-12s", $0}' | tr ' ' 0; }
+case "$cmd" in
+host-list)
+  echo "uuid ( RO)                : 853af309-5cca-4c94-89ec-80acca09830c"
+  echo "          name-label ( RW): parity" ;;
+vm-snapshot)
+  KEY=uuid; u=$(arg "$@"); KEY=new-name-label; n=$(arg "$@")
+  if [ "$u" != "$VM" ]; then echo "The uuid you supplied was invalid."; exit 1; fi
+  h=$(hexname "$n"); echo "676ffe7e-c3f4-8913-f0ed-$h"
+  echo "$n" > /p/snapname-$h ;;
+template-param-set|vbd-param-set|vdi-destroy) ;;
+vbd-list)
+  echo "uuid ( RO)    : 5b0d6a66-0000-4000-8000-000000000000"; echo; echo
+  echo "uuid ( RO)    : 5b0d6a66-0000-4000-8000-000000000001"; echo ;;
+vbd-param-get)
+  KEY=uuid; u=$(arg "$@"); KEY=param-name; p=$(arg "$@")
+  d=${u##*-00000000000}
+  if [ "$p" = userdevice ]; then echo "$d"; else echo "7d1e0000-0000-4000-8000-00000000000$d"; fi ;;
+vm-export)
+  KEY=vm; s=$(arg "$@"); KEY=filename; f=$(arg "$@")
+  n=$(cat /p/snapname-${s##*-} 2>/dev/null)
+  case "$n" in slow) sleep 12;; esac
+  cp /p/xva-template.tar.gz "$f" && echo "Export succeeded" ;;
+vm-uninstall)
+  echo "The following items are about to be destroyed"; echo "All objects destroyed" ;;
+vm-import)
+  KEY=filename; f=$(arg "$@")
+  if [ -f "$f" ]; then echo "cd5498f2-0342-db8e-749e-53a5e86744dd"; else echo "Error: file not found"; fi ;;
+*)
+  echo "Unknown command: $cmd"; exit 1 ;;
+esac

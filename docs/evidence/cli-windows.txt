@@ -1,0 +1,103 @@
+# 2026-11-17 13:19 Windows 실행 파일 명령행 확인 (임시 작업 디렉터리에서 실행)
+$ ./vbr_cifs.exe -version
+NCC-VBR CIFS Manager version = 3.0000
+exit=0
+$ ./vbr_cifs.exe -ver
+NCC-VBR CIFS Manager version = 3.0000
+exit=0
+$ ./vbr_cifs.exe one-arg-only
+Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_cifs.exe [-home dir] [-config file] [-foreground] source-dir target-dir seq-no
+exit=255
+$ ./vbr_remove.exe -version
+File Remove (BATCH) for NCC-VBR version = 2.000
+exit=0
+$ ./vbr_remove.exe tgt abc
+File Remove (BATCH) for NCC-VBR : days must be a non-negative integer: [abc]
+Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_remove.exe [-home dir] [-config file] [-foreground] delete-dir days
+exit=255
+$ ./vbr_remove.exe tgt -3
+File Remove (BATCH) for NCC-VBR : days must be a non-negative integer: [-3]
+Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_remove.exe [-home dir] [-config file] [-foreground] delete-dir days
+exit=255
+$ ./vbr_cifs.exe -foreground src tgt 20261117090503001
+exit=0
+# 아래 세 건은 백그라운드 분리 실행이다. 부모의 종료 코드만 바로 돌아온다.
+$ ./vbr_cifs.exe src no-such-target 1
+exit=0
+$ ./vbr_cifs.exe src tgt 2
+exit=0
+$ ./vbr_remove.exe tgt 0
+exit=0
+--- 결과 파일
+history: rc-gt.vbr  tgt: a top.txt  tgt/a: f.txt 
+--- server.log
+[2026-11-17 13:19:30]Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_cifs.exe source-dir target-dir seq-no
+[2026-11-17 13:19:30]Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_remove.exe delete-dir days
+[2026-11-17 13:19:30]Usage : C:\Users\SK\AppData\Local\Temp\tmp.m4sxNermtT\vbr_remove.exe delete-dir days
+[2026-11-17 13:19:30]Config file [MAX Log size] parameter not found.(50000000 default setting)..
+[2026-11-17 13:19:30]NCC-VBR CIFS Manager ver 3.0000 start.
+[2026-11-17 13:19:30]VBR CIFS backup start.  source dir = [src], target dir = [tgt]
+[2026-11-17 13:19:30]history file search.[history\rc-gt.vbr]
+[2026-11-17 13:19:30]Backup history file [history\rc-gt.vbr]is not found.
+[2026-11-17 13:19:30]Backup base time  = [0]
+[2026-11-17 13:19:30]Backup start time = [1794889170]
+[2026-11-17 13:19:30]BEGIN : 1794889170 [2026-11-17 13:19:30]
+[2026-11-17 13:19:30]CIFS Thread cnt = [2]
+[2026-11-17 13:19:30]2ND SEARCH DIR is not defined.  Backup mode is standard.
+[2026-11-17 13:19:30]EXCLUSION DIR is not defined.  Backup mode is standard.
+[2026-11-17 13:19:30]VBR CIFS TASK registered=>[src\a]
+[2026-11-17 13:19:30]VBR CIFS thread [2]th job start: [src\a]
+[2026-11-17 13:19:30]VBR CIFS thread [1]th finished.
+[2026-11-17 13:19:30]VBR CIFS thread [2]th finished: [src\a]=>[tgt\a]
+   Total File = [1], Total Dir = [0], Change file = [1], Create dir = [1]
+[2026-11-17 13:19:30]VBR CIFS thread [2]th finished.
+[2026-11-17 13:19:30]VBR CIFS main thread finished: [src]=>[tgt]
+   Total File = [1], Total Dir = [1], Change file = [1], Create dir = [0]
+[2026-11-17 13:19:30]END : 1794889170 [2026-11-17 13:19:30]
+[2026-11-17 13:19:30]VBR CIFS backup finished.  source dir = [src], target dir = [tgt]
+[2026-11-17 13:19:30]Total File = [2], Total Dir = [1], Change file = [2], Create dir = [1], Error = [0]
+[2026-11-17 13:19:30]Warning. Config file [WEB server(IP)] parameter not found.
+[2026-11-17 13:19:31]Config file [MAX Log size] parameter not found.(50000000 default setting)..
+[2026-11-17 13:19:31]NCC-VBR CIFS Manager ver 3.0000 start.
+[2026-11-17 13:19:31]VBR CIFS backup start.  source dir = [src], target dir = [no-such-target]
+[2026-11-17 13:19:31]Target directory [no-such-target] is not valid.[GetFileAttributesEx no-such-target: The system cannot find the file specified.]!!!
+[2026-11-17 13:19:31]VBR TASK Internal error.  STOP RUN!!!
+[2026-11-17 13:19:33]Config file [MAX Log size] parameter not found.(50000000 default setting)..
+[2026-11-17 13:19:33]NCC-VBR CIFS Manager ver 3.0000 start.
+[2026-11-17 13:19:33]VBR CIFS backup start.  source dir = [src], target dir = [tgt]
+[2026-11-17 13:19:33]history file search.[history\rc-gt.vbr]
+[2026-11-17 13:19:33]Backup base time  = [1794889170]
+[2026-11-17 13:19:33]Backup start time = [1794889173]
+[2026-11-17 13:19:33]BEGIN : 1794889173 [2026-11-17 13:19:33]
+[2026-11-17 13:19:33]CIFS Thread cnt = [2]
+[2026-11-17 13:19:33]2ND SEARCH DIR is not defined.  Backup mode is standard.
+[2026-11-17 13:19:33]EXCLUSION DIR is not defined.  Backup mode is standard.
+[2026-11-17 13:19:33]VBR CIFS TASK registered=>[src\a]
+[2026-11-17 13:19:33]VBR CIFS thread [2]th job start: [src\a]
+[2026-11-17 13:19:33]VBR CIFS thread [1]th finished.
+[2026-11-17 13:19:33]VBR CIFS thread [2]th finished: [src\a]=>[tgt\a]
+   Total File = [1], Total Dir = [0], Change file = [0], Create dir = [0]
+[2026-11-17 13:19:33]VBR CIFS thread [2]th finished.
+[2026-11-17 13:19:33]VBR CIFS main thread finished: [src]=>[tgt]
+   Total File = [1], Total Dir = [1], Change file = [0], Create dir = [0]
+[2026-11-17 13:19:33]END : 1794889173 [2026-11-17 13:19:33]
+[2026-11-17 13:19:33]VBR CIFS backup finished.  source dir = [src], target dir = [tgt]
+[2026-11-17 13:19:33]Total File = [2], Total Dir = [1], Change file = [0], Create dir = [0], Error = [0]
+[2026-11-17 13:19:33]Warning. Config file [WEB server(IP)] parameter not found.
+[2026-11-17 13:19:36]Config file [MAX Log size] parameter not found.(50000000 default setting)..
+[2026-11-17 13:19:36]Config file [Delete Mode] parameter not found. LOG mode default setting.
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR ver 2.000 start.
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR start.  delete dir = [tgt], base(delete) days = [0]
+[2026-11-17 13:19:36]Current base date = 2026-11-17 13:19:36
+[2026-11-17 13:19:36]Delete base date = 2026-11-17 13:19:36
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR Thread cnt = [2]
+[2026-11-17 13:19:36]2ND SEARCH DIR is not defined.  File Delete mode is standard.
+[2026-11-17 13:19:36]EXCLUSION DIR is not defined.  File Delete mode is standard.
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR TASK registered=>[tgt\a]
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR thread [2]th job start: [tgt\a]
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR thread [1]th finished.
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR thread [2]th finished: [tgt\a]
+   Total File = [1], Total Dir = [0], Delete file = [0], Skip file = [0]
+[2026-11-17 13:19:36]File Remove (BATCH) for NCC-VBR thread [2]th finished.
+[2026-11-17 13:19:36]NCC-VBR batch finished.  Directory = [tgt], delete base time = [20261117131936]
+[2026-11-17 13:19:36]Total File = [2], Total Dir = [1], Delete files = [0] Skip files = [0], Error = [0]

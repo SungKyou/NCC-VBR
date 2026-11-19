@@ -1,0 +1,79 @@
+=== 0. 준비
+=== 1. 첫 실행(전체 복사)
+PASS  1-1 대상 디렉터리 구조가 같다
+FAIL  1-2 복사된 파일 내용이 같다
+      1c1
+      < 78f56b0ae1763ec54b40ba48d7753082  ./a/big.bin
+      ---
+      > c3764e9ae45d4154ea87668f4faa134d  ./a/big.bin
+PASS  1-3 합계(파일·디렉터리·변경)가 같다
+PASS  1-4 제외 디렉터리는 복사되지 않는다
+PASS  1-5 스냅샷 디렉터리는 복사되지 않는다
+PASS  1-6 심볼릭 링크는 복사되지 않는다
+PASS  1-7 기준 시각 파일 이름이 같다
+=== 2. 변경 후 실행(증분 복사 + 이전 버전 보관)
+PASS  2-1 대상 디렉터리 구조가 같다
+FAIL  2-2 복사된 파일 내용이 같다
+      1c1
+      < 78f56b0ae1763ec54b40ba48d7753082  ./a/big.bin
+      ---
+      > c3764e9ae45d4154ea87668f4faa134d  ./a/big.bin
+PASS  2-3 이전 버전 파일의 내용이 같다
+PASS  2-4 합계(파일·디렉터리·변경)가 같다
+=== 3. 변경 없이 실행
+PASS  3-1 대상 디렉터리 구조가 같다
+PASS  3-2 합계(파일·디렉터리·변경 0건)가 같다
+=== 4. 삭제 LOG 모드(보존 0일)
+FAIL  4-1 삭제 명령 목록이 같다
+      1c1
+      < rm -f -- '/w/X/tgt/a/one.txt-vbr-20261117035235.zip'
+      ---
+      > rm -f -- '/w/X/tgt/a/one.txt-vbr-20261117035242.zip'
+PASS  4-2 파일은 지워지지 않는다
+PASS  4-3 합계(파일·디렉터리·삭제)가 같다
+=== 5. 삭제 LOG 모드(보존 30일: 대상 없음)
+PASS  5-1 삭제 대상이 없다(원본)
+PASS  5-2 삭제 대상이 없다(전환본)
+=== 6. 삭제 DELETE 모드(보존 0일)
+PASS  6-1 대상 디렉터리 구조가 같다
+FAIL  6-2 남은 파일 내용이 같다
+      1c1
+      < 78f56b0ae1763ec54b40ba48d7753082  ./a/big.bin
+      ---
+      > c3764e9ae45d4154ea87668f4faa134d  ./a/big.bin
+PASS  6-3 이전 버전 파일이 남지 않는다
+PASS  6-4 합계(파일·디렉터리·삭제)가 같다
+
+RESULT: FAILED
+--- asis server.log (tail)
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/asis/tgt/a]
+   Total File = [4], Total Dir = [1], Delete file = [1], Skip file = [0]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th job start: [/w/asis/tgt/b]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/asis/tgt/b]
+   Total File = [2], Total Dir = [1], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th job start: [/w/asis/tgt/empty]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/asis/tgt/empty]
+   Total File = [0], Total Dir = [0], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th job start: [/w/asis/tgt/c]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/asis/tgt/c]
+   Total File = [1], Total Dir = [1], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:03]File Remove (BATCH) for NCC-VBR thread [1]th finished.
+[2026-11-17 03:53:04]File Remove (BATCH) for NCC-VBR thread [2]th finished.
+[2026-11-17 03:53:06]NCC-VBR batch finished.  Directory = [/w/asis/tgt], delete base time = [20261117035303]
+[2026-11-17 03:53:06]Total File = [8], Total Dir = [7], Delete files = [1] Skip files = [0]
+--- tobe server.log (tail)
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/tobe/tgt/b]
+   Total File = [2], Total Dir = [1], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th job start: [/w/tobe/tgt/empty]
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/tobe/tgt/empty]
+   Total File = [0], Total Dir = [0], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th job start: [/w/tobe/tgt/c]
+[2026-11-17 03:53:06]File Name [/w/tobe/tgt/a/one.txt-vbr-20261117035242.zip] : Delete finished.
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [2]th finished: [/w/tobe/tgt/a]
+   Total File = [4], Total Dir = [1], Delete file = [1], Skip file = [0]
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [2]th finished.
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th finished: [/w/tobe/tgt/c]
+   Total File = [1], Total Dir = [1], Delete file = [0], Skip file = [0]
+[2026-11-17 03:53:06]File Remove (BATCH) for NCC-VBR thread [1]th finished.
+[2026-11-17 03:53:06]NCC-VBR batch finished.  Directory = [/w/tobe/tgt], delete base time = [20261117035306]
+[2026-11-17 03:53:06]Total File = [8], Total Dir = [7], Delete files = [1] Skip files = [0], Error = [0]

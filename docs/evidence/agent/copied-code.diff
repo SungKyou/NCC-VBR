@@ -1,0 +1,600 @@
+# ncc-xen(커밋 043c6d5) → ncc-vbr 복사 코드의 실제 차이. 2026-11-17 diff -u 로 생성.
+# 함수 단위로 옮긴 vm.go 는 원본 함수 본문과 비교한 결과를 맨 끝에 적었다.
+
+=================== ncc-xen/backend/pkg/xapi/xmlrpc.go  ->  ncc-vbr/go/internal/xapi/xmlrpc.go
+--- ncc-xen/backend/pkg/xapi/xmlrpc.go
++++ ncc-vbr/go/internal/xapi/xmlrpc.go
+@@ -1,7 +1,9 @@
++// 출처: ncc-xen backend/pkg/xapi/xmlrpc.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-01
++
+ package xapi
+ 
+ import (
+-	"github.com/ncc/xen-backend/internal/i18n"
+ 	"bytes"
+ 	"encoding/xml"
+ 	"fmt"
+@@ -123,7 +125,7 @@
+ 		t, err := p.next()
+ 		if err != nil {
+ 			if err == io.EOF {
+-				return fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e001"), name)
++				return fmt.Errorf("<%s> missing (EOF)", name)
+ 			}
+ 			return err
+ 		}
+@@ -156,7 +158,7 @@
+ 	p := newParser(data)
+ 
+ 	if err := p.expectStart("methodResponse"); err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e002"), err)
++		return nilVal(), fmt.Errorf("methodResponse missing: %w", err)
+ 	}
+ 
+ 	se, err := p.nextStart()
+@@ -170,16 +172,16 @@
+ 	case "fault":
+ 		return nilVal(), p.parseFault()
+ 	default:
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e003"), se.Name.Local)
++		return nilVal(), fmt.Errorf("unexpected tag: <%s>", se.Name.Local)
+ 	}
+ }
+ 
+ func (p *parser) parseParams() (Value, error) {
+ 	if err := p.expectStart("param"); err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e004"), err)
++		return nilVal(), fmt.Errorf("param missing: %w", err)
+ 	}
+ 	if err := p.expectStart("value"); err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e005"), err)
++		return nilVal(), fmt.Errorf("value missing: %w", err)
+ 	}
+ 	return p.parseValue()
+ }
+@@ -238,7 +240,7 @@
+ 		return strVal(""), nil
+ 	}
+ 
+-	return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e006"), t)
++	return nilVal(), fmt.Errorf("parseValue: unexpected token %T", t)
+ }
+ 
+ // parseTyped는 타입 태그 안의 내용을 파싱합니다.
+@@ -352,7 +354,7 @@
+ func (p *parser) parseArray() (Value, error) {
+ 	// <data>
+ 	if err := p.expectStart("data"); err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e007"), err)
++		return nilVal(), fmt.Errorf("array/data missing: %w", err)
+ 	}
+ 
+ 	var items []Value
+@@ -473,7 +475,7 @@
+ 	for _, arg := range args {
+ 		buf.WriteString(`<param><value>`)
+ 		if err := writeValue(&buf, arg); err != nil {
+-			return nil, fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e008"), arg, err)
++			return nil, fmt.Errorf("parameter encoding failed (%T): %w", arg, err)
+ 		}
+ 		buf.WriteString(`</value></param>`)
+ 	}
+@@ -525,13 +527,13 @@
+ 			xml.EscapeText(buf, []byte(k))
+ 			buf.WriteString(`</name><value>`)
+ 			if err := writeValue(buf, v); err != nil {
+-				return fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e009"), k, err)
++				return fmt.Errorf("struct field encoding failed (key=%s): %w", k, err)
+ 			}
+ 			buf.WriteString(`</value></member>`)
+ 		}
+ 		buf.WriteString(`</struct>`)
+ 	default:
+-		return fmt.Errorf(i18n.RawT("pkg_xapi_xmlrpc.e010"), v)
++		return fmt.Errorf("unsupported type: %T", v)
+ 	}
+ 	return nil
+ }
+
+=================== ncc-xen/backend/pkg/xapi/client.go  ->  ncc-vbr/go/internal/xapi/client.go
+--- ncc-xen/backend/pkg/xapi/client.go
++++ ncc-vbr/go/internal/xapi/client.go
+@@ -1,7 +1,9 @@
++// 출처: ncc-xen backend/pkg/xapi/client.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-02
++
+ package xapi
+ 
+ import (
+-	"github.com/ncc/xen-backend/internal/i18n"
+ 	"bytes"
+ 	"context"
+ 	"crypto/tls"
+@@ -13,10 +15,20 @@
+ 	"strings"
+ 	"sync"
+ 	"time"
+-
+-	"github.com/ncc/stdlogger/logger"
+ )
+ 
++// Logger는 이 패키지가 남기는 진단 기록을 받는다. ncc-vbr의 logx.Logger가 만족한다.
++// nil이면 기록하지 않는다.
++type Logger interface {
++	Printf(format string, args ...interface{})
++}
++
++func (c *Client) logf(format string, args ...interface{}) {
++	if c.log != nil {
++		c.log.Printf(format+"\n", args...)
++	}
++}
++
+ // Client는 XenServer XAPI XML-RPC 클라이언트입니다.
+ // PoC(vms 프로젝트)의 검증된 구조를 기반으로 확장합니다.
+ //
+@@ -37,7 +49,7 @@
+ 	baseURL          string
+ 	httpClient       *http.Client
+ 	sessionRef       string
+-	log              *logger.Entry
++	log              Logger
+ 	requestTimeout   time.Duration
+ 	maxResponseBytes int64 // 2026-09-18: call()의 응답 크기 상한, SetMaxResponseBytes 참조
+ }
+@@ -45,7 +57,7 @@
+ // NewClient는 새 클라이언트를 생성합니다.
+ // connectTimeout: TCP+TLS 연결 타임아웃 (기본 10초 권장)
+ // requestTimeout: 전체 요청 타임아웃 (로그인·XAPI 호출 포함)
+-func NewClient(baseURL string, verifySSL bool, connectTimeout, requestTimeout time.Duration, log *logger.Entry) *Client {
++func NewClient(baseURL string, verifySSL bool, connectTimeout, requestTimeout time.Duration, log Logger) *Client {
+ 	dialer := &net.Dialer{Timeout: connectTimeout}
+ 	tr := &http.Transport{
+ 		TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifySSL}, //nolint:gosec
+@@ -105,7 +117,7 @@
+ // 있습니다.
+ func checkResponseSize(method string, n int, limit int64) error {
+ 	if int64(n) > limit {
+-		return fmt.Errorf(i18n.RawT("pkg_xapi_client.e014"), method, limit)
++		return fmt.Errorf("XAPI response too large (method=%s, limit=%d bytes)", method, limit)
+ 	}
+ 	return nil
+ }
+@@ -141,8 +153,9 @@
+ // 폐기할 때(재연결로 새 Client를 만들어 교체할 때, Pool 등록 해제 시 등)는
+ // 반드시 이 메서드를 호출해야 합니다.
+ // (2026-09-15 — Pool 등록/삭제 반복 시 goroutine이 계속 증가하는 문제의
+-//  실제 원인으로 확인됨: connectAndListen()이 재연결마다 새 Client를 만들며
+-//  이전 Client의 Transport를 그대로 버려 유휴 커넥션이 계속 누적되었음.)
++//
++//	실제 원인으로 확인됨: connectAndListen()이 재연결마다 새 Client를 만들며
++//	이전 Client의 Transport를 그대로 버려 유휴 커넥션이 계속 누적되었음.)
+ func (c *Client) Close() {
+ 	if tr, ok := c.httpClient.Transport.(*http.Transport); ok {
+ 		tr.CloseIdleConnections()
+@@ -157,31 +170,30 @@
+ // HOST_IS_SLAVE 오류 시 master IP로 자동 리다이렉트합니다.
+ func (c *Client) Login(ctx context.Context, username, password string) error {
+ 	result, err := c.call(ctx, "session.login_with_password",
+-		username, password, "1.0", "ncc-xen-backend")
++		username, password, "1.0", "ncc-vbr-agent")
+ 	if err != nil {
+ 		// HOST_IS_SLAVE: master IP로 재시도
+ 		if masterIP := extractMasterIP(err.Error()); masterIP != "" {
+-			c.log.Info(i18n.T("pkg_xapi_client.l001"), "master_ip", masterIP)
++			c.logf("slave host detected, redirecting to master. master_ip=%s", masterIP)
+ 			c.SetBaseURL("https://" + masterIP + ":443")
+ 			result, err = c.call(ctx, "session.login_with_password",
+-				username, password, "1.0", "ncc-xen-backend")
++				username, password, "1.0", "ncc-vbr-agent")
+ 			if err != nil {
+-				return fmt.Errorf(i18n.RawT("pkg_xapi_client.e001"), err)
++				return fmt.Errorf("master login failed: %w", err)
+ 			}
+ 		} else {
+-			return fmt.Errorf(i18n.RawT("pkg_xapi_client.e002"), err)
++			return fmt.Errorf("login failed: %w", err)
+ 		}
+ 	}
+ 
+ 	ref := result.Str()
+ 	if !strings.HasPrefix(ref, "OpaqueRef:") {
+-		return fmt.Errorf(i18n.RawT("pkg_xapi_client.e003"), ref)
++		return fmt.Errorf("invalid session reference format: %q", ref)
+ 	}
+ 
+ 	c.mu.Lock()
+ 	c.sessionRef = ref
+ 	c.mu.Unlock()
+-	c.log.Debug(i18n.T("pkg_xapi_client.l002"), "url", c.BaseURL())
+ 	return nil
+ }
+ 
+@@ -211,38 +223,19 @@
+ func (c *Client) call(ctx context.Context, method string, args ...interface{}) (Value, error) {
+ 	body, err := encodeCall(method, args)
+ 	if err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e004"), err)
+-	}
+-
+-	// [DEBUG] migrate_send / migrate_receive 호출 시 요청 XML 로그 출력
+-	// 운영 배포 전 제거할 것
+-	// 2026-09-18: 마스킹 없이 그대로 로그에 남기면 XML-RPC 파라미터의 첫
+-	// 번째 값(XAPI 관례상 항상 session ref)이 평문으로 노출되어, 그 로그를
+-	// 확보한 사람이 세션 만료 전까지 해당 세션 권한으로 XAPI를 호출할 수
+-	// 있는 위험이 있었음 — redactSessionRefInLog()로 그 값만 정확히 치환
+-	// (OpaqueRef 형식은 VM/host 등 다른 참조에도 쓰이므로 "OpaqueRef:"
+-	// 전체가 아니라 이 호출에 실제 쓰인 session ref 값 하나만 치환해
+-	// 나머지 디버깅 정보는 그대로 유지).
+-	if strings.Contains(method, "migrate") {
+-		xmlStr := redactSessionRefInLog(string(body), args)
+-		// XML이 너무 길면 앞 4000자만 출력
+-		if len(xmlStr) > 4000 {
+-			c.log.Debug(i18n.T("pkg_xapi_client.l003"), "method", method, "xml", xmlStr[:4000])
+-		} else {
+-			c.log.Debug(i18n.T("pkg_xapi_client.l004"), "method", method, "xml", xmlStr)
+-		}
++		return nilVal(), fmt.Errorf("request encoding failed: %w", err)
+ 	}
+ 
+ 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.BaseURL(), bytes.NewReader(body))
+ 	if err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e005"), err)
++		return nilVal(), fmt.Errorf("HTTP request creation failed: %w", err)
+ 	}
+ 	req.Header.Set("Content-Type", "text/xml; charset=utf-8")
+-	req.Header.Set("User-Agent", "ncc-xen-backend/1.0")
++	req.Header.Set("User-Agent", "ncc-vbr-agent/3.0")
+ 
+ 	resp, err := c.httpClient.Do(req)
+ 	if err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e006"), err)
++		return nilVal(), fmt.Errorf("HTTP request failed: %w", err)
+ 	}
+ 	defer resp.Body.Close()
+ 
+@@ -255,25 +248,12 @@
+ 	limit := c.getMaxResponseBytes()
+ 	respBody, err := io.ReadAll(io.LimitReader(resp.Body, limit+1))
+ 	if err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e007"), err)
++		return nilVal(), fmt.Errorf("response read failed: %w", err)
+ 	}
+ 	if sizeErr := checkResponseSize(method, len(respBody), limit); sizeErr != nil {
+ 		return nilVal(), sizeErr
+ 	}
+ 
+-	// [DEBUG] migrate 응답 XML 로그
+-	// 2026-09-18: 응답에는 보통 session ref가 echo되지 않지만, 실패 응답의
+-	// ErrorDescription 등에 요청 파라미터 일부가 되돌아오는 경우를 대비해
+-	// 방어적으로 동일하게 치환한다.
+-	if strings.Contains(method, "migrate") {
+-		respStr := redactSessionRefInLog(string(respBody), args)
+-		if len(respStr) > 2000 {
+-			c.log.Debug(i18n.T("pkg_xapi_client.l005"), "method", method, "xml", respStr[:2000])
+-		} else {
+-			c.log.Debug(i18n.T("pkg_xapi_client.l006"), "method", method, "xml", respStr)
+-		}
+-	}
+-
+ 	if resp.StatusCode != 200 {
+ 		preview := respBody
+ 		if len(preview) > 200 {
+@@ -284,7 +264,7 @@
+ 
+ 	raw, err := parseMethodResponse(respBody)
+ 	if err != nil {
+-		return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e008"), err)
++		return nilVal(), fmt.Errorf("XML-RPC parsing failed: %w", err)
+ 	}
+ 
+ 	return c.unwrapXAPIResponse(raw)
+@@ -386,7 +366,7 @@
+ 		case "":
+ 			return v, nil
+ 		default:
+-			return nilVal(), fmt.Errorf(i18n.RawT("pkg_xapi_client.e009"), status)
++			return nilVal(), fmt.Errorf("Unknown XAPI status: %s", status)
+ 		}
+ 	}
+ 	return v, nil
+@@ -428,22 +408,22 @@
+ func (c *Client) GetPoolMasterAddress(ctx context.Context) (string, error) {
+ 	poolsVal, err := c.call(ctx, "pool.get_all", c.SessionRef())
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_client.e010"), err)
++		return "", fmt.Errorf("pool.get_all failed: %w", err)
+ 	}
+ 
+ 	pools := poolsVal.ToStringSlice()
+ 	if len(pools) == 0 {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_client.e011"))
++		return "", fmt.Errorf("pool reference value is missing")
+ 	}
+ 
+ 	masterRefVal, err := c.call(ctx, "pool.get_master", c.SessionRef(), pools[0])
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_client.e012"), err)
++		return "", fmt.Errorf("pool.get_master failed: %w", err)
+ 	}
+ 
+ 	addrVal, err := c.call(ctx, "host.get_address", c.SessionRef(), masterRefVal.Str())
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_client.e013"), err)
++		return "", fmt.Errorf("host.get_address failed: %w", err)
+ 	}
+ 
+ 	return addrVal.Str(), nil
+
+=================== ncc-xen/backend/pkg/xapi/mixins/task.go  ->  ncc-vbr/go/internal/xapi/task.go
+--- ncc-xen/backend/pkg/xapi/mixins/task.go
++++ ncc-vbr/go/internal/xapi/task.go
+@@ -1,4 +1,7 @@
+-package mixins
++// 출처: ncc-xen backend/pkg/xapi/mixins/task.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-04
++
++package xapi
+ 
+ // task.go — XAPI task 레코드 범용 헬퍼 (2026-10-19 신규)
+ //
+@@ -12,26 +15,23 @@
+ 	"context"
+ 	"fmt"
+ 	"strings"
+-
+-	"github.com/ncc/xen-backend/internal/i18n"
+-	"github.com/ncc/xen-backend/pkg/xapi"
+ )
+ 
+ // TaskGetStatus는 Task의 현재 상태를 반환합니다.
+ // 반환값: "pending" | "success" | "failure" | "cancelling" | "cancelled"
+-func TaskGetStatus(ctx context.Context, c *xapi.Client, taskRef string) (string, error) {
++func TaskGetStatus(ctx context.Context, c *Client, taskRef string) (string, error) {
+ 	val, err := c.Call(ctx, "task.get_status", c.SessionRef(), taskRef)
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_mixins_vm.e026"), err)
++		return "", fmt.Errorf("task.get_status failed: %w", err)
+ 	}
+ 	return val.Str(), nil
+ }
+ 
+ // TaskGetProgress는 Task의 현재 진행률을 반환합니다 (0.0 ~ 1.0).
+-func TaskGetProgress(ctx context.Context, c *xapi.Client, taskRef string) (float64, error) {
++func TaskGetProgress(ctx context.Context, c *Client, taskRef string) (float64, error) {
+ 	val, err := c.Call(ctx, "task.get_progress", c.SessionRef(), taskRef)
+ 	if err != nil {
+-		return 0, fmt.Errorf(i18n.RawT("pkg_xapi_mixins_vm.e025"), err)
++		return 0, fmt.Errorf("task.get_progress failed: %w", err)
+ 	}
+ 	prog := val.Str()
+ 	if prog == "" {
+@@ -46,10 +46,10 @@
+ // status가 "success"일 때만 의미 있는 값을 반환합니다. 결과가 OpaqueRef가
+ // 아닌 Async 작업(예: host.evacuate는 결과값이 없음)은 빈 문자열이 반환될 수
+ // 있습니다 — 호출자가 필요 여부를 판단하세요.
+-func TaskGetResult(ctx context.Context, c *xapi.Client, taskRef string) (string, error) {
++func TaskGetResult(ctx context.Context, c *Client, taskRef string) (string, error) {
+ 	val, err := c.Call(ctx, "task.get_result", c.SessionRef(), taskRef)
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_mixins_vm.e027"), err)
++		return "", fmt.Errorf("task.get_result failed: %w", err)
+ 	}
+ 	raw := val.Str()
+ 	raw = strings.TrimSpace(raw)
+@@ -61,10 +61,10 @@
+ }
+ 
+ // TaskGetErrorInfo는 실패한 Task의 오류 정보를 반환합니다.
+-func TaskGetErrorInfo(ctx context.Context, c *xapi.Client, taskRef string) (string, error) {
++func TaskGetErrorInfo(ctx context.Context, c *Client, taskRef string) (string, error) {
+ 	val, err := c.Call(ctx, "task.get_error_info", c.SessionRef(), taskRef)
+ 	if err != nil {
+-		return "", fmt.Errorf(i18n.RawT("pkg_xapi_mixins_vm.e028"), err)
++		return "", fmt.Errorf("task.get_error_info failed: %w", err)
+ 	}
+ 	slice := val.ToStringSlice()
+ 	if len(slice) == 0 {
+@@ -75,10 +75,10 @@
+ 
+ // TaskDestroy는 Task 레코드를 정리합니다. Async 작업 완료/실패 후 반드시
+ // defer로 호출해야 합니다.
+-func TaskDestroy(ctx context.Context, c *xapi.Client, taskRef string) error {
++func TaskDestroy(ctx context.Context, c *Client, taskRef string) error {
+ 	_, err := c.Call(ctx, "task.destroy", c.SessionRef(), taskRef)
+ 	if err != nil {
+-		return fmt.Errorf(i18n.RawT("pkg_xapi_mixins_vm.e029"), err)
++		return fmt.Errorf("task.destroy failed: %w", err)
+ 	}
+ 	return nil
+ }
+
+=================== ncc-xen/stdcrypto/secret/aes256gcm.go  ->  ncc-vbr/go/internal/secret/aes256gcm.go
+--- ncc-xen/stdcrypto/secret/aes256gcm.go
++++ ncc-vbr/go/internal/secret/aes256gcm.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/aes256gcm.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import (
+
+=================== ncc-xen/stdcrypto/secret/algorithm.go  ->  ncc-vbr/go/internal/secret/algorithm.go
+--- ncc-xen/stdcrypto/secret/algorithm.go
++++ ncc-vbr/go/internal/secret/algorithm.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/algorithm.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import (
+
+=================== ncc-xen/stdcrypto/secret/api.go  ->  ncc-vbr/go/internal/secret/api.go
+--- ncc-xen/stdcrypto/secret/api.go
++++ ncc-vbr/go/internal/secret/api.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/api.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import (
+
+=================== ncc-xen/stdcrypto/secret/config.go  ->  ncc-vbr/go/internal/secret/config.go
+--- ncc-xen/stdcrypto/secret/config.go
++++ ncc-vbr/go/internal/secret/config.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/config.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import (
+@@ -16,14 +19,14 @@
+ var keyIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]{1,64}$`)
+ 
+ type KeyringConfig struct {
+-	Version     int                  `yaml:"version"`
+-	ActiveKeyID string               `yaml:"active_key_id"`
+-	Keys        map[string]KeyConfig `yaml:"keys"`
++	Version     int                  `json:"version"`
++	ActiveKeyID string               `json:"active_key_id"`
++	Keys        map[string]KeyConfig `json:"keys"`
+ }
+ 
+ type KeyConfig struct {
+-	Algorithm string `yaml:"algorithm"`
+-	Material  string `yaml:"material"`
++	Algorithm string `json:"algorithm"`
++	Material  string `json:"material"`
+ }
+ 
+ func ValidateKeyringConfig(cfg KeyringConfig) error {
+
+=================== ncc-xen/stdcrypto/secret/envelope.go  ->  ncc-vbr/go/internal/secret/envelope.go
+--- ncc-xen/stdcrypto/secret/envelope.go
++++ ncc-vbr/go/internal/secret/envelope.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/envelope.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import (
+
+=================== ncc-xen/stdcrypto/secret/errors.go  ->  ncc-vbr/go/internal/secret/errors.go
+--- ncc-xen/stdcrypto/secret/errors.go
++++ ncc-vbr/go/internal/secret/errors.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/errors.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ import "errors"
+
+=================== ncc-xen/stdcrypto/secret/keyring.go  ->  ncc-vbr/go/internal/secret/keyring.go
+--- ncc-xen/stdcrypto/secret/keyring.go
++++ ncc-vbr/go/internal/secret/keyring.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/keyring.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ package secret
+ 
+ type keyEntry struct {
+
+=================== ncc-xen/stdcrypto/secret/filemode_unix.go  ->  ncc-vbr/go/internal/secret/filemode_unix.go
+--- ncc-xen/stdcrypto/secret/filemode_unix.go
++++ ncc-vbr/go/internal/secret/filemode_unix.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/filemode_unix.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ //go:build unix
+ 
+ package secret
+
+=================== ncc-xen/stdcrypto/secret/filemode_other.go  ->  ncc-vbr/go/internal/secret/filemode_other.go
+--- ncc-xen/stdcrypto/secret/filemode_other.go
++++ ncc-vbr/go/internal/secret/filemode_other.go
+@@ -1,3 +1,6 @@
++// 출처: ncc-xen stdcrypto/secret/filemode_other.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++
+ //go:build !unix
+ 
+ package secret
+
+=================== ncc-xen/stdcrypto/secret/load.go  ->  ncc-vbr/go/internal/secret/load.go
+--- ncc-xen/stdcrypto/secret/load.go
++++ ncc-vbr/go/internal/secret/load.go
+@@ -1,12 +1,14 @@
++// 출처: ncc-xen stdcrypto/secret/load.go (커밋 043c6d5, 2026-11-17 복사)
++// 바뀐 부분: docs/agent/08-copied-code-register.md CP-10
++// (키링 파일 형식을 YAML에서 JSON으로 바꿨다. YAML 라이브러리와 safeyaml을 들여오지 않기 위해서다.)
++
+ package secret
+ 
+ import (
++	"bytes"
++	"encoding/json"
+ 	"fmt"
+ 	"os"
+-
+-	"ncc-xen/stdcrypto/internal/safeyaml"
+-
+-	"gopkg.in/yaml.v3"
+ )
+ 
+ func LoadFromFile(path string) (*Protector, error) {
+@@ -42,14 +44,16 @@
+ 	if len(data) == 0 || len(data) > MaximumKeyringBytes {
+ 		return KeyringConfig{}, fmt.Errorf("%w: keyring size is invalid", ErrInvalidKeyring)
+ 	}
+-	if _, err := safeyaml.ParseSingleMapping(data, MaximumKeyringBytes); err != nil {
+-		return KeyringConfig{}, fmt.Errorf("%w: keyring YAML is unsafe or invalid", ErrInvalidKeyring)
+-	}
+-
++	// 원본의 safeyaml.DecodeKnownFields 대신 표준 JSON 해석기에서 모르는 필드를 거부한다.
+ 	var cfg KeyringConfig
+-	if err := safeyaml.DecodeKnownFields(data, &cfg); err != nil {
++	dec := json.NewDecoder(bytes.NewReader(data))
++	dec.DisallowUnknownFields()
++	if err := dec.Decode(&cfg); err != nil {
+ 		return KeyringConfig{}, fmt.Errorf("%w: keyring fields are invalid", ErrInvalidKeyring)
+ 	}
++	if dec.More() {
++		return KeyringConfig{}, fmt.Errorf("%w: keyring JSON has trailing data", ErrInvalidKeyring)
++	}
+ 	if err := ValidateKeyringConfig(cfg); err != nil {
+ 		return KeyringConfig{}, err
+ 	}
+@@ -60,7 +64,7 @@
+ 	if err := ValidateKeyringConfig(cfg); err != nil {
+ 		return nil, err
+ 	}
+-	data, err := yaml.Marshal(cfg)
++	data, err := json.MarshalIndent(cfg, "", "  ")
+ 	if err != nil {
+ 		return nil, fmt.Errorf("%w: keyring encoding failed", ErrInvalidKeyring)
+ 	}
+
+=================== ncc-xen/backend/pkg/xapi/mixins/vm.go (함수 단위) -> ncc-vbr/go/internal/xapi/vm.go
+GetRecord: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+GetByUUID: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+Snapshot: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+DestroyByRef: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+GetUUIDByRef: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskCreate: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskDestroy: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskGetStatus: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskGetProgress: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskGetErrorInfo: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+TaskGetResultRefs: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+SetIsATemplate: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+UpdateAllowedOperations: 원본과 같음(i18n 키를 영어 문장으로 바꾼 것만 다름)
+새로 작성(원본에 없음, backup_ops.go): SetHAAlwaysRun, DiskVBDs, SetVBDOwnerFalse, DestroyVDI, UninstallSnapshot, CancelTask, SRByUUID

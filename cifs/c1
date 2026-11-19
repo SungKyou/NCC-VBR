@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -z "$1" ] || [ ! -f "$1.c" ]; then
+    echo "Usage: $0 source_name_without_c_extension"
+    exit 1
+fi
+
+cc -g -fcommon -c bs_common.c -o bs_common.o || exit 1
+cc -g -O -Wall -fcommon "$1.c" bs_common.o -o "$1" -lpthread -D_REENTRANT -lm -lz || exit 1

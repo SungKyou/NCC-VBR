@@ -1,0 +1,51 @@
+[2026-11-18 18:37:58]Log File Max size is [100000000]
+[2026-11-18 18:37:58]XAPI address [https://192.168.102.53] user [root] backup root [C:\temp\vbr\BACKUP] async thread [2]
+[2026-11-18 18:37:58][0]th async thread starting.
+[2026-11-18 18:37:58][1]th async thread starting.
+[2026-11-18 18:37:58]VBR agent for Xenserver service start.
+[2026-11-18 18:37:58]NCC-VBR version	: [3.000]
+[2026-11-18 18:40:42]Send to REQUEST Manager internal error[20261118200000001]
+[2026-11-18 18:50:59]VBR agent for Xenserver service stop.
+[2026-11-18 18:51:01]Log File Max size is [100000000]
+[2026-11-18 18:51:01]XAPI address [https://192.168.102.53] user [root] backup root [C:\temp\vbr\BACKUP] async thread [2]
+[2026-11-18 18:51:01][0]th async thread starting.
+[2026-11-18 18:51:01][1]th async thread starting.
+[2026-11-18 18:51:01]VBR agent for Xenserver service start.
+[2026-11-18 18:51:01]NCC-VBR version	: [3.000]
+[2026-11-18 18:51:18]Send to REQUEST Manager internal error[20261118200000101]
+[2026-11-18 18:54:24]VBR agent for Xenserver service stop.
+[2026-11-18 18:54:32]Log File Max size is [100000000]
+[2026-11-18 18:54:32]XAPI address [https://192.168.102.53] user [root] backup root [C:\temp\vbr\BACKUP] async thread [2]
+[2026-11-18 18:54:32][0]th async thread starting.
+[2026-11-18 18:54:32][1]th async thread starting.
+[2026-11-18 18:54:32]VBR agent for Xenserver service start.
+[2026-11-18 18:54:32]NCC-VBR version	: [3.000]
+[2026-11-18 18:54:39]XAPI login success [https://192.168.102.53]
+[2026-11-18 18:59:08]VM export file [C:\temp\vbr\BACKUP\full.xva] size [2588192829] elapsed [4m28s]
+[2026-11-18 18:59:09]Send to REQUEST Manager internal error[20261118200000201]
+[2026-11-18 19:03:30]Send to REQUEST Manager internal error[20261118200000301]
+[2026-11-18 19:04:47]VM import failed : [XAPI task failure: DUPLICATE_MAC_SEED: de99e29a-cae1-7ad7-14ff-6f40459ca86f]
+[2026-11-18 19:04:47]Send to REQUEST Manager internal error[20261118200000401]
+[2026-11-18 19:11:19]VM export file [C:\temp\vbr\BACKUP\new1.xva] size [2588153658] elapsed [4m26s]
+[2026-11-18 19:11:20]Send to REQUEST Manager internal error[20261118200000411]
+[2026-11-19 09:44:34]Send to REQUEST Manager internal error[20261118200000412]
+[2026-11-19 09:51:34]VM export file [C:\temp\vbr\BACKUP\part.xva] size [2588140361] elapsed [4m24s]
+[2026-11-19 09:51:34]Send to REQUEST Manager internal error[20261118200000005]
+[2026-11-19 09:52:19]Send to REQUEST Manager internal error[20261118200000006]
+[2026-11-19 10:04:13]VM export file [C:\temp\vbr\BACKUP\c12.xva] size [2588164579] elapsed [4m32s]
+[2026-11-19 10:04:13]VM export file [C:\temp\vbr\BACKUP\c11.xva] size [2588159006] elapsed [4m33s]
+[2026-11-19 10:04:14]Send to REQUEST Manager internal error[20261118200000012]
+[2026-11-19 10:04:14]Send to REQUEST Manager internal error[20261118200000011]
+[2026-11-19 10:07:16]Log File Max size is [100000000]
+[2026-11-19 10:07:16]XAPI address [https://192.168.102.53] user [root] backup root [C:\temp\vbr\BACKUP] async thread [2]
+[2026-11-19 10:07:16][20261118200000030] Task cancel.   Please check result.
+[2026-11-19 10:07:16]Restart recovery : canceled [1], requeued [0]
+[2026-11-19 10:07:16][0]th async thread starting.
+[2026-11-19 10:07:16][1]th async thread starting.
+[2026-11-19 10:07:16]VBR agent for Xenserver service start.
+[2026-11-19 10:07:16]NCC-VBR version	: [3.000]
+[2026-11-19 10:09:01]XAPI login success [https://192.168.102.53]
+[2026-11-19 10:09:01]VM Snapshot failed : [XAPI Error: UUID_INVALID | VM | 00000000-0000-0000-0000-000000000000]
+[2026-11-19 10:09:01]Send to REQUEST Manager internal error[20261118200000040]
+[2026-11-19 10:09:02]VM import failed : [XAPI Error: UUID_INVALID | SR | 00000000-0000-0000-0000-000000000000]
+[2026-11-19 10:09:02]Send to REQUEST Manager internal error[20261118200000041]

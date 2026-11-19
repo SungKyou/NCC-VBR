@@ -1,0 +1,38 @@
+# 2026-11-17 13:18 WSL Ubuntu, Linux 대상 시험 실행 파일(go test -c, GOOS=linux)
+== ./cifs.test
+--- PASS: TestFirstRunCopiesEverything (0.00s)
+--- PASS: TestSecondRunCopiesNothing (0.00s)
+--- PASS: TestChangedFileKeepsOldVersion (0.00s)
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.00s)
+--- PASS: TestUntouchedSourceIsNotCompared (0.00s)
+--- PASS: TestExclusionAndSecondLevel (0.00s)
+--- PASS: TestDisabledFolderRenamesTarget (0.00s)
+--- PASS: TestDisabledFolderKeepsExistingData (0.00s)
+--- PASS: TestErrorKeepsHistoryUnchanged (0.00s)
+--- PASS: TestMissingTargetRootStops (0.00s)
+--- PASS: TestSymlinkIsSkipped (0.00s)
+--- PASS: TestHistoryFileName (0.00s)
+PASS
+== ./config.test
+--- PASS: TestSectionAndKeyRules (0.00s)
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+--- SKIP: TestRealDevelopmentFile (0.00s)
+PASS
+== ./logx.test
+--- PASS: TestServerLogFormat (0.00s)
+--- PASS: TestTransactionLogFormat (0.00s)
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+== ./portal.test
+--- PASS: TestEncodeLayout (0.00s)
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+== ./remove.test
+--- PASS: TestIsExpiredVersion (0.00s)
+--- PASS: TestParseDays (0.00s)
+--- PASS: TestShellQuote (0.00s)
+--- PASS: TestLogModeDeletesNothing (0.00s)
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.00s)
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+exit=0

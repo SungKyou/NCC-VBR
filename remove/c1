@@ -1,0 +1,7 @@
+cc -g -c bs_common.c -o bs_common.o
+#cc -g -O $1.c bs_common.o -o $1 -lpthread -D_REENTRANT -lm -L /usr/lib/mysql -lmysqlclient
+#cc -g -O $1.c bs_common.o -o $1 -lpthread -D_REENTRANT -lm -lz -D_USE_LARGEFILE64 -D_FILE_OFFSET_BITS=64
+#cc -g -O $1.c bs_common.o -o $1 -lpthread -D_REENTRANT -lm -lz
+cc -g -O -Wall $1.c bs_common.o -o $1 -lpthread -D_REENTRANT -lm -lz
+#cc -g -O $1.c bs_common.o -o $1 -lpthread -D_REENTRANT -lm -lz -D_FILE_OFFSET_BITS=64
+#/bin/cp -f $1 /tmp

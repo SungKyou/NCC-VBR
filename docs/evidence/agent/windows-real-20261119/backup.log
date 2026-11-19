@@ -1,0 +1,60 @@
+[2026-11-18 18:40:42]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\full.xva
+	VM Snapshot failed : [XAPI session][XAPI Error: SESSION_AUTHENTICATION_FAILED | root | Authentication failure]
+[2026-11-18 18:51:18]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\full.xva
+	VM Snapshot failed : [XAPI session][XAPI Error: SESSION_AUTHENTICATION_FAILED | root | Authentication failure]
+[2026-11-18 18:54:40]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\full.xva
+	VM Snapshot success, uuid=547e3b2d-ee00-f254-bac2-706e774475a8
+[2026-11-18 18:54:40]SNAPSHOT VM property Change: VM-UUID=547e3b2d-ee00-f254-bac2-706e774475a8 filename=C:\temp\vbr\BACKUP\full.xva
+	VM Snapshot property change, uuid=547e3b2d-ee00-f254-bac2-706e774475a8
+[2026-11-18 18:59:08]VM BACKUP: VM-UUID=547e3b2d-ee00-f254-bac2-706e774475a8 filename=C:\temp\vbr\BACKUP\full.xva
+	VM export succeeded.
+[2026-11-18 18:59:09]SNAPSHOT destroy: VM-UUID=547e3b2d-ee00-f254-bac2-706e774475a8 filename=C:\temp\vbr\BACKUP\full.xva
+	Snapshot VM remove, uuid=547e3b2d-ee00-f254-bac2-706e774475a8
+[2026-11-18 19:03:30]VM IMPORT: SR-UUID=e4138437-7e20-480f-08b1-25e5b8b6027b filename=C:\temp\vbr\BACKUP\full.xva
+	VM import success, vm-uuid=23fe6b44-7f03-5aa9-392a-54fb8e5292b5
+[2026-11-18 19:04:47]VM IMPORT: SR-UUID=e4138437-7e20-480f-08b1-25e5b8b6027b filename=C:\temp\vbr\BACKUP\full.xva
+	VM import failed : [XAPI task failure: DUPLICATE_MAC_SEED: de99e29a-cae1-7ad7-14ff-6f40459ca86f]
+[2026-11-18 19:06:54]SNAPSHOT create: VM-UUID=23fe6b44-7f03-5aa9-392a-54fb8e5292b5 filename=C:\temp\vbr\BACKUP\new1.xva
+	VM Snapshot success, uuid=930aefc6-a9b7-3e81-37c5-aae252273569
+[2026-11-18 19:06:54]SNAPSHOT VM property Change: VM-UUID=930aefc6-a9b7-3e81-37c5-aae252273569 filename=C:\temp\vbr\BACKUP\new1.xva
+	VM Snapshot property change, uuid=930aefc6-a9b7-3e81-37c5-aae252273569
+[2026-11-18 19:11:19]VM BACKUP: VM-UUID=930aefc6-a9b7-3e81-37c5-aae252273569 filename=C:\temp\vbr\BACKUP\new1.xva
+	VM export succeeded.
+[2026-11-18 19:11:20]SNAPSHOT destroy: VM-UUID=930aefc6-a9b7-3e81-37c5-aae252273569 filename=C:\temp\vbr\BACKUP\new1.xva
+	Snapshot VM remove, uuid=930aefc6-a9b7-3e81-37c5-aae252273569
+[2026-11-19 09:44:34]VM IMPORT: SR-UUID=e4138437-7e20-480f-08b1-25e5b8b6027b filename=C:\temp\vbr\BACKUP\new1.xva
+	VM import success, vm-uuid=930aefc6-a9b7-3e81-37c5-aae252273569
+[2026-11-19 09:47:09]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\part.xva
+	VM Snapshot success, uuid=699ddfb1-b8ae-10ac-3b13-bccd692c84ff
+[2026-11-19 09:47:09]SNAPSHOT VM property Change: VM-UUID=699ddfb1-b8ae-10ac-3b13-bccd692c84ff filename=C:\temp\vbr\BACKUP\part.xva
+	VM Snapshot property change, uuid=699ddfb1-b8ae-10ac-3b13-bccd692c84ff
+[2026-11-19 09:51:34]VM BACKUP: VM-UUID=699ddfb1-b8ae-10ac-3b13-bccd692c84ff filename=C:\temp\vbr\BACKUP\part.xva
+	VM export succeeded.
+[2026-11-19 09:51:34]SNAPSHOT destroy: VM-UUID=699ddfb1-b8ae-10ac-3b13-bccd692c84ff filename=C:\temp\vbr\BACKUP\part.xva
+	Snapshot VM remove, uuid=699ddfb1-b8ae-10ac-3b13-bccd692c84ff
+[2026-11-19 09:52:19]VM IMPORT: SR-UUID=e4138437-7e20-480f-08b1-25e5b8b6027b filename=C:\temp\vbr\BACKUP\part.xva
+	VM import success, vm-uuid=b9bda7ee-caee-063d-3db9-1cdcd43911e7
+[2026-11-19 09:59:40]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\c11.xva
+	VM Snapshot success, uuid=b336efec-fb77-9af9-b215-90354eff57ad
+[2026-11-19 09:59:40]SNAPSHOT VM property Change: VM-UUID=b336efec-fb77-9af9-b215-90354eff57ad filename=C:\temp\vbr\BACKUP\c11.xva
+	VM Snapshot property change, uuid=b336efec-fb77-9af9-b215-90354eff57ad
+[2026-11-19 09:59:41]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\c12.xva
+	VM Snapshot success, uuid=89cfd4f9-309f-96e3-69d8-c7b6036c772e
+[2026-11-19 09:59:41]SNAPSHOT VM property Change: VM-UUID=89cfd4f9-309f-96e3-69d8-c7b6036c772e filename=C:\temp\vbr\BACKUP\c12.xva
+	VM Snapshot property change, uuid=89cfd4f9-309f-96e3-69d8-c7b6036c772e
+[2026-11-19 10:04:13]VM BACKUP: VM-UUID=89cfd4f9-309f-96e3-69d8-c7b6036c772e filename=C:\temp\vbr\BACKUP\c12.xva
+	VM export succeeded.
+[2026-11-19 10:04:13]VM BACKUP: VM-UUID=b336efec-fb77-9af9-b215-90354eff57ad filename=C:\temp\vbr\BACKUP\c11.xva
+	VM export succeeded.
+[2026-11-19 10:04:14]SNAPSHOT destroy: VM-UUID=89cfd4f9-309f-96e3-69d8-c7b6036c772e filename=C:\temp\vbr\BACKUP\c12.xva
+	Snapshot VM remove, uuid=89cfd4f9-309f-96e3-69d8-c7b6036c772e
+[2026-11-19 10:04:14]SNAPSHOT destroy: VM-UUID=b336efec-fb77-9af9-b215-90354eff57ad filename=C:\temp\vbr\BACKUP\c11.xva
+	Snapshot VM remove, uuid=b336efec-fb77-9af9-b215-90354eff57ad
+[2026-11-19 10:06:55]SNAPSHOT create: VM-UUID=42097417-b9ee-2f97-8eeb-3612efbcb25d filename=C:\temp\vbr\BACKUP\kill.xva
+	VM Snapshot success, uuid=18c30c76-1ad5-c097-8d7b-f3cfa1e7166d
+[2026-11-19 10:06:55]SNAPSHOT VM property Change: VM-UUID=18c30c76-1ad5-c097-8d7b-f3cfa1e7166d filename=C:\temp\vbr\BACKUP\kill.xva
+	VM Snapshot property change, uuid=18c30c76-1ad5-c097-8d7b-f3cfa1e7166d
+[2026-11-19 10:09:01]SNAPSHOT create: VM-UUID=00000000-0000-0000-0000-000000000000 filename=C:\temp\vbr\BACKUP\x.xva
+	VM Snapshot failed : [XAPI Error: UUID_INVALID | VM | 00000000-0000-0000-0000-000000000000]
+[2026-11-19 10:09:02]VM IMPORT: SR-UUID=00000000-0000-0000-0000-000000000000 filename=C:\temp\vbr\BACKUP\full.xva
+	VM import failed : [XAPI Error: UUID_INVALID | SR | 00000000-0000-0000-0000-000000000000]

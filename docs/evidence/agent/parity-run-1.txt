@@ -1,0 +1,556 @@
+original agent started (exit 0)
+2026/11/17 10:14:24 fake XAPI listening on https://[::]:8443
+converted agent started (exit 0)
+== driver ==
+FAIL     reply P00 accept
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000000005OK"
+FAIL     reply P00 result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790007841600001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva\n"
+FAIL     reply P01 format error
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "X2026111710000000190005BACKUP x"
+FAIL     reply P02 bad uuid result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790007841800001[ERROR]VM UUID is not valid."
+FAIL     reply P03 restore args result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790007841900001[ERROR]SR UUID is not valid."
+FAIL     reply P04 accept 20261117100000005
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000500005OK"
+FAIL     reply P04 accept 20261117100000006
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000600005OK"
+FAIL     reply P04 accept 20261117100000007
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000700005OK"
+FAIL     reply P04 accept 20261117100000008
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000800005OK"
+FAIL     reply P04 accept 20261117100000009
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000000900005OK"
+FAIL     reply P04 query running
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001030001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva"
+FAIL     reply P04 query queued
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001120001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva"
+FAIL     reply P04 cancel running
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001290001Request message is processing."
+FAIL     reply P04 cancel queued
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001300001Request message is cancel.[20261117100000013]"
+FAIL     reply P04 query canceled
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B20261117100000014C0001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva"
+FAIL     reply P04 query not found
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B202611171000000159000120261117109999999"
+FAIL     reply P04 query short
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001690001TASK SEQ is not valid.[123]"
+FAIL     reply P04 cancel short
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001790001Cancel request sequence is not valid."
+FAIL     reply P04 cancel not found
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000001890001Request message not found.(Invalid or Already finished)."
+FAIL     reply P04 result 20261117100000005
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790842396200001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva\n"
+FAIL     reply P04 result 20261117100000006
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790842396300001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva\n"
+FAIL     reply P04 result 20261117100000007
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790842396400001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva\n"
+FAIL     reply P04 result 20261117100000009
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790842396600001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva\n"
+FAIL     reply P05 accept
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000002000005OK"
+FAIL     reply P05 result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790007842100001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva\n"
+FAIL     reply P06 accept
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000002100005OK"
+FAIL     reply P06 result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111790007842200001cd5498f2-0342-db8e-749e-53a5e86744dd"
+FAIL     reply P07 multi cancel
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B2026111710000003000001Multi cancel summary : total [100], cancel [0], failed [100]\n"
+FAIL     reply P08 100 accepted
+    c : "0:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,1:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,2:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,3:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,4:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,5:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,6:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,7:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,8:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,9:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,10:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,11:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,12:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,13:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,14:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,15:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,16:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,17:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,18:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,19:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,20:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,21:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,22:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,23:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,24:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,25:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,26:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,27:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,28:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,29:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,30:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,31:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,32:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,33:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,34:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,35:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,36:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,37:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,38:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,39:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,40:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,41:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,42:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,43:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,44:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,45:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,46:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,47:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,48:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,49:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,50:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,51:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,52:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,53:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,54:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,55:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,56:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,57:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,58:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,59:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,60:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,61:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,62:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,63:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,64:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,65:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,66:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,67:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,68:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,69:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,70:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,71:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,72:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,73:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,74:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,75:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,76:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,77:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,78:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,79:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,80:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,81:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,82:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,83:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,84:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,85:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,86:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,87:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,88:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,89:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,90:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,91:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,92:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,93:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,94:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,95:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,96:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,97:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,98:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused,99:DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: ""
+FAIL     reply P08 queue full
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B202611171199999998000120261117110000000"
+FAIL     reply P08 last result
+    c : "DIAL-ERROR dial tcp 127.0.0.1:7101: connect: connection refused"
+    go: "B202611179000784248000120261117110000099"
+FAIL     tran 20261117100000000 count
+    c : ""
+    go: "1:Message Receive | B20261117100000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 <ROOT>/17.xva\n2:Queue saving | B20261117100000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 <ROOT>/17.xva\n3:ASYNC Queue receive | B20261117100000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 <ROOT>/17.xva\n5:ASYNC Queue result send finished | B2026111710000000000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva\n0:ASYNC RESULT send error | B2026111710000000000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva"
+FAIL     tran 20261117100000001 count
+    c : ""
+    go: "9:Format Error | X2026111710000000190005BACKUP x"
+FAIL     tran 20261117100000002 count
+    c : ""
+    go: "1:Message Receive | B20261117100000002A0005BACKUP 1234 s <ROOT>/x.xva\n2:Queue saving | B20261117100000002A0005BACKUP 1234 s <ROOT>/x.xva\n3:ASYNC Queue receive | B20261117100000002A0005BACKUP 1234 s <ROOT>/x.xva\n5:ASYNC Queue result send finished | B2026111710000000290005[ERROR]VM UUID is not valid.\n0:ASYNC RESULT send error | B2026111710000000290005[ERROR]VM UUID is not valid."
+FAIL     tran 20261117100000003 count
+    c : ""
+    go: "1:Message Receive | B20261117100000003A0005RESTORE <ROOT>/17.xva  9ad088e0-d03d-0269-0b7f-e40006aa5014\n2:Queue saving | B20261117100000003A0005RESTORE <ROOT>/17.xva  9ad088e0-d03d-0269-0b7f-e40006aa5014\n3:ASYNC Queue receive | B20261117100000003A0005RESTORE <ROOT>/17.xva  9ad088e0-d03d-0269-0b7f-e40006aa5014\n5:ASYNC Queue result send finished | B2026111710000000390005[ERROR]SR UUID is not valid.\n0:ASYNC RESULT send error | B2026111710000000390005[ERROR]SR UUID is not valid."
+FAIL     tran 20261117100000005 count
+    c : ""
+    go: "1:Message Receive | B20261117100000005A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n2:Queue saving | B20261117100000005A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n3:ASYNC Queue receive | B20261117100000005A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n5:ASYNC Queue result send finished | B2026111710000000500005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva\n0:ASYNC RESULT send error | B2026111710000000500005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva"
+FAIL     tran 20261117100000006 count
+    c : ""
+    go: "1:Message Receive | B20261117100000006A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s1.xva\n2:Queue saving | B20261117100000006A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s1.xva\n3:ASYNC Queue receive | B20261117100000006A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s1.xva\n5:ASYNC Queue result send finished | B2026111710000000600005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva\n0:ASYNC RESULT send error | B2026111710000000600005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva"
+FAIL     tran 20261117100000007 count
+    c : ""
+    go: "1:Message Receive | B20261117100000007A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s2.xva\n2:Queue saving | B20261117100000007A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s2.xva\n3:ASYNC Queue receive | B20261117100000007A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s2.xva\n5:ASYNC Queue result send finished | B2026111710000000700005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva\n0:ASYNC RESULT send error | B2026111710000000700005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva"
+FAIL     tran 20261117100000008 count
+    c : ""
+    go: "1:Message Receive | B20261117100000008A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva\n2:Queue saving | B20261117100000008A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva\nC:TASK Canceled | B20261117100000008A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva"
+FAIL     tran 20261117100000009 count
+    c : ""
+    go: "1:Message Receive | B20261117100000009A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n2:Queue saving | B20261117100000009A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n3:ASYNC Queue receive | B20261117100000009A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n5:ASYNC Queue result send finished | B2026111710000000900005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva\n0:ASYNC RESULT send error | B2026111710000000900005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva"
+FAIL     tran 20261117100000010 count
+    c : ""
+    go: "1:Message Receive | B20261117100000010Q000120261117100000005\n2:Queue saving | B20261117100000010Q000120261117100000005\n3:Management Queue receive | B20261117100000010Q000120261117100000005\n0:QUERY RESULT send success | B2026111710000001030001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva"
+FAIL     tran 20261117100000011 count
+    c : ""
+    go: "1:Message Receive | B20261117100000011Q000120261117100000008\n2:Queue saving | B20261117100000011Q000120261117100000008\n3:Management Queue receive | B20261117100000011Q000120261117100000008\n0:QUERY RESULT send success | B2026111710000001120001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva"
+FAIL     tran 20261117100000012 count
+    c : ""
+    go: "1:Message Receive | B20261117100000012C000120261117100000005\n2:Queue saving | B20261117100000012C000120261117100000005\n3:Management Queue receive | B20261117100000012C000120261117100000005\n0:QUERY RESULT send success | B2026111710000001290001Request message is processing."
+FAIL     tran 20261117100000013 count
+    c : ""
+    go: "1:Message Receive | B20261117100000013C000120261117100000008\n2:Queue saving | B20261117100000013C000120261117100000008\n3:Management Queue receive | B20261117100000013C000120261117100000008\n0:QUERY RESULT send success | B2026111710000001300001Request message is cancel.[20261117100000013]"
+FAIL     tran 20261117100000014 count
+    c : ""
+    go: "1:Message Receive | B20261117100000014Q000120261117100000008\n2:Queue saving | B20261117100000014Q000120261117100000008\n3:Management Queue receive | B20261117100000014Q000120261117100000008\n0:QUERY RESULT send success | B20261117100000014C0001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s3.xva"
+FAIL     tran 20261117100000015 count
+    c : ""
+    go: "1:Message Receive | B20261117100000015Q000120261117109999999\n2:Queue saving | B20261117100000015Q000120261117109999999\n3:Management Queue receive | B20261117100000015Q000120261117109999999\n0:QUERY RESULT send success | B202611171000000159000120261117109999999"
+FAIL     tran 20261117100000016 count
+    c : ""
+    go: "1:Message Receive | B20261117100000016Q0001123\n2:Queue saving | B20261117100000016Q0001123\n3:Management Queue receive | B20261117100000016Q0001123\n0:QUERY RESULT send success | B2026111710000001690001TASK SEQ is not valid.[123]"
+FAIL     tran 20261117100000017 count
+    c : ""
+    go: "1:Message Receive | B20261117100000017C0001123\n2:Queue saving | B20261117100000017C0001123\n3:Management Queue receive | B20261117100000017C0001123\n0:QUERY RESULT send success | B2026111710000001790001Cancel request sequence is not valid."
+FAIL     tran 20261117100000018 count
+    c : ""
+    go: "1:Message Receive | B20261117100000018C000120261117109999999\n2:Queue saving | B20261117100000018C000120261117109999999\n3:Management Queue receive | B20261117100000018C000120261117109999999\n0:QUERY RESULT send success | B2026111710000001890001Request message not found.(Invalid or Already finished)."
+FAIL     tran 20261117100000020 count
+    c : ""
+    go: "1:Message Receive | B20261117100000020A0005PARTIAL 22acc256-b431-f9df-6c44-b1f71e7912fc 100000000000000 p <ROOT>/p.xva\n2:Queue saving | B20261117100000020A0005PARTIAL 22acc256-b431-f9df-6c44-b1f71e7912fc 100000000000000 p <ROOT>/p.xva\n3:ASYNC Queue receive | B20261117100000020A0005PARTIAL 22acc256-b431-f9df-6c44-b1f71e7912fc 100000000000000 p <ROOT>/p.xva\n5:ASYNC Queue result send finished | B2026111710000002000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva\n0:ASYNC RESULT send error | B2026111710000002000005VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva"
+FAIL     tran 20261117100000021 count
+    c : ""
+    go: "1:Message Receive | B20261117100000021A0005RESTORE <ROOT>/17.xva true 9ad088e0-d03d-0269-0b7f-e40006aa5014\n2:Queue saving | B20261117100000021A0005RESTORE <ROOT>/17.xva true 9ad088e0-d03d-0269-0b7f-e40006aa5014\n3:ASYNC Queue receive | B20261117100000021A0005RESTORE <ROOT>/17.xva true 9ad088e0-d03d-0269-0b7f-e40006aa5014\n5:ASYNC Queue result send finished | B2026111710000002100005cd5498f2-0342-db8e-749e-53a5e86744dd\n0:ASYNC RESULT send error | B2026111710000002100005cd5498f2-0342-db8e-749e-53a5e86744dd"
+FAIL     tran 20261117100000030 count
+    c : ""
+    go: "1:Message Receive | B20261117100000030C000100000000000000000\n2:Queue saving | B20261117100000030C000100000000000000000\n3:Management Queue receive | B20261117100000030C000100000000000000000\n0:QUERY RESULT send success | B2026111710000003000001Multi cancel summary : total [100], cancel [0], failed [100]"
+FAIL     tran 20261117110000000 count
+    c : ""
+    go: "1:Message Receive | B20261117110000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f0.xva\n2:Queue saving | B20261117110000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f0.xva\n3:ASYNC Queue receive | B20261117110000000A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f0.xva"
+FAIL     tran 20261117110000001 count
+    c : ""
+    go: "1:Message Receive | B20261117110000001A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f1.xva\n2:Queue saving | B20261117110000001A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f1.xva\n3:ASYNC Queue receive | B20261117110000001A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f1.xva"
+FAIL     tran 20261117110000002 count
+    c : ""
+    go: "1:Message Receive | B20261117110000002A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f2.xva\n2:Queue saving | B20261117110000002A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f2.xva\n3:ASYNC Queue receive | B20261117110000002A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc hold <ROOT>/f2.xva"
+FAIL     tran 20261117110000003 count
+    c : ""
+    go: "1:Message Receive | B20261117110000003A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f3.xva\n2:Queue saving | B20261117110000003A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f3.xva"
+FAIL     tran 20261117110000004 count
+    c : ""
+    go: "1:Message Receive | B20261117110000004A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f4.xva\n2:Queue saving | B20261117110000004A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f4.xva"
+FAIL     tran 20261117110000005 count
+    c : ""
+    go: "1:Message Receive | B20261117110000005A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f5.xva\n2:Queue saving | B20261117110000005A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f5.xva"
+FAIL     tran 20261117110000006 count
+    c : ""
+    go: "1:Message Receive | B20261117110000006A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f6.xva\n2:Queue saving | B20261117110000006A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f6.xva"
+FAIL     tran 20261117110000007 count
+    c : ""
+    go: "1:Message Receive | B20261117110000007A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f7.xva\n2:Queue saving | B20261117110000007A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f7.xva"
+FAIL     tran 20261117110000008 count
+    c : ""
+    go: "1:Message Receive | B20261117110000008A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f8.xva\n2:Queue saving | B20261117110000008A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f8.xva"
+FAIL     tran 20261117110000009 count
+    c : ""
+    go: "1:Message Receive | B20261117110000009A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f9.xva\n2:Queue saving | B20261117110000009A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f9.xva"
+FAIL     tran 20261117110000010 count
+    c : ""
+    go: "1:Message Receive | B20261117110000010A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f10.xva\n2:Queue saving | B20261117110000010A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f10.xva"
+FAIL     tran 20261117110000011 count
+    c : ""
+    go: "1:Message Receive | B20261117110000011A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f11.xva\n2:Queue saving | B20261117110000011A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f11.xva"
+FAIL     tran 20261117110000012 count
+    c : ""
+    go: "1:Message Receive | B20261117110000012A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f12.xva\n2:Queue saving | B20261117110000012A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f12.xva"
+FAIL     tran 20261117110000013 count
+    c : ""
+    go: "1:Message Receive | B20261117110000013A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f13.xva\n2:Queue saving | B20261117110000013A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f13.xva"
+FAIL     tran 20261117110000014 count
+    c : ""
+    go: "1:Message Receive | B20261117110000014A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f14.xva\n2:Queue saving | B20261117110000014A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f14.xva"
+FAIL     tran 20261117110000015 count
+    c : ""
+    go: "1:Message Receive | B20261117110000015A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f15.xva\n2:Queue saving | B20261117110000015A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f15.xva"
+FAIL     tran 20261117110000016 count
+    c : ""
+    go: "1:Message Receive | B20261117110000016A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f16.xva\n2:Queue saving | B20261117110000016A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f16.xva"
+FAIL     tran 20261117110000017 count
+    c : ""
+    go: "1:Message Receive | B20261117110000017A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f17.xva\n2:Queue saving | B20261117110000017A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f17.xva"
+FAIL     tran 20261117110000018 count
+    c : ""
+    go: "1:Message Receive | B20261117110000018A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f18.xva\n2:Queue saving | B20261117110000018A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f18.xva"
+FAIL     tran 20261117110000019 count
+    c : ""
+    go: "1:Message Receive | B20261117110000019A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f19.xva\n2:Queue saving | B20261117110000019A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f19.xva"
+FAIL     tran 20261117110000020 count
+    c : ""
+    go: "1:Message Receive | B20261117110000020A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f20.xva\n2:Queue saving | B20261117110000020A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f20.xva"
+FAIL     tran 20261117110000021 count
+    c : ""
+    go: "1:Message Receive | B20261117110000021A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f21.xva\n2:Queue saving | B20261117110000021A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f21.xva"
+FAIL     tran 20261117110000022 count
+    c : ""
+    go: "1:Message Receive | B20261117110000022A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f22.xva\n2:Queue saving | B20261117110000022A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f22.xva"
+FAIL     tran 20261117110000023 count
+    c : ""
+    go: "1:Message Receive | B20261117110000023A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f23.xva\n2:Queue saving | B20261117110000023A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f23.xva"
+FAIL     tran 20261117110000024 count
+    c : ""
+    go: "1:Message Receive | B20261117110000024A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f24.xva\n2:Queue saving | B20261117110000024A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f24.xva"
+FAIL     tran 20261117110000025 count
+    c : ""
+    go: "1:Message Receive | B20261117110000025A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f25.xva\n2:Queue saving | B20261117110000025A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f25.xva"
+FAIL     tran 20261117110000026 count
+    c : ""
+    go: "1:Message Receive | B20261117110000026A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f26.xva\n2:Queue saving | B20261117110000026A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f26.xva"
+FAIL     tran 20261117110000027 count
+    c : ""
+    go: "1:Message Receive | B20261117110000027A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f27.xva\n2:Queue saving | B20261117110000027A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f27.xva"
+FAIL     tran 20261117110000028 count
+    c : ""
+    go: "1:Message Receive | B20261117110000028A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f28.xva\n2:Queue saving | B20261117110000028A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f28.xva"
+FAIL     tran 20261117110000029 count
+    c : ""
+    go: "1:Message Receive | B20261117110000029A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f29.xva\n2:Queue saving | B20261117110000029A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f29.xva"
+FAIL     tran 20261117110000030 count
+    c : ""
+    go: "1:Message Receive | B20261117110000030A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f30.xva\n2:Queue saving | B20261117110000030A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f30.xva"
+FAIL     tran 20261117110000031 count
+    c : ""
+    go: "1:Message Receive | B20261117110000031A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f31.xva\n2:Queue saving | B20261117110000031A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f31.xva"
+FAIL     tran 20261117110000032 count
+    c : ""
+    go: "1:Message Receive | B20261117110000032A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f32.xva\n2:Queue saving | B20261117110000032A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f32.xva"
+FAIL     tran 20261117110000033 count
+    c : ""
+    go: "1:Message Receive | B20261117110000033A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f33.xva\n2:Queue saving | B20261117110000033A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f33.xva"
+FAIL     tran 20261117110000034 count
+    c : ""
+    go: "1:Message Receive | B20261117110000034A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f34.xva\n2:Queue saving | B20261117110000034A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f34.xva"
+FAIL     tran 20261117110000035 count
+    c : ""
+    go: "1:Message Receive | B20261117110000035A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f35.xva\n2:Queue saving | B20261117110000035A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f35.xva"
+FAIL     tran 20261117110000036 count
+    c : ""
+    go: "1:Message Receive | B20261117110000036A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f36.xva\n2:Queue saving | B20261117110000036A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f36.xva"
+FAIL     tran 20261117110000037 count
+    c : ""
+    go: "1:Message Receive | B20261117110000037A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f37.xva\n2:Queue saving | B20261117110000037A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f37.xva"
+FAIL     tran 20261117110000038 count
+    c : ""
+    go: "1:Message Receive | B20261117110000038A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f38.xva\n2:Queue saving | B20261117110000038A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f38.xva"
+FAIL     tran 20261117110000039 count
+    c : ""
+    go: "1:Message Receive | B20261117110000039A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f39.xva\n2:Queue saving | B20261117110000039A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f39.xva"
+FAIL     tran 20261117110000040 count
+    c : ""
+    go: "1:Message Receive | B20261117110000040A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f40.xva\n2:Queue saving | B20261117110000040A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f40.xva"
+FAIL     tran 20261117110000041 count
+    c : ""
+    go: "1:Message Receive | B20261117110000041A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f41.xva\n2:Queue saving | B20261117110000041A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f41.xva"
+FAIL     tran 20261117110000042 count
+    c : ""
+    go: "1:Message Receive | B20261117110000042A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f42.xva\n2:Queue saving | B20261117110000042A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f42.xva"
+FAIL     tran 20261117110000043 count
+    c : ""
+    go: "1:Message Receive | B20261117110000043A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f43.xva\n2:Queue saving | B20261117110000043A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f43.xva"
+FAIL     tran 20261117110000044 count
+    c : ""
+    go: "1:Message Receive | B20261117110000044A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f44.xva\n2:Queue saving | B20261117110000044A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f44.xva"
+FAIL     tran 20261117110000045 count
+    c : ""
+    go: "1:Message Receive | B20261117110000045A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f45.xva\n2:Queue saving | B20261117110000045A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f45.xva"
+FAIL     tran 20261117110000046 count
+    c : ""
+    go: "1:Message Receive | B20261117110000046A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f46.xva\n2:Queue saving | B20261117110000046A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f46.xva"
+FAIL     tran 20261117110000047 count
+    c : ""
+    go: "1:Message Receive | B20261117110000047A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f47.xva\n2:Queue saving | B20261117110000047A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f47.xva"
+FAIL     tran 20261117110000048 count
+    c : ""
+    go: "1:Message Receive | B20261117110000048A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f48.xva\n2:Queue saving | B20261117110000048A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f48.xva"
+FAIL     tran 20261117110000049 count
+    c : ""
+    go: "1:Message Receive | B20261117110000049A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f49.xva\n2:Queue saving | B20261117110000049A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f49.xva"
+FAIL     tran 20261117110000050 count
+    c : ""
+    go: "1:Message Receive | B20261117110000050A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f50.xva\n2:Queue saving | B20261117110000050A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f50.xva"
+FAIL     tran 20261117110000051 count
+    c : ""
+    go: "1:Message Receive | B20261117110000051A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f51.xva\n2:Queue saving | B20261117110000051A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f51.xva"
+FAIL     tran 20261117110000052 count
+    c : ""
+    go: "1:Message Receive | B20261117110000052A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f52.xva\n2:Queue saving | B20261117110000052A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f52.xva"
+FAIL     tran 20261117110000053 count
+    c : ""
+    go: "1:Message Receive | B20261117110000053A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f53.xva\n2:Queue saving | B20261117110000053A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f53.xva"
+FAIL     tran 20261117110000054 count
+    c : ""
+    go: "1:Message Receive | B20261117110000054A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f54.xva\n2:Queue saving | B20261117110000054A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f54.xva"
+FAIL     tran 20261117110000055 count
+    c : ""
+    go: "1:Message Receive | B20261117110000055A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f55.xva\n2:Queue saving | B20261117110000055A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f55.xva"
+FAIL     tran 20261117110000056 count
+    c : ""
+    go: "1:Message Receive | B20261117110000056A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f56.xva\n2:Queue saving | B20261117110000056A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f56.xva"
+FAIL     tran 20261117110000057 count
+    c : ""
+    go: "1:Message Receive | B20261117110000057A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f57.xva\n2:Queue saving | B20261117110000057A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f57.xva"
+FAIL     tran 20261117110000058 count
+    c : ""
+    go: "1:Message Receive | B20261117110000058A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f58.xva\n2:Queue saving | B20261117110000058A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f58.xva"
+FAIL     tran 20261117110000059 count
+    c : ""
+    go: "1:Message Receive | B20261117110000059A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f59.xva\n2:Queue saving | B20261117110000059A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f59.xva"
+FAIL     tran 20261117110000060 count
+    c : ""
+    go: "1:Message Receive | B20261117110000060A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f60.xva\n2:Queue saving | B20261117110000060A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f60.xva"
+FAIL     tran 20261117110000061 count
+    c : ""
+    go: "1:Message Receive | B20261117110000061A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f61.xva\n2:Queue saving | B20261117110000061A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f61.xva"
+FAIL     tran 20261117110000062 count
+    c : ""
+    go: "1:Message Receive | B20261117110000062A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f62.xva\n2:Queue saving | B20261117110000062A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f62.xva"
+FAIL     tran 20261117110000063 count
+    c : ""
+    go: "1:Message Receive | B20261117110000063A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f63.xva\n2:Queue saving | B20261117110000063A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f63.xva"
+FAIL     tran 20261117110000064 count
+    c : ""
+    go: "1:Message Receive | B20261117110000064A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f64.xva\n2:Queue saving | B20261117110000064A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f64.xva"
+FAIL     tran 20261117110000065 count
+    c : ""
+    go: "1:Message Receive | B20261117110000065A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f65.xva\n2:Queue saving | B20261117110000065A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f65.xva"
+FAIL     tran 20261117110000066 count
+    c : ""
+    go: "1:Message Receive | B20261117110000066A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f66.xva\n2:Queue saving | B20261117110000066A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f66.xva"
+FAIL     tran 20261117110000067 count
+    c : ""
+    go: "1:Message Receive | B20261117110000067A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f67.xva\n2:Queue saving | B20261117110000067A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f67.xva"
+FAIL     tran 20261117110000068 count
+    c : ""
+    go: "1:Message Receive | B20261117110000068A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f68.xva\n2:Queue saving | B20261117110000068A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f68.xva"
+FAIL     tran 20261117110000069 count
+    c : ""
+    go: "1:Message Receive | B20261117110000069A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f69.xva\n2:Queue saving | B20261117110000069A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f69.xva"
+FAIL     tran 20261117110000070 count
+    c : ""
+    go: "1:Message Receive | B20261117110000070A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f70.xva\n2:Queue saving | B20261117110000070A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f70.xva"
+FAIL     tran 20261117110000071 count
+    c : ""
+    go: "1:Message Receive | B20261117110000071A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f71.xva\n2:Queue saving | B20261117110000071A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f71.xva"
+FAIL     tran 20261117110000072 count
+    c : ""
+    go: "1:Message Receive | B20261117110000072A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f72.xva\n2:Queue saving | B20261117110000072A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f72.xva"
+FAIL     tran 20261117110000073 count
+    c : ""
+    go: "1:Message Receive | B20261117110000073A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f73.xva\n2:Queue saving | B20261117110000073A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f73.xva"
+FAIL     tran 20261117110000074 count
+    c : ""
+    go: "1:Message Receive | B20261117110000074A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f74.xva\n2:Queue saving | B20261117110000074A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f74.xva"
+FAIL     tran 20261117110000075 count
+    c : ""
+    go: "1:Message Receive | B20261117110000075A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f75.xva\n2:Queue saving | B20261117110000075A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f75.xva"
+FAIL     tran 20261117110000076 count
+    c : ""
+    go: "1:Message Receive | B20261117110000076A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f76.xva\n2:Queue saving | B20261117110000076A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f76.xva"
+FAIL     tran 20261117110000077 count
+    c : ""
+    go: "1:Message Receive | B20261117110000077A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f77.xva\n2:Queue saving | B20261117110000077A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f77.xva"
+FAIL     tran 20261117110000078 count
+    c : ""
+    go: "1:Message Receive | B20261117110000078A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f78.xva\n2:Queue saving | B20261117110000078A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f78.xva"
+FAIL     tran 20261117110000079 count
+    c : ""
+    go: "1:Message Receive | B20261117110000079A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f79.xva\n2:Queue saving | B20261117110000079A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f79.xva"
+FAIL     tran 20261117110000080 count
+    c : ""
+    go: "1:Message Receive | B20261117110000080A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f80.xva\n2:Queue saving | B20261117110000080A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f80.xva"
+FAIL     tran 20261117110000081 count
+    c : ""
+    go: "1:Message Receive | B20261117110000081A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f81.xva\n2:Queue saving | B20261117110000081A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f81.xva"
+FAIL     tran 20261117110000082 count
+    c : ""
+    go: "1:Message Receive | B20261117110000082A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f82.xva\n2:Queue saving | B20261117110000082A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f82.xva"
+FAIL     tran 20261117110000083 count
+    c : ""
+    go: "1:Message Receive | B20261117110000083A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f83.xva\n2:Queue saving | B20261117110000083A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f83.xva"
+FAIL     tran 20261117110000084 count
+    c : ""
+    go: "1:Message Receive | B20261117110000084A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f84.xva\n2:Queue saving | B20261117110000084A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f84.xva"
+FAIL     tran 20261117110000085 count
+    c : ""
+    go: "1:Message Receive | B20261117110000085A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f85.xva\n2:Queue saving | B20261117110000085A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f85.xva"
+FAIL     tran 20261117110000086 count
+    c : ""
+    go: "1:Message Receive | B20261117110000086A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f86.xva\n2:Queue saving | B20261117110000086A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f86.xva"
+FAIL     tran 20261117110000087 count
+    c : ""
+    go: "1:Message Receive | B20261117110000087A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f87.xva\n2:Queue saving | B20261117110000087A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f87.xva"
+FAIL     tran 20261117110000088 count
+    c : ""
+    go: "1:Message Receive | B20261117110000088A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f88.xva\n2:Queue saving | B20261117110000088A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f88.xva"
+FAIL     tran 20261117110000089 count
+    c : ""
+    go: "1:Message Receive | B20261117110000089A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f89.xva\n2:Queue saving | B20261117110000089A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f89.xva"
+FAIL     tran 20261117110000090 count
+    c : ""
+    go: "1:Message Receive | B20261117110000090A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f90.xva\n2:Queue saving | B20261117110000090A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f90.xva"
+FAIL     tran 20261117110000091 count
+    c : ""
+    go: "1:Message Receive | B20261117110000091A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f91.xva\n2:Queue saving | B20261117110000091A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f91.xva"
+FAIL     tran 20261117110000092 count
+    c : ""
+    go: "1:Message Receive | B20261117110000092A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f92.xva\n2:Queue saving | B20261117110000092A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f92.xva"
+FAIL     tran 20261117110000093 count
+    c : ""
+    go: "1:Message Receive | B20261117110000093A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f93.xva\n2:Queue saving | B20261117110000093A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f93.xva"
+FAIL     tran 20261117110000094 count
+    c : ""
+    go: "1:Message Receive | B20261117110000094A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f94.xva\n2:Queue saving | B20261117110000094A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f94.xva"
+FAIL     tran 20261117110000095 count
+    c : ""
+    go: "1:Message Receive | B20261117110000095A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f95.xva\n2:Queue saving | B20261117110000095A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f95.xva"
+FAIL     tran 20261117110000096 count
+    c : ""
+    go: "1:Message Receive | B20261117110000096A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f96.xva\n2:Queue saving | B20261117110000096A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f96.xva"
+FAIL     tran 20261117110000097 count
+    c : ""
+    go: "1:Message Receive | B20261117110000097A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f97.xva\n2:Queue saving | B20261117110000097A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f97.xva"
+FAIL     tran 20261117110000098 count
+    c : ""
+    go: "1:Message Receive | B20261117110000098A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f98.xva\n2:Queue saving | B20261117110000098A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f98.xva"
+FAIL     tran 20261117110000099 count
+    c : ""
+    go: "1:Message Receive | B20261117110000099A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f99.xva\n2:Queue saving | B20261117110000099A0005BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc fast <ROOT>/f99.xva"
+FAIL     tran 20261117119999999 count
+    c : ""
+    go: "8:Queue full | B202611171199999998000120261117110000000"
+FAIL     tran 20261117900078416 count
+    c : ""
+    go: "1:Message Receive | B20261117900078416Q000120261117100000000\n2:Queue saving | B20261117900078416Q000120261117100000000\n3:Management Queue receive | B20261117900078416Q000120261117100000000\n0:QUERY RESULT send success | B2026111790007841630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc 17 <ROOT>/17.xva\n1:Message Receive | B20261117900078416Q000120261117100000000\n2:Queue saving | B20261117900078416Q000120261117100000000\n3:Management Queue receive | B20261117900078416Q000120261117100000000\n0:QUERY RESULT send success | B2026111790007841600001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-313700000000, backup filename=<ROOT>/17.xva"
+FAIL     tran 20261117900078418 count
+    c : ""
+    go: "1:Message Receive | B20261117900078418Q000120261117100000002\n2:Queue saving | B20261117900078418Q000120261117100000002\n3:Management Queue receive | B20261117900078418Q000120261117100000002\n0:QUERY RESULT send success | B2026111790007841800001[ERROR]VM UUID is not valid."
+FAIL     tran 20261117900078419 count
+    c : ""
+    go: "1:Message Receive | B20261117900078419Q000120261117100000003\n2:Queue saving | B20261117900078419Q000120261117100000003\n3:Management Queue receive | B20261117900078419Q000120261117100000003\n0:QUERY RESULT send success | B2026111790007841900001[ERROR]SR UUID is not valid."
+FAIL     tran 20261117900078421 count
+    c : ""
+    go: "1:Message Receive | B20261117900078421Q000120261117100000020\n2:Queue saving | B20261117900078421Q000120261117100000020\n3:Management Queue receive | B20261117900078421Q000120261117100000020\n0:QUERY RESULT send success | B2026111790007842130001PARTIAL 22acc256-b431-f9df-6c44-b1f71e7912fc 100000000000000 p <ROOT>/p.xva\n1:Message Receive | B20261117900078421Q000120261117100000020\n2:Queue saving | B20261117900078421Q000120261117100000020\n3:Management Queue receive | B20261117900078421Q000120261117100000020\n0:QUERY RESULT send success | B2026111790007842100001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-700000000000, backup filename=<ROOT>/p.xva"
+FAIL     tran 20261117900078422 count
+    c : ""
+    go: "1:Message Receive | B20261117900078422Q000120261117100000021\n2:Queue saving | B20261117900078422Q000120261117100000021\n3:Management Queue receive | B20261117900078422Q000120261117100000021\n0:QUERY RESULT send success | B2026111790007842230001RESTORE <ROOT>/17.xva true 9ad088e0-d03d-0269-0b7f-e40006aa5014\n1:Message Receive | B20261117900078422Q000120261117100000021\n2:Queue saving | B20261117900078422Q000120261117100000021\n3:Management Queue receive | B20261117900078422Q000120261117100000021\n0:QUERY RESULT send success | B2026111790007842200001cd5498f2-0342-db8e-749e-53a5e86744dd"
+FAIL     tran 20261117900078424 count
+    c : ""
+    go: "8:Queue full | B202611179000784248000120261117110000099"
+FAIL     tran 20261117908423962 count
+    c : ""
+    go: "1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396230001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396230001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396230001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396230001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396230001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s0.xva\n1:Message Receive | B20261117908423962Q000120261117100000005\n2:Queue saving | B20261117908423962Q000120261117100000005\n3:Management Queue receive | B20261117908423962Q000120261117100000005\n0:QUERY RESULT send success | B2026111790842396200001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s0.xva"
+FAIL     tran 20261117908423963 count
+    c : ""
+    go: "1:Message Receive | B20261117908423963Q000120261117100000006\n2:Queue saving | B20261117908423963Q000120261117100000006\n3:Management Queue receive | B20261117908423963Q000120261117100000006\n0:QUERY RESULT send success | B2026111790842396300001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s1.xva"
+FAIL     tran 20261117908423964 count
+    c : ""
+    go: "1:Message Receive | B20261117908423964Q000120261117100000007\n2:Queue saving | B20261117908423964Q000120261117100000007\n3:Management Queue receive | B20261117908423964Q000120261117100000007\n0:QUERY RESULT send success | B2026111790842396400001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s2.xva"
+FAIL     tran 20261117908423966 count
+    c : ""
+    go: "1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396630001BACKUP 22acc256-b431-f9df-6c44-b1f71e7912fc slow <ROOT>/s4.xva\n1:Message Receive | B20261117908423966Q000120261117100000009\n2:Queue saving | B20261117908423966Q000120261117100000009\n3:Management Queue receive | B20261117908423966Q000120261117100000009\n0:QUERY RESULT send success | B2026111790842396600001VM BACKUP Success : VM uuid=22acc256-b431-f9df-6c44-b1f71e7912fc, Snapshot VM uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000, backup filename=<ROOT>/s4.xva"
+FAIL     backup.log
+    c : ""
+head: /p/xe.log: No such file or directory
+    go: "SNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-313700000000 filename=<ROOT>/17.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-313700000000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-686f6c640000 filename=<ROOT>/f0.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-686f6c640000 filename=<ROOT>/f1.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-686f6c640000 filename=<ROOT>/f2.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-700000000000 filename=<ROOT>/p.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-700000000000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s0.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s1.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s2.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT VM property Change: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s4.xva / VM Snapshot property change, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/17.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-313700000000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/f0.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/f1.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/f2.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-686f6c640000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/p.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-700000000000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/s0.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/s1.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/s2.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nSNAPSHOT create: VM-UUID=22acc256-b431-f9df-6c44-b1f71e7912fc filename=<ROOT>/s4.xva / VM Snapshot success, uuid=676ffe7e-c3f4-8913-f0ed-736c6f770000\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-313700000000 filename=<ROOT>/17.xva / VM export succeeded.\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-700000000000 filename=<ROOT>/p.xva / VM export succeeded.\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s0.xva / VM export succeeded.\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s1.xva / VM export succeeded.\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s2.xva / VM export succeeded.\nVM BACKUP: VM-UUID=676ffe7e-c3f4-8913-f0ed-736c6f770000 filename=<ROOT>/s4.xva / VM export succeeded.\nVM IMPORT: SR-UUID=9ad088e0-d03d-0269-0b7f-e40006aa5014 filename=<ROOT>/17.xva / VM import success, vm-uuid=cd5498f2-0342-db8e-749e-53a5e86744dd"
+
+SUMMARY: PASS 0, EXPECTED 0, FAIL 164
+RESULT: FAIL
+
+== server.log (original, last 15) ==
+[2026-11-17 10:14:24]Warning. Config file[./node_info.cfg] [WEB server(IP)] parameter not found.
+[2026-11-17 10:14:24]Log File Max size is [100000000]
+[2026-11-17 10:14:24]Environment setup start.
+[2026-11-17 10:14:24]Shared memory creation success....
+[2026-11-17 10:14:24]HOSTNAME = [3d0eca7673e5]
+[2026-11-17 10:14:24]Environment setup end.
+[2026-11-17 10:14:24]Network listen starting : portno = [7101]
+[2026-11-17 10:14:24]server socket close-on-exec bit on
+[2026-11-17 10:14:24]getsockopt : SO_RCVBUF [99904]
+[2026-11-17 10:14:24]FATAL Error. Config file[./node_info.cfg] Daemon program value is invalid.
+[2026-11-17 10:14:24]STOP RUN.
+== server.log (converted, last 15) ==
+[2026-11-17 10:14:27]Send to REQUEST Manager internal error[20261117100000003]
+[2026-11-17 10:14:30]VM export file [/p/go/BACKUP/s0.xva] size [175] elapsed [0s]
+[2026-11-17 10:14:30]VM export file [/p/go/BACKUP/s2.xva] size [175] elapsed [0s]
+[2026-11-17 10:14:30]VM export file [/p/go/BACKUP/s1.xva] size [175] elapsed [0s]
+[2026-11-17 10:14:30]Send to REQUEST Manager internal error[20261117100000005]
+[2026-11-17 10:14:30]Send to REQUEST Manager internal error[20261117100000007]
+[2026-11-17 10:14:30]Send to REQUEST Manager internal error[20261117100000006]
+[2026-11-17 10:14:33]VM export file [/p/go/BACKUP/s4.xva] size [175] elapsed [0s]
+[2026-11-17 10:14:33]Send to REQUEST Manager internal error[20261117100000009]
+[2026-11-17 10:14:33]VM export file [/p/go/BACKUP/p.xva] size [175] elapsed [0s]
+[2026-11-17 10:14:33]Send to REQUEST Manager internal error[20261117100000020]
+[2026-11-17 10:14:33]Send to REQUEST Manager internal error[20261117100000021]
+[2026-11-17 10:14:33]Multi cancel summary : total [100], cancel [0], failed [100]
+[2026-11-17 10:14:34]Task queue is full [100].
+[2026-11-17 10:14:34]Task queue is full [100].
+== xe calls (original, first 25) ==
+== XAPI calls (converted, first 25) ==
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 17
+VM.get_record OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VM.set_is_a_template OpaqueRef:5aa50001-0000-0000-0000-000000000000 0
+VM.set_ha_always_run OpaqueRef:5aa50001-0000-0000-0000-000000000000 0
+task.create NCC-VBR VM Export vbr_agent export 676ffe7e-c3f4-8913-f0ed-313700000000
+HTTP export uuid=676ffe7e-c3f4-8913-f0ed-313700000000 use_compression=true
+task.destroy OpaqueRef:7a5c0002-0000-0000-0000-000000000000
+VM.get_VBDs OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VBD.get_record OpaqueRef:b0000000-0000-0000-0000-000000000000
+VBD.get_record OpaqueRef:b0000000-0000-0000-0000-000000000001
+VDI.get_is_a_snapshot OpaqueRef:d0000000-0000-0000-0000-000000000000
+VDI.destroy OpaqueRef:d0000000-0000-0000-0000-000000000000
+VDI.get_is_a_snapshot OpaqueRef:d0000000-0000-0000-0000-000000000001
+VDI.destroy OpaqueRef:d0000000-0000-0000-0000-000000000001
+VM.destroy OpaqueRef:5aa50001-0000-0000-0000-000000000000
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 slow
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.get_record OpaqueRef:5aa50003-0000-0000-0000-000000000000
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 slow
+VM.get_by_uuid 22acc256-b431-f9df-6c44-b1f71e7912fc
+VM.snapshot OpaqueRef:0000cccc-0000-0000-0000-000000000001 slow
+VM.get_record OpaqueRef:5aa50004-0000-0000-0000-000000000000
+VM.set_is_a_template OpaqueRef:5aa50003-0000-0000-0000-000000000000 0

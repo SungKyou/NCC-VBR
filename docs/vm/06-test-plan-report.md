@@ -1,6 +1,6 @@
 # vbr_vm 시험 계획과 결과
 
-기준일: 2026-11-19 / 대상: `go/cmd/vbr_vm` 4.000, `go/internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}` / 상태: **개발 검증 통과(V0·V1·데모 자동 모드), 실기 V2·V3 일부 통과(I01~I03, I05~I09, 2026-11-19 Windows PC), 남은 실기 I04·I10·L01 등(6장)**. 판정 표현은 [검증 절차](../00-process/02-verification-procedure.md) 5장.
+기준일: 2026-11-19 / 대상: `go/cmd/vbr_vm` 4.000, `go/internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}` / 상태: **개발 검증 통과(V0·V1·데모 자동 모드), 실기 V2·V3 일부 통과(I01~I03, I05~I10, 2026-11-19 Windows PC), 남은 실기 I04·L01 등(6장)**. 판정 표현은 [검증 절차](../00-process/02-verification-procedure.md) 5장.
 
 ## 1. 판정
 
@@ -99,7 +99,8 @@
 | U74 | `i18n/catalog_test.go` `TestCatalogParity`(키 44개 × 3개 언어, 형식 지시자) | 통과 |
 | U80~U82 | `TestHealthAndAuth`, `TestSubmitValidation`(평문 거부), `TestSecretsNotLeaked`(ENC 복호화로 성공, 평문·ENC 값이 기록·응답에 없음), 데모 U82(로그·기록) | 통과 |
 | I01~I03, I05~I09 | 데모 실기 모드(5.1) | 통과(I08 없는 SR 은 시험 스크립트 수정 뒤 사용자 판정, I09 의 `snapshot_left` 표시는 단위 시험으로 확인) |
-| I04, I10, L01 | 데모 실기 모드 | 미실행(6장) |
+| I10 | 가이드 6.3(메뉴 2 auto·none + dom0 `xe vm-start`) | 통과(5.1) |
+| I04, L01 | 데모 실기 모드 | 미실행(6장) |
 
 ## 5. 실행 기록
 
@@ -142,6 +143,8 @@ agent 원본 비교의 같음·의도한 차이 수가 실행마다 96/22, 97/21
 | I08 오류 | 없는 VM / 없는 SR / 없는 파일 / 틀린 암호 / 필수 값 없음 | `XAPI_ERROR UUID_INVALID \| VM`, (없는 SR 은 시험 스크립트가 없는 파일을 넣어 `FILE_IO_ERROR` → 스크립트 수정), `FILE_IO_ERROR`, `XAPI_AUTH_FAILED`, 400 `MISSING_FIELD` | R8 | 통과(사용자 판정) |
 | I09 강제 종료 | always, 3% 에서 `Stop-Process -Force` → 재기동 | `interrupted`/`INTERRUPTED`, detail `… (step exporting)`, 다시 실행 안 함. `.partial` 753,805,824바이트와 임시 스냅샷이 남음(R7 과 같은 모양). **결과에 남은 스냅샷 uuid 가 없음** → 결함 D-VM-03 수정(`snapshot_left`) | R7 | 통과(사용자 판정, 수정분은 단위 시험) |
 
+| I10 Halted 내보내기 중 VM 시작 | Halted, auto·none(스냅샷 없음), 진행 1% 에서 dom0 `xe vm-start` | `vm-start`가 응답 없이 기다리다가 내보내기가 끝난 뒤 시작됨. 백업 68초, 5,983,571,968바이트, succeeded, `snapshot_used=false` | (1단계는 항상 스냅샷이라 해당 없음) | 통과. Q-VM-01 판단 자료의 추정(VM 잠김)을 확인: 거부가 아니라 대기 |
+
 실기 중 관찰(결함 아님)
 
 | 관찰 | 내용 | 반영 |
@@ -159,7 +162,6 @@ agent 원본 비교의 같음·의도한 차이 수가 실행마다 96/22, 97/21
 | I06 R6 같은 조건 | 고치기 전 메뉴로 none·auto 만 했다 | 메뉴 6, gzip·always | 사용자 |
 | I08 없는 SR | 시험 스크립트 수정 뒤 다시 돌리지 않았다(사용자 판정 정상) | 메뉴 8 | 사용자 |
 | I09 `snapshot_left` 표시 | 수정분(D-VM-03)을 실기로 다시 보지 않았다(단위 시험 통과, 사용자 판정 정상) | I09 다시 | 사용자 |
-| I10 Halted 내보내기 중 VM 시작 | 미실행 | 가이드 6.3 | 사용자 |
 | L01 (V4) | 운영 크기 VM | 운영 VM 하나로 gzip·zstd 백업 시간 측정 | 사용자 |
 | U60 `send_progress` | 진행 중 결과 보고는 middle 이 정해지지 않아 시험하지 않았다. 코드는 같은 outbox 경로를 쓴다 | middle 연동 때 | 수행자 |
 | Linux 실행 파일 기동 | 단위 시험은 Linux 에서 통과했지만 `vbr_vm` 실행 파일을 Linux 에서 띄워 보지 않았다 | Linux 서버 단계 | 사용자·수행자 |

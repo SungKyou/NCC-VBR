@@ -32,6 +32,7 @@
 | CP-VM-10 | `backend/internal/i18n/i18n.go` | `go/internal/i18n/i18n.go` | 파일 전체(`watch.go`는 복사하지 않음) | 복사(머리 주석만) |
 | CP-VM-11 | `stdlogger/logger/*.go` 9개 | `go/internal/stdlogger/` | 시험 파일 포함 전체 | 복사(머리 주석, gofmt 정렬만) |
 | CP-VM-12 | `backend/pkg/xapi/mixins/vm.go` `SetNameLabelByRef`, `SetAffinity` | `go/internal/xapi/restore_ops.go` | 두 함수 | 복사·수정 완료. 나머지(`SR.get_by_uuid`, `task.cancel`, VBD·VDI, allowed_operations)는 1단계에 이미 있었다 |
+| CP-VM-14 | `docs/NCC-XEN_JobType_표준명세서_v3.36.docx` | `tools/spec/template/` | Word 양식 파트(styles, settings, fontTable, numbering, theme, header1, footer1, footnotes, endnotes, webSettings, rels, content types). 본문 서식 값(표지·표·코드 상자 색·글꼴·여백)은 `tools/spec/build_vm_spec.py`가 같은 값으로 쓴다 | 복사·수정 완료: 주석 파트 제거, 머리말·꼬리말 문구와 작성자 정보를 자리 표시로 바꿈 |
 | CP-VM-13 | `backend/demo.ps1`, `demo_modules/demo_common.ps1`, `demo_vm_backup.ps1` | `go/test/vm/demo.ps1`, `demo_modules/` | 진입점·모듈 구조, `Get-Input`(입력 버퍼 비우기), `Confirm-Run`, `Write-MenuHeader` | 구조를 따라 새로 씀 |
 
 ## 3. 바뀐 부분

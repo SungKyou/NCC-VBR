@@ -41,9 +41,13 @@ function Initialize-Session {
     $plain = Read-Secret "XAPI 암호($script:XAPI_USER, 화면에 보이지 않음)"
     $script:CRYPTO_ON = [bool]$h.Body.cryptoEnabled
     if ($script:CRYPTO_ON) {
-        # 기본값: 환경 변수 VBR_VM_KEYRING, 없으면 현재 폴더의 key.yaml(가이드 6.2 는 C:\temp\vbrvm 에서 실행)
+        # 기본값: 환경 변수 VBR_VM_KEYRING → 현재 폴더의 key.yaml → 저장소 최상위 key.yaml(가이드 6.2, ncc-xen 과 같은 위치)
         if (-not $script:KEYRING) {
-            $script:KEYRING = $(if ($env:VBR_VM_KEYRING) { $env:VBR_VM_KEYRING } elseif (Test-Path (Join-Path $PWD 'key.yaml')) { (Join-Path $PWD 'key.yaml') } else { '' })
+            $repoKey = Join-Path $PSScriptRoot '..\..\..\key.yaml'
+            $script:KEYRING = $(if ($env:VBR_VM_KEYRING) { $env:VBR_VM_KEYRING }
+                elseif (Test-Path (Join-Path $PWD 'key.yaml')) { (Join-Path $PWD 'key.yaml') }
+                elseif (Test-Path $repoKey) { (Resolve-Path $repoKey).Path }
+                else { '' })
         }
         while ($true) {
             $script:KEYRING = Get-Input 'key.yaml 경로(vbr_vm 과 같은 키링)' $script:KEYRING

@@ -618,17 +618,21 @@ cd c:\dev\ncc-vbr-go\go
 
 ### 6.2 실기 모드 (실제 XenServer 풀)
 
-1. 설정과 키링을 만든다(PC 에서 시험할 때).
+설정 `sysconfig.yaml`과 키링 `key.yaml`은 ncc-xen 처럼 저장소 최상위(`c:\dev\ncc-vbr-go\`)에 둔다. 두 파일은 `.gitignore`로 커밋하지 않고, 양식은 `sysconfig.example.yaml`이다. 백업 파일·작업 기록·로그는 크기가 커서 `C:\temp\vbrvm` 아래에 둔다(2026-11-19 사용자 지시로 설정·키링만 `C:\temp\vbrvm`에서 옮김).
+
+1. 처음 한 번: 키링과 토큰을 만든다. 이미 `key.yaml`과 `sysconfig.yaml`이 있으면 건너뛰고, 토큰 평문 `$tok`만 알고 있으면 된다(잊었으면 이 절차로 토큰을 새로 만든다).
 ```powershell
-$B = "c:\dev\ncc-vbr-go\go\bin\windows-amd64"; $V = "C:\temp\vbrvm"
-New-Item -ItemType Directory -Force "$V\backup" | Out-Null; cd $V
-& "$B\vbr_secret.exe" keygen "$V\key.yaml"
+cd c:\dev\ncc-vbr-go
+$B = ".\go\bin\windows-amd64"
+New-Item -ItemType Directory -Force C:\temp\vbrvm\backup | Out-Null
+& "$B\vbr_secret.exe" keygen key.yaml
+Copy-Item sysconfig.example.yaml sysconfig.yaml
 $tok = [guid]::NewGuid().ToString('N')
-$encTok = $tok | & "$B\vbr_secret.exe" encrypt "$V\key.yaml" sysconfig.api_auth.VBR_VM_API_TOKEN
+$tok | & "$B\vbr_secret.exe" encrypt key.yaml sysconfig.api_auth.VBR_VM_API_TOKEN   # 나온 ENC[...] 를 sysconfig.yaml 의 VBR_VM_API_TOKEN 에
 ```
-2. `C:\temp\vbrvm\sysconfig.yaml`을 [vm/05](../vm/05-interface-spec.md) 10장 예로 만든다. 바꿀 값: `server.port: 8090`, `api_auth.VBR_VM_API_TOKEN: "<$encTok 값>"`, `crypto.keyring_file: C:/temp/vbrvm/key.yaml`, `backup.base_path: C:/temp/vbrvm/backup`, `task_store.dir: C:/temp/vbrvm/tasks`, `logging.file_name: C:/temp/vbrvm/vbr_vm.log`.
-3. PowerShell 창을 하나 더 열어 서비스를 띄운다: `cd C:\temp\vbrvm; & "c:\dev\ncc-vbr-go\go\bin\windows-amd64\vbr_vm.exe" -config C:\temp\vbrvm\sysconfig.yaml`
-4. 처음 창에서 `$env:VBR_VM_API_TOKEN = $tok` 뒤 `c:\dev\ncc-vbr-go\go\test\vm\demo.ps1`. 처음 메뉴를 고르면 서비스 주소, 풀 마스터, XAPI 암호(화면에 안 보임), `key.yaml` 경로를 묻는다(`C:\temp\vbrvm`에서 실행하면 그 폴더의 `key.yaml`이 기본값, 다른 곳이면 `$env:VBR_VM_KEYRING`). 암호는 스크립트가 ENC 값으로 바꿔 보낸다. 키링이 없거나 암호화에 실패하면 메뉴를 진행하지 않고 처음부터 다시 묻는다.
+2. `sysconfig.yaml`에서 확인할 것: `crypto.keyring_file: C:/dev/ncc-vbr-go/key.yaml`, `backup.base_path`·`task_store.dir`·`logging.file_name`은 `C:/temp/vbrvm/…`. 항목 설명은 [vm/05](../vm/05-interface-spec.md) 10장.
+3. 창 2(서비스): `cd c:\dev\ncc-vbr-go; & .\go\bin\windows-amd64\vbr_vm.exe -config C:\dev\ncc-vbr-go\sysconfig.yaml`
+4. 창 1(데모): `$env:VBR_VM_API_TOKEN = $tok` 뒤 `c:\dev\ncc-vbr-go\go\test\vm\demo.ps1`. 처음 메뉴를 고르면 서비스 주소, 풀 마스터, XAPI 암호(화면에 안 보임), `key.yaml` 경로를 묻는다. 키링 기본값은 `$env:VBR_VM_KEYRING` → 현재 폴더의 `key.yaml` → 저장소 최상위 `key.yaml` 순이다. 암호는 스크립트가 ENC 값으로 바꿔 보낸다. 키링이 없거나 암호화에 실패하면 메뉴를 진행하지 않고 처음부터 다시 묻는다.
 5. 메뉴 2(전체 백업) → 3(디스크 선택) → 4(복구) → 5(검증) → 6(동시) → 7(취소) → 8(오류) → 9(정리 안내) 순으로 한다. 각 메뉴가 PASS/FAIL 과 dom0 확인 명령을 출력한다. 1단계 R0~R9 결과(agent/06 5.3)와 비교한다.
 
 주의(1단계와 같음): 시험 VM `42097417-…`과 기존 스냅샷 `926b6f3f-…`은 지우지 않는다. 복구한 VM 은 켜지 않는다. 9번은 지울 명령을 보여 주기만 하고 실행하지 않는다.

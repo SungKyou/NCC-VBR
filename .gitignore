@@ -6,3 +6,8 @@ go/bin/
 *.state
 *.xva
 *.partial
+
+# vbr_vm 개발 환경 설정·키링(ncc-xen 과 같이 저장소 최상위에 두고 커밋하지 않는다).
+# 양식은 sysconfig.example.yaml. 키링은 vbr_secret keygen 으로 만든다.
+/sysconfig.yaml
+/key.yaml

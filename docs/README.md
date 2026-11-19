@@ -101,9 +101,10 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 | 03 | [목표 설계서](vm/03-tobe-design.md) | 구현 반영 |
 | 04 | [변경·결정 대장](vm/04-change-register.md): 변경 C-VM-01~20, 결정 DEC-VM-19~33, Q-VM-01·02 결정, Q-VM-03 대기, 실기 결함 D-VM-01~03 | 구현 반영 |
 | 05 | [인터페이스 명세](vm/05-interface-spec.md): API, 오류 코드, `sysconfig.yaml` | 구현 반영 |
-| 06 | [시험 계획과 결과](vm/06-test-plan-report.md): 개발 검증 통과(데모 자동 16/16, govulncheck 0), 2026-11-19 실기 I01~I03·I05~I09 통과, 실기 결함 3건 수정 뒤 Windows 77/4/0·Linux 76/1/0 | 남은 실기 I04·I10·L01 등 |
+| 06 | [시험 계획과 결과](vm/06-test-plan-report.md): 개발 검증 통과(데모 자동 16/16, govulncheck 0), 2026-11-19 실기 I01~I03·I05~I10 통과, 실기 결함 3건 수정 뒤 Windows 77/4/0·Linux 76/1/0 | 남은 실기 I04·L01 등 |
 | 07 | [설치와 운영 안내](vm/07-operations.md) | 작성(실기 전) |
 | 08 | [복사 코드 대장](vm/08-copied-code-register.md) | 복사·수정 완료 |
+| 명세서 | [NCC-VBR_VM_JobType_표준명세서_v1.00.docx](vm/NCC-VBR_VM_JobType_표준명세서_v1.00.docx): NCC-Xen Job Type 표준 명세서와 같은 서식의 개발팀 전달용 명세서. 원문은 `tools/spec/vm_spec_source.md`, 만들기는 [tools/spec/README.md](../tools/spec/README.md) | v1.00 (2026-11-19) |
 
 ### 증거 (`evidence/`)
 
@@ -135,8 +136,10 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 ```
 c:\dev\ncc-vbr-go
 ├─ agent\, cifs\, remove\     원본 C 소스. 고치지 않는다
-├─ node_info.cfg              개발 환경 설정 파일
+├─ node_info.cfg              개발 환경 설정 파일(cifs·remove·agent)
+├─ sysconfig.example.yaml     vbr_vm 개발 환경 설정 양식. 실제 sysconfig.yaml·key.yaml 은 여기 두고 커밋하지 않는다(.gitignore)
 ├─ docs\                      이 문서들(history\ 는 통합 전 Codex 세션 기록)
+├─ tools\spec\                vbr_vm 표준 명세서(docx) 원문·생성기·양식
 └─ go\                        전환본
    ├─ cmd\vbr_cifs, vbr_remove, vbr_agent, vbr_vm, vbr_secret   실행 파일의 시작점(vbr_vm 은 2단계)
    ├─ internal\                       업무 패키지(cifs, remove, agent, vm)와 공통 패키지(xapi, secret, stdlogger, i18n 등은 ncc-xen 에서 복사)

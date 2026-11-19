@@ -1,0 +1,55 @@
+# vbr_vm 개발 환경 설정 양식(Windows PC 시험용).
+# sysconfig.yaml 로 복사해 고쳐 쓴다. sysconfig.yaml 과 key.yaml 은 커밋하지 않는다(.gitignore).
+# 항목 설명: docs/vm/05-interface-spec.md 10장. 운영(Linux) 설치: docs/vm/07-operations.md 3장.
+#
+# 처음 한 번(저장소 최상위에서):
+#   go\bin\windows-amd64\vbr_secret.exe keygen key.yaml
+#   $tok = [guid]::NewGuid().ToString('N')
+#   $tok | go\bin\windows-amd64\vbr_secret.exe encrypt key.yaml sysconfig.api_auth.VBR_VM_API_TOKEN
+#   → 나온 ENC[...] 를 아래 VBR_VM_API_TOKEN 에 넣고, 데모 창에서 $env:VBR_VM_API_TOKEN = $tok
+# 기동:
+#   go\bin\windows-amd64\vbr_vm.exe -config C:\dev\ncc-vbr-go\sysconfig.yaml
+#
+# 백업 파일·작업 기록·로그는 크기가 커서 저장소 밖(C:/temp/vbrvm)에 둔다.
+server:
+  port: 8090
+api_auth:
+  enabled: true
+  VBR_VM_API_TOKEN: ""
+  GATEWAY_INTERNAL_TOKEN: ""
+crypto:
+  enabled: true
+  keyring_file: C:/dev/ncc-vbr-go/key.yaml
+locale: ko
+logging:
+  # level 을 적으면 아래 키를 모두 적어야 기동한다(stdlogger 원본 규칙, 04 DEC-VM-30)
+  level: info
+  format: custom
+  output: both
+  file_name: C:/temp/vbrvm/vbr_vm.log
+  max_size_mb: 50
+  max_backups: 5
+  max_age_days: 28
+  compress: true
+  local_time: true
+  time_format: "2006-01-02 15:04:05.000"
+  time_zone: "Asia/Seoul"
+  log_pattern: "[{time}][{level}] {msg} {attrs}"
+  service_name: vbr_vm
+backup:
+  base_path: C:/temp/vbrvm/backup
+  sandbox_mode: false
+  allowed_absolute_paths: []
+  timeout_hours: 4
+  verify_after_export: false
+concurrency:
+  max_jobs: 3
+  max_queue: 100
+xapi:
+  verify_ssl: false
+  progress_interval_sec: 5
+task_store:
+  dir: C:/temp/vbrvm/tasks
+  retention_days: 30
+result_report:
+  url: ""

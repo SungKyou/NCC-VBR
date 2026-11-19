@@ -87,8 +87,8 @@ export의 스냅샷 정책(기본 `auto`, 2026-11-19 사용자 결정 Q-VM-01)
 | F-VM-02 부분 백업 | `agent/xen.go partialRemove` | `vm/export.go` | 옮김 | 입력을 디스크 번호 목록으로 |
 | F-VM-03 복구 | `agent/transfer.go importFile` | `vm/restore.go`, `xva` | 구조 변경 | allowed_operations 재계산, zstd 해제 추가 |
 | F-VM-04 결과 조회 | `agent/tranlog.go` | `jobstore`, API-VM-02·03 | 대체 | |
-| F-VM-05·06 취소 | `agent.go cancel` | `vm/runner.go`, API-VM-04·05 | 대체 | 처리 중 취소 추가 |
-| F-VM-07 대기열·작업자 | `agent/registry.go` | `vm/runner.go` | 구조 변경 | 우선순위 삭제 |
+| F-VM-05·06 취소 | `agent.go cancel` | `vm/service.go`, API-VM-04·05 | 대체 | 처리 중 취소 추가 |
+| F-VM-07 대기열·작업자 | `agent/registry.go` | `vm/service.go`, `vm/run.go` | 구조 변경 | 우선순위 삭제 |
 | F-VM-08 재기동 복구 | `agent/registry.go Restore` | `jobstore` 재기동 처리 | 대체 | 전부 `interrupted` |
 | F-VM-09 접속 허용 주소 | `agent` Allow Client | `apiauth` | 대체 | |
 | F-VM-10 경로 제한 | `agent/config.go insideRoots` | `xva` 경로 규칙(CP-VM-09) | 대체 | sandbox_mode |

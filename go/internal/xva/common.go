@@ -167,6 +167,31 @@ func waitTask(ctx context.Context, vm *xapi.VMClient, taskRef string, interval t
 	}
 }
 
+// settleTimeout 은 취소한 XAPI task 가 끝나기를 기다리는 최대 시간이다.
+var settleTimeout = 60 * time.Second
+
+// settleIfCanceled 는 작업이 취소됐으면 XAPI task 가 pending·cancelling 을 벗어날 때까지 기다린다.
+// 기다리지 않으면 XenServer 가 아직 스냅샷 디스크를 잡고 있어 뒤이은 정리가 VDI_IN_USE 로
+// 실패한다(2026-11-19 실기 I07). 취소와 무관한 새 ctx 로 본다.
+func settleIfCanceled(ctx context.Context, vm *xapi.VMClient, taskRef string) {
+	if ctx.Err() == nil {
+		return
+	}
+	sctx, cancel := context.WithTimeout(context.Background(), settleTimeout)
+	defer cancel()
+	for {
+		st, err := vm.TaskGetStatus(sctx, taskRef)
+		if err != nil || (st != "pending" && st != "cancelling") {
+			return
+		}
+		select {
+		case <-sctx.Done():
+			return
+		case <-time.After(time.Second):
+		}
+	}
+}
+
 func destroyTask(vm *xapi.VMClient, taskRef string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()

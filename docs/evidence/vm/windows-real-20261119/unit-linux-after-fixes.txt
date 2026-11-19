@@ -1,0 +1,109 @@
+== 2026-11-19T17:03:57 WSL 6.6.87.2-microsoft-standard-WSL2
+== ./cmd_vbr_secret.test
+--- PASS: TestReadPassword (0.00s)
+PASS
+== ./internal_agent.test
+--- PASS: TestMessageFrame (0.00s)
+--- PASS: TestTranLogFormatAndQuery (0.00s)
+--- PASS: TestAsyncBackupFlow (0.21s)
+--- PASS: TestAsyncResultOnOpenConnection (0.05s)
+--- PASS: TestQueryProcessingAndNotFound (0.00s)
+--- PASS: TestCancel (0.00s)
+--- PASS: TestRejects (0.04s)
+--- PASS: TestArgumentErrors (0.01s)
+--- PASS: TestBackupFailureResult (0.00s)
+--- PASS: TestPriorityOrder (0.00s)
+--- PASS: TestRestartRecovery (0.00s)
+--- PASS: TestAllowClient (0.00s)
+--- PASS: TestShortMessage (6.00s)
+--- PASS: TestXenBackup (0.01s)
+--- PASS: TestXenPartialBackup (0.01s)
+--- PASS: TestXenExportFailure (0.00s)
+--- PASS: TestXenSnapshotFailure (0.00s)
+--- PASS: TestXenRestore (0.00s)
+PASS
+== ./internal_cifs.test
+--- PASS: TestFirstRunCopiesEverything (0.00s)
+--- PASS: TestSecondRunCopiesNothing (0.00s)
+--- PASS: TestChangedFileKeepsOldVersion (0.00s)
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.00s)
+--- PASS: TestUntouchedSourceIsNotCompared (0.00s)
+--- PASS: TestFullScanDayComparesFilesOlderThanHistory (0.01s)
+--- PASS: TestExclusionAndSecondLevel (0.00s)
+--- PASS: TestDisabledFolderRenamesTarget (0.00s)
+--- PASS: TestDisabledFolderKeepsExistingData (0.00s)
+--- PASS: TestDisabledFolderPreservesActiveSourceBackup (0.00s)
+--- PASS: TestErrorKeepsHistoryUnchanged (0.00s)
+--- PASS: TestMissingTargetRootStops (0.00s)
+--- PASS: TestSymlinkIsSkipped (0.00s)
+--- PASS: TestHistoryFileName (0.00s)
+PASS
+== ./internal_config.test
+--- PASS: TestSectionAndKeyRules (0.00s)
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+--- SKIP: TestRealDevelopmentFile (0.00s)
+PASS
+== ./internal_i18n.test
+--- PASS: TestCatalogParity (0.00s)
+PASS
+== ./internal_jobstore.test
+--- PASS: TestReopenMarksInterrupted (0.01s)
+--- PASS: TestCompactAndRetention (0.01s)
+--- PASS: TestOutbox (0.00s)
+PASS
+== ./internal_logx.test
+--- PASS: TestServerLogFormat (0.00s)
+--- PASS: TestTransactionLogFormat (0.00s)
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+PASS
+== ./internal_portal.test
+--- PASS: TestEncodeLayout (0.00s)
+--- PASS: TestSendAndReceive (0.00s)
+PASS
+== ./internal_redact.test
+--- PASS: TestValueMasksNestedSecrets (0.00s)
+PASS
+== ./internal_remove.test
+--- PASS: TestIsExpiredVersion (0.00s)
+--- PASS: TestParseDays (0.00s)
+--- PASS: TestRunRejectsOverflowingDaysBeforeTraversing (0.00s)
+--- PASS: TestShellQuote (0.00s)
+--- PASS: TestLogModeDeletesNothing (0.00s)
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.00s)
+--- PASS: TestMissingDirectoryFails (0.00s)
+PASS
+== ./internal_secret.test
+--- PASS: TestRoundTrip (0.00s)
+--- PASS: TestUnknownField (0.00s)
+--- PASS: TestFileMode (0.00s)
+PASS
+== ./internal_stdlogger.test
+--- PASS: TestSuffixedFileName (0.00s)
+PASS
+== ./internal_vm_api.test
+--- PASS: TestHealthAndAuth (0.01s)
+--- PASS: TestSubmitValidation (0.01s)
+--- PASS: TestExportHaltedAuto (0.06s)
+--- PASS: TestExportRunningWithDisks (0.06s)
+--- PASS: TestExportDiskNotFound (0.06s)
+--- PASS: TestExportFileExists (0.11s)
+--- PASS: TestExportZstdVerifyAfter (0.06s)
+--- PASS: TestXAPIErrors (0.21s)
+--- PASS: TestVerify (0.11s)
+--- PASS: TestRestore (0.11s)
+--- PASS: TestRestoreZstd (0.06s)
+--- PASS: TestDuplicateConcurrent (0.03s)
+--- PASS: TestCancel (0.06s)
+--- PASS: TestCancelSnapshotInUse (2.03s)
+--- PASS: TestWorkersAndCancelQueued (0.06s)
+--- PASS: TestShutdown (0.01s)
+--- PASS: TestSecretsNotLeaked (0.06s)
+PASS
+== ./internal_vmconfig.test
+--- PASS: TestLoadAndReload (0.00s)
+--- PASS: TestAuthAndCryptoRules (0.00s)
+PASS
+== ./internal_xva.test
+--- PASS: TestPathRules (0.00s)
+PASS
+test exit=0

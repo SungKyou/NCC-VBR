@@ -1,6 +1,5 @@
-# ncc-xen @043c6d5 원본(docs/evidence/vm/copied-original) 대비 vbr_vm 복사 코드의 차이(줄 끝 CR 무시). 생성 2026-11-19T13:07:09
+# ncc-xen @043c6d5 원본(docs/evidence/vm/copied-original) 대비 vbr_vm 복사 코드의 차이(줄 끝 CR 무시). 생성 2026-11-19T17:04:28 (실기 결함 수정 반영)
 # 항목별 설명은 docs/vm/08-copied-code-register.md 3장
-
 
 ######## CP-VM-02  backend/internal/apiauth/apiauth.go  ->  go/internal/apiauth/apiauth.go
  .../backend => go}/internal/apiauth/apiauth.go     | 55 ++++++++++++----------
@@ -208,10 +207,10 @@ index cd75347..0d592fa 100644
  .../internal/xva/export.go                         | 481 +++++----------------
  1 file changed, 105 insertions(+), 376 deletions(-)
 diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_export.go b/go/internal/xva/export.go
-index 3648402..cd0799c 100644
+index 3648402..c35b459 100644
 --- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_export.go
 +++ b/go/internal/xva/export.go
-@@ -1,432 +1,161 @@
+@@ -1,432 +1,162 @@
 -package job
 +// copied from ncc-xen backend/internal/job/vm_backup_export.go runExport 203~375행 @043c6d5 (CP-VM-05), 2026-11-19.
 +// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-05):
@@ -470,6 +469,7 @@ index 3648402..cd0799c 100644
 +	defer destroyTask(p.VM, taskRef)
 +	stopWatch := watchCancel(ctx, p.VM, taskRef)
 +	defer stopWatch()
++	defer settleIfCanceled(ctx, p.VM, taskRef) // stopWatch·destroyTask 보다 먼저 돈다
  
 -	// ── export URL 구성 ───────────────────────────────────────
  	q := url.Values{}
@@ -754,10 +754,10 @@ index 3648402..cd0799c 100644
  .../internal/xva/import.go                         | 449 +++------------------
  1 file changed, 60 insertions(+), 389 deletions(-)
 diff --git a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_restore.go b/go/internal/xva/import.go
-index 0527399..91996a0 100644
+index 0527399..7e9711f 100644
 --- a/docs/evidence/vm/copied-original/backend/internal/job/vm_backup_restore.go
 +++ b/go/internal/xva/import.go
-@@ -1,435 +1,106 @@
+@@ -1,435 +1,107 @@
 -package job
 +// copied from ncc-xen backend/internal/job/vm_backup_restore.go runImport 158~320행 @043c6d5 (CP-VM-06), 2026-11-19.
 +// 바뀐 부분(docs/vm/08-copied-code-register.md CP-VM-06):
@@ -969,6 +969,7 @@ index 0527399..91996a0 100644
 +	defer destroyTask(p.VM, taskRef)
 +	stopWatch := watchCancel(ctx, p.VM, taskRef)
 +	defer stopWatch()
++	defer settleIfCanceled(ctx, p.VM, taskRef) // stopWatch·destroyTask 보다 먼저 돈다
  
 -	// ── import URL 구성 ────────────────────────────────────────
 -	// ⚠ sr_id/restore/force 파라미터명은 실기검증 전 — 확인 후 조정 가능
@@ -2051,6 +2052,7 @@ index a696ce6..15b206b 100644
  package logger
  
  import (
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/build.go b/go/internal/stdlogger/build.go
 index 9b55d06..56df34e 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/build.go
@@ -2060,6 +2062,7 @@ index 9b55d06..56df34e 100644
  package logger
  
  import (
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/config.go b/go/internal/stdlogger/config.go
 index 2a9eb9a..582cb04 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/config.go
@@ -2082,6 +2085,7 @@ index 2a9eb9a..582cb04 100644
  	FileName   string `mapstructure:"file_name"`
  	MaxSizeMB  int    `mapstructure:"max_size_mb"`
  	MaxBackups int    `mapstructure:"max_backups"`
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/handler_custom.go b/go/internal/stdlogger/handler_custom.go
 index 4ad6f84..8a428d1 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/handler_custom.go
@@ -2114,6 +2118,7 @@ index 4ad6f84..8a428d1 100644
  }
  
  // NewCustomHandler는 패턴 기반 핸들러를 생성합니다.
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/init.go b/go/internal/stdlogger/init.go
 index e172535..768abbe 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/init.go
@@ -2123,6 +2128,7 @@ index e172535..768abbe 100644
  package logger
  
  import (
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/init_test.go b/go/internal/stdlogger/init_test.go
 index 34d7ba3..3b979d9 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/init_test.go
@@ -2132,6 +2138,7 @@ index 34d7ba3..3b979d9 100644
  package logger
  
  import "testing"
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/manager.go b/go/internal/stdlogger/manager.go
 index 431df0d..d46123d 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/manager.go
@@ -2141,6 +2148,7 @@ index 431df0d..d46123d 100644
  package logger
  
  import (
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/slog_default.go b/go/internal/stdlogger/slog_default.go
 index d2db63c..f1822f3 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/slog_default.go
@@ -2150,6 +2158,7 @@ index d2db63c..f1822f3 100644
  package logger
  
  import "log/slog"
+
 diff --git a/docs/evidence/vm/copied-original/stdlogger/logger/watch.go b/go/internal/stdlogger/watch.go
 index fe2b122..b9c204e 100644
 --- a/docs/evidence/vm/copied-original/stdlogger/logger/watch.go

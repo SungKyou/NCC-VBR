@@ -7,6 +7,16 @@
 # ═══════════════════════════════════════════════════════════════════
 
 $script:Created = [System.Collections.Generic.List[string]]::new()   # 이 데모가 만든 VM uuid
+$script:LastFile = ''   # 마지막으로 성공한 백업 파일(서버 기준 경로). 복구·검증의 기본값
+
+function Get-FilePathInput {
+    # 복구·검증 파일. 기본값은 이 데모에서 마지막으로 만든 백업 파일. 상대 경로는 서버 backup.base_path 아래
+    while ($true) {
+        $f = Get-Input 'file_path(서버 기준. 상대 경로는 backup.base_path 아래, 예 test1.xva)' $script:LastFile
+        if ($f) { return $f }
+        Write-Host '  ✗ file_path 를 넣으세요.' -ForegroundColor Red
+    }
+}
 
 function Show-Dom0 { param([string[]]$Lines) Write-Host '  [dom0 에서 확인]' -ForegroundColor Yellow; $Lines | ForEach-Object { Write-Host "    $_" -ForegroundColor Yellow } }
 
@@ -34,6 +44,7 @@ function Invoke-ExportMenu {
     if (-not (Send-VbrJob (New-VbrJob -TaskId $id -Action export -Options $o -TargetUUID $vm))) { return }
     $b = Wait-VbrJob $id
     Show-VbrResult $b
+    if ($b.status -eq 'succeeded' -and $b.payload.options.file_path) { $script:LastFile = $b.payload.options.file_path }
     Test-Step "export $id" ($b.status -eq 'succeeded') "$($b.payload.options.file_path)"
     Show-Dom0 @("xe snapshot-list snapshot-of=$vm params=uuid,name-label   # 임시 스냅샷이 남지 않아야 한다",
         'xe task-list params=uuid,name-label,status')
@@ -41,7 +52,7 @@ function Invoke-ExportMenu {
 
 function Invoke-RestoreMenu {
     Write-MenuHeader '4. 복구 (I03, I04)'
-    $o = [ordered]@{ file_path = Get-Input 'file_path(서버 기준)'; sr_uuid = Get-Input 'SR uuid' $script:SR_UUID }
+    $o = [ordered]@{ file_path = Get-FilePathInput; sr_uuid = Get-Input 'SR uuid' $script:SR_UUID }
     if ((Get-Input 'MAC·uuid 보존(restore_original_uuid) y/n — 원본 VM 이 같은 풀에 있으면 거부됨' 'n') -eq 'y') { $o.restore_original_uuid = $true }
     $n = Get-Input 'name_label(비우면 파일 속 이름)' ''
     if ($n) { $o.name_label = $n }
@@ -62,7 +73,7 @@ function Invoke-RestoreMenu {
 function Invoke-VerifyMenu {
     Write-MenuHeader '5. 검증 (I05)'
     $id = New-TaskId 'verify'
-    if (-not (Send-VbrJob (New-VbrJob -TaskId $id -Action verify -Options @{ file_path = (Get-Input 'file_path(서버 기준)') }))) { return }
+    if (-not (Send-VbrJob (New-VbrJob -TaskId $id -Action verify -Options @{ file_path = (Get-FilePathInput) }))) { return }
     $b = Wait-VbrJob $id
     Show-VbrResult $b
     Test-Step "verify $id" ($b.status -eq 'succeeded' -and $b.payload.options.verified -eq $true) "verified=$($b.payload.options.verified)"
@@ -70,17 +81,22 @@ function Invoke-VerifyMenu {
 
 function Invoke-ConcurrentMenu {
     Write-MenuHeader '6. 동시 작업과 목록 (I06)'
+    $vm = Get-Input 'VM uuid' $script:VM_UUID
     $n = [int](Get-Input '동시에 보낼 백업 수' '3')
+    # 기본값은 1단계 R6 과 같은 조건(gzip, 항상 스냅샷). none 이면 파일 하나가 VM 디스크 크기만큼 된다
+    $c = Get-Input 'compression none/gzip/zstd' 'gzip'
+    $m = Get-Input 'snapshot_mode auto/always' 'always'
     $ids = @()
     for ($i = 1; $i -le $n; $i++) {
         $id = New-TaskId "multi$i"
-        if (Send-VbrJob (New-VbrJob -TaskId $id -Action export -Options @{ file_name = "vbrvm-multi$i-" + (Get-Date -Format 'HHmmss'); overwrite = $true })) { $ids += $id }
+        if (Send-VbrJob (New-VbrJob -TaskId $id -Action export -Options @{ file_name = "vbrvm-multi$i-" + (Get-Date -Format 'HHmmss'); overwrite = $true; compression = $c; snapshot_mode = $m } -TargetUUID $vm)) { $ids += $id }
     }
     Start-Sleep -Seconds 2
     $r = Invoke-Vbr -Method GET -Path '/api/v1/jobs?status=queued,running'
     Write-Host "  처리 중·대기: $($r.Body.count)" -ForegroundColor White
     $r.Body.items | ForEach-Object { Write-Host "    $($_.taskId)  $($_.status)  $($_.percent)%" -ForegroundColor Gray }
-    foreach ($id in $ids) { $b = Wait-VbrJob $id -Quiet; Test-Step "multi $id" ($b.status -eq 'succeeded') "$($b.payload.options.file_size_bytes) bytes, $($b.payload.options.duration_seconds)s" }
+    foreach ($id in $ids) { $b = Wait-VbrJob $id -Quiet; Test-Step "multi $id" ($b.status -eq 'succeeded') "$($b.payload.options.file_size_bytes) bytes, $($b.payload.options.duration_seconds)s $($b.error.code) $($b.error.detail)" }
+    Show-Dom0 @("xe snapshot-list snapshot-of=$vm params=uuid,name-label   # 임시 스냅샷이 남지 않아야 한다", 'xe task-list params=uuid,name-label,status')
 }
 
 function Invoke-CancelMenu {
@@ -102,8 +118,11 @@ function Invoke-CancelMenu {
 
 function Invoke-ErrorMenu {
     Write-MenuHeader '8. 오류 응답 (I08)'
+    # 없는 SR 은 파일 확인 다음 단계라서 실제로 있는 백업 파일이 필요하다(없는 파일이면 FILE_IO_ERROR 가 먼저 난다)
+    $srFile = Get-Input '없는 SR 시험에 쓸, 실제로 있는 백업 파일(서버 기준)' $(if ($script:LastFile) { $script:LastFile } else { 'test1.xva' })
     $cases = @(
         @{ name = '없는 VM'; job = (New-VbrJob -TaskId (New-TaskId 'err') -Action export -Options @{ file_name = 'x' } -TargetUUID '00000000-0000-0000-0000-000000000000'); code = 'XAPI_ERROR' },
+        @{ name = '없는 SR'; job = (New-VbrJob -TaskId (New-TaskId 'err') -Action restore -Options @{ file_path = $srFile; sr_uuid = '00000000-0000-0000-0000-000000000000' }); code = 'XAPI_ERROR' },
         @{ name = '없는 복구 파일'; job = (New-VbrJob -TaskId (New-TaskId 'err') -Action restore -Options @{ file_path = 'none-' + [guid]::NewGuid().ToString('N') + '.xva'; sr_uuid = $script:SR_UUID }); code = 'FILE_IO_ERROR' },
         @{ name = '틀린 암호'; job = (New-VbrJob -TaskId (New-TaskId 'err') -Action export -Options @{ file_name = 'x' } -Password $(if ($script:CRYPTO_ON) { $script:WRONG_PASSWORD_ENC } else { 'wrong' })); code = 'XAPI_AUTH_FAILED' }
     )

@@ -535,6 +535,39 @@ func TestCancel(t *testing.T) {
 	close(h.fake.SlowExport)
 }
 
+// T-VM-U22·U51: 처리 중 취소 직후 XenServer 가 디스크를 잠시 잡고 있어도(task cancelling, VDI_IN_USE)
+// 임시 스냅샷을 끝내 지운다. 2026-11-19 실기 I07 에서 VDI_IN_USE 로 스냅샷이 남았던 결함의 회귀 시험.
+func TestCancelSnapshotInUse(t *testing.T) {
+	h := newHarness(t, nil)
+	h.fake.SlowExport = make(chan struct{})
+	h.fake.ExportStart = make(chan struct{})
+	h.fake.Cancelling = 2
+	h.fake.VDIInUse = 1
+	h.submit("ciu", vm.ActionExport, map[string]interface{}{"file_name": "ciu", "snapshot_mode": "always"})
+	<-h.fake.ExportStart
+	if _, b := h.do("GET", "/api/v1/jobs/ciu", nil, true); opts(b)["snapshot_left"] == nil {
+		t.Fatalf("running export must record the temporary snapshot: %v", b)
+	}
+	if code, _ := h.do("POST", "/api/v1/jobs/ciu/cancel", nil, true); code != 202 {
+		t.Fatalf("running cancel: %d", code)
+	}
+	b := h.wait("ciu")
+	if b["status"] != "canceled" {
+		t.Fatalf("status: %v", b)
+	}
+	if o := opts(b); o["snapshot_cleanup_failed"] != nil || o["snapshot_left"] != nil {
+		t.Fatalf("snapshot must be removed after retry: %v", o)
+	}
+	calls := h.fake.Calls()
+	if strings.Count(calls, "VDI.destroy") < 2 || !strings.Contains(calls, "VM.destroy") {
+		t.Fatalf("expected VDI.destroy retry then VM.destroy:\n%s", calls)
+	}
+	if strings.Index(calls, "task.cancel") > strings.Index(calls, "VDI.destroy") {
+		t.Fatalf("cleanup must start after task.cancel:\n%s", calls)
+	}
+	close(h.fake.SlowExport)
+}
+
 // T-VM-U52: 작업자 1 에 둘째는 queued, 설정을 2 로 바꾸면 바로 시작한다. cancel-queued 는 대기만 취소.
 func TestWorkersAndCancelQueued(t *testing.T) {
 	h := newHarness(t, func(l *vmconfig.Loaded) { l.Concurrency.MaxJobs = 1 })

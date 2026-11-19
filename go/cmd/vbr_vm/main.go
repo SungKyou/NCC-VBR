@@ -18,6 +18,9 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	// IANA 시간대 자료를 실행 파일에 넣는다. Windows 와 tzdata 가 없는 Linux 에서
+	// logging.time_zone: Asia/Seoul 이 실패하지 않게 한다(2026-11-19 실기 기동 실패).
+	_ "time/tzdata"
 
 	"ncc-vbr/internal/i18n"
 	"ncc-vbr/internal/jobstore"

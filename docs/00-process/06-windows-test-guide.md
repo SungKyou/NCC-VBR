@@ -628,7 +628,33 @@ $encTok = $tok | & "$B\vbr_secret.exe" encrypt "$V\key.yaml" sysconfig.api_auth.
 ```
 2. `C:\temp\vbrvm\sysconfig.yaml`을 [vm/05](../vm/05-interface-spec.md) 10장 예로 만든다. 바꿀 값: `server.port: 8090`, `api_auth.VBR_VM_API_TOKEN: "<$encTok 값>"`, `crypto.keyring_file: C:/temp/vbrvm/key.yaml`, `backup.base_path: C:/temp/vbrvm/backup`, `task_store.dir: C:/temp/vbrvm/tasks`, `logging.file_name: C:/temp/vbrvm/vbr_vm.log`.
 3. PowerShell 창을 하나 더 열어 서비스를 띄운다: `cd C:\temp\vbrvm; & "c:\dev\ncc-vbr-go\go\bin\windows-amd64\vbr_vm.exe" -config C:\temp\vbrvm\sysconfig.yaml`
-4. 처음 창에서 `$env:VBR_VM_API_TOKEN = $tok` 뒤 `c:\dev\ncc-vbr-go\go\test\vm\demo.ps1`. 처음 메뉴를 고르면 서비스 주소, 풀 마스터, XAPI 암호(화면에 안 보임), `key.yaml` 경로를 묻는다. 암호는 스크립트가 ENC 값으로 바꿔 보낸다.
+4. 처음 창에서 `$env:VBR_VM_API_TOKEN = $tok` 뒤 `c:\dev\ncc-vbr-go\go\test\vm\demo.ps1`. 처음 메뉴를 고르면 서비스 주소, 풀 마스터, XAPI 암호(화면에 안 보임), `key.yaml` 경로를 묻는다(`C:\temp\vbrvm`에서 실행하면 그 폴더의 `key.yaml`이 기본값, 다른 곳이면 `$env:VBR_VM_KEYRING`). 암호는 스크립트가 ENC 값으로 바꿔 보낸다. 키링이 없거나 암호화에 실패하면 메뉴를 진행하지 않고 처음부터 다시 묻는다.
 5. 메뉴 2(전체 백업) → 3(디스크 선택) → 4(복구) → 5(검증) → 6(동시) → 7(취소) → 8(오류) → 9(정리 안내) 순으로 한다. 각 메뉴가 PASS/FAIL 과 dom0 확인 명령을 출력한다. 1단계 R0~R9 결과(agent/06 5.3)와 비교한다.
 
 주의(1단계와 같음): 시험 VM `42097417-…`과 기존 스냅샷 `926b6f3f-…`은 지우지 않는다. 복구한 VM 은 켜지 않는다. 9번은 지울 명령을 보여 주기만 하고 실행하지 않는다.
+
+### 6.3 메뉴가 없는 시험 (I09, I10)
+
+데모 메뉴에는 없어서 손으로 한다. 작업 조회는 처음 창에서 이렇게 한다.
+```powershell
+$H = @{ 'X-Internal-Token' = $env:VBR_VM_API_TOKEN }
+Invoke-RestMethod -Headers $H http://127.0.0.1:8090/api/v1/jobs/<taskId> | ConvertTo-Json -Depth 6
+# <taskId> 는 데모 화면 Request 의 "taskId" 값(예 export-1a2b3c4d5e6f)으로 바꾼다. 모르면 목록으로 찾는다:
+(Invoke-RestMethod -Headers $H 'http://127.0.0.1:8090/api/v1/jobs?status=interrupted').items |
+  Select-Object taskId, status, step, percent, @{n='code';e={$_.error.code}}, @{n='detail';e={$_.error.detail}} | Format-List
+```
+이 조회가 필요한 이유: I09 는 서비스를 끊으므로 데모 창이 결과를 받지 못한다. 재기동한 뒤 그 작업이 `interrupted`로 남았는지, 다시 실행되지 않는지를 직접 본다.
+
+**I09 처리 중 강제 종료 → 재기동** (1단계 R7과 비교)
+1. 메뉴 2로 백업을 보낸다. 임시 스냅샷이 생기게 `snapshot_mode`는 `always`로 한다. 화면에 나온 taskId 를 적어 둔다.
+2. 진행률이 오르기 시작하면 셋째 창에서 `Stop-Process -Name vbr_vm -Force`(정리 없이 끊김). 데모 창은 응답이 끊겨 오류를 낸다. 정상이다.
+3. dom0: `xe snapshot-list snapshot-of=<vm> params=uuid,name-label`, `xe task-list params=uuid,name-label,status` — 임시 스냅샷이 남아 있을 것으로 본다(강제 종료라 정리 못 함).
+4. 서비스를 다시 띄우고 위 조회로 그 taskId 를 본다. 기대: `status: interrupted`, `error.code: INTERRUPTED`, 서비스 로그에 재기동 복구 경고. `C:\temp\vbrvm\backup`에 `.partial`이 남았는지 적는다.
+5. (선택) 같은 절차를 2번에서 서비스 창 `Ctrl+C`(정상 종료)로 한다. 기대: `interrupted`, 임시 스냅샷·`.partial`이 정리된다(최대 30초).
+6. 남은 임시 스냅샷은 uuid·이름(`NCC-BACKUP-…`)을 확인한 뒤 사용자가 `xe snapshot-uninstall`로 지운다. `926b6f3f-…`은 제외.
+
+**I10 Halted VM 을 스냅샷 없이 내보내는 동안 VM 시작** (Q-VM-01 판단 자료)
+1. 대상 VM 이 Halted 인지 dom0 `xe vm-param-get uuid=<vm> param-name=power-state`로 확인한다.
+2. 메뉴 2, `snapshot_mode`는 `auto`(기본), 압축 `none`. 진행 중에 dom0 `xe vm-start uuid=<vm>`.
+3. 기록할 것: 시작이 거부되는지(오류 원문, 예 `OTHER_OPERATION_IN_PROGRESS`), 허용되면 백업 결과(`succeeded`/`failed`)와 파일. 결과는 [vm/07](../vm/07-operations.md) 8장 남은 일과 4장 운영 안내에 반영한다.
+4. 시작이 허용돼 VM 이 켜졌으면 시험 뒤 원래 상태(Halted)로 되돌린다(`xe vm-shutdown uuid=<vm>`). 시험 VM `42097417-…`을 이 시험에서 켰다가 끄는 것은 2026-11-19 사용자가 허용했다. 복구한 VM 은 이 시험에서도 켜지 않는다.

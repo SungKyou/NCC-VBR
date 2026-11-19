@@ -1,6 +1,6 @@
 # 진행 현황판
 
-기준일: 2026-11-18
+기준일: 2026-11-19
 
 2026-11-18부터 작업 위치는 `c:\dev\ncc-vbr-go`(세 서비스 통합)이고, 모든 변경은 Claude Code가 한다. 통합 경위는 [05-merge-record.md](05-merge-record.md)에 있다.
 
@@ -106,6 +106,7 @@ agent는 구현 전에 사용자에게 문제를 먼저 알리도록 지시받�
 | 2026-11-19 | 2단계 문서 초안 | ncc-xen JobType 명세 v3.36 1·17·18장과 backend 코드(043c6d5) 분석. `vm/01`~`06`, `08` 초안. 결정 대기 Q-VM-01(스냅샷 정책), Q-VM-02(압축 기본값) | 문서만 변경. 링크 검사 | `vm/` |
 | 2026-11-19 | 2단계 구현 | `vbr_vm` 4.000: `go/cmd/vbr_vm`, `internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}`, `vm/vmtest`, `test/vm/{demo.ps1,demo_modules,fakexapi}`. 외부 라이브러리 gin·viper·lumberjack·zstd. `vbr_secret`에 용도 인자(DEC-VM-33) | V0 통과(govulncheck 0, DEC-VM-28로 x/net·quic-go·go1.27.4), V1 Windows 76/4/0·Linux 75/1/0, 데모 자동 16/16, 기존 서비스 회귀 통과(원본 비교 ALL PASS, agent 97/21/0). 실기 V2·V3 남음 | `evidence/vm/`, `vm/06` |
 | 2026-11-18~19 | agent V3 실기(일부) | Windows PC의 `vbr_agent.exe` → 실제 XenServer 9 풀, 가이드 4장 R0~R9 (사용자 실행) | IT-01~05, PT-01, PT-02 통과. 원본 VM이 있는 풀의 preserve=true 복구는 DUPLICATE_MAC_SEED로 거부(운영 안내 반영). 정리 완료 | `evidence/agent/windows-real-20261119/`, `agent/06` 5.3 |
+| 2026-11-19 | vbr_vm V2·V3 실기(일부) | Windows PC 의 `vbr_vm.exe` → 실제 XenServer 9 풀, `demo.ps1` 실기 모드(사용자 실행). I01~I03, I05~I09 | 통과. 실기 중 전환본 결함 3건(시간대 자료, 취소 뒤 스냅샷 정리, 중단 결과의 남은 스냅샷 uuid)과 시험 스크립트 결함 4건 수정. 수정 뒤 Windows 77/4/0, Linux 76/1/0. 결정 대기 Q-VM-03(진행률) | `evidence/vm/windows-real-20261119/`, `vm/06` 5.1, `vm/04` 6장 |
 
 V2 1차와 2차의 원인과 조치는 [cifs/06-test-report.md](../cifs/06-test-report.md) 5장에 있다.
 
@@ -128,7 +129,7 @@ V2 1차와 2차의 원인과 조치는 [cifs/06-test-report.md](../cifs/06-test-
 | 1 | 결정 대기 항목 확인 | 사용자 | [04-open-decisions.md](04-open-decisions.md) |
 | 2 | cifs·remove 통합 시험(V3)과 운영 규모 시험(V4) | 사용자 | 시험 서버, NAS 마운트, 포털 접속 정보 |
 | 3 | agent 결정 Q-A18, Q-A19 | 사용자 | [04-open-decisions.md](04-open-decisions.md) 4장 |
-| 3-1 | vbr_vm 실기 시험 I01~I10, L01 | 사용자 | [06-windows-test-guide.md](06-windows-test-guide.md) 6장, [vm/06](../vm/06-test-plan-report.md) 6장 |
+| 3-1 | vbr_vm 남은 실기 I04, I05(gzip·zstd), I06(R6 조건), I10, L01 과 결정 Q-VM-03 | 사용자 | [06-windows-test-guide.md](06-windows-test-guide.md) 6장, [vm/06](../vm/06-test-plan-report.md) 6장. I01~I03·I05~I09 는 2026-11-19 통과 |
 | 4 | agent 남은 통합 시험 IT-06·07, PT-03·04 | 사용자 | Linux agent 서버, 실제 관리 서버, `/BACKUP` NAS. PT-01·02, IT-01~05는 2026-11-19 Windows 실기로 통과([agent/06-test-report.md](../agent/06-test-report.md) 5.3) |
 | 4-1 | (선택) `collect-xe-samples.sh` 실행 결과 | 사용자 | 조회 기능을 나중에 더할 때 필요. 지금 범위에는 필요 없다 |
 | 5 | 조회(`I`) 기능 | 전환 수행자 | 사용자가 필요하다고 할 때(DEC-AG-09) |

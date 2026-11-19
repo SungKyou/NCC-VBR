@@ -58,7 +58,7 @@
 | 01 | [요건 정의서](01-requirements.md) | T01 | REQ-VM-01~20, N01~N10, 위험 R-VM-01~04 | 초안 |
 | 02 | [기존·참조 분석서](02-baseline-reference-analysis.md) | T02(1~12장 요약 + 13장) | 기존 기능 F-VM-01~10, 실기 사실 E-01~07, ncc-xen 규약·복사 후보·전제 차이 | 초안 |
 | 03 | [목표 설계서](03-tobe-design.md) | T03 | 패키지 구조, 흐름, 작업 상태 모델, 보안, 관측, 국제화 | 구현 반영 |
-| 04 | [변경·결정 대장](04-change-register.md) | T04 | 기존 대비 변경 C-VM-01~20, 결정 DEC-VM-19~27, Q-VM-01·02(2026-11-19 결정: 스냅샷 기본 auto, 압축은 요청·없으면 none) | 초안 |
+| 04 | [변경·결정 대장](04-change-register.md) | T04 | 기존 대비 변경 C-VM-01~20, 결정 DEC-VM-19~33, Q-VM-01·02(2026-11-19 결정: 스냅샷 기본 auto, 압축은 요청·없으면 none) | 구현 반영 |
 | 05 | [인터페이스 명세](05-interface-spec.md) | T05 8~11장 | API-VM-01~07, 오류 코드, `sysconfig.yaml`, 기존 전문 대응표 | 구현 반영 |
 | 06 | [시험 계획과 결과](06-test-plan-report.md) | T06 + 9장 | T-VM-U·I·L, demo.ps1 메뉴 | 개발 검증 통과, 실기 남음 |
 | 07 | [설치와 운영 안내](07-operations.md) | T07 | 설치, systemd, 기존 agent와 병행, 되돌리기, 문제 대응 | 작성(실기 전) |

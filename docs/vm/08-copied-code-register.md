@@ -78,6 +78,8 @@
 | 수정 | 스냅샷 정리 | `VM.destroy`만(스냅샷 VDI가 남을 수 있다) | 1단계 `UninstallSnapshot`(스냅샷 VDI → VM 레코드) | 1단계 PT-01 실기 |
 | 추가 | 스냅샷 준비 | 없음 | 스냅샷을 일반 VM 으로(`set_is_a_template false`, `ha_always_run` 무시) | 1단계 동작(원본 vbr) |
 | 추가 | 취소 | 없음 | ctx 가 끝나면 `task.cancel` | DEC-VM-09 |
+| 추가 | 취소 뒤 대기 | 없음 | 취소됐으면 XAPI task 가 pending·cancelling 을 벗어날 때까지 최대 60초 기다린 뒤 돌아온다(`settleIfCanceled`) | 실기 I07: 바로 정리하면 `VDI_IN_USE`(04 D-VM-02) |
+| 추가 | 남은 스냅샷 기록 | 없음 | 임시 스냅샷을 만들면 작업 기록 `snapshot_left`에 uuid(`vm/export.go`) | 04 D-VM-03 |
 | 수정 | task 최종 확인 | 12회(12초) | ctx 까지 | 1단계와 같음 |
 | 수정 | 진행률 | 규약 2 processing 송신 | `Progress` 콜백 → 작업 기록 | 조회 API |
 | 그대로 | `.partial`, `use_compression=true`, 동시 zstd, SHA256, rename 전 Windows 삭제, 결과 필드 이름 | | | 호환 |
@@ -89,7 +91,7 @@
 |---|---|---|---|---|
 | 수정 | 순서 | zstd 해제 → 세션 → SR 확인 | 세션 → SR 확인 → zstd 해제 | 실기 E-05: 없는 SR 은 바로 실패해야 한다 |
 | 수정 | 구조 | 한 함수 | `xva.Import`(업로드·task 결과 참조)와 `vm.runRestore`(경로·후처리·결과) | 03 2장 |
-| 추가 | 취소 | 없음 | `task.cancel` | DEC-VM-09 |
+| 추가 | 취소 | 없음 | `task.cancel`, 취소 뒤 task 가 끝나기를 기다림(CP-VM-05 와 같음) | DEC-VM-09, 04 D-VM-02 |
 | 그대로 | `restore`·`force`·`sr_id` 파라미터, ContentLength, 최종 대기 2초 간격, 템플릿 후처리 + `update_allowed_operations`, name_label·home_server 실패해도 성공 유지, 결과 필드 이름 | | | 호환 |
 | 수정 | Home Server | uuid → `VM.get_by_uuid` → `set_affinity` | 가져온 VM 참조로 바로(CP-VM-12) | 호출 하나 줄임 |
 
@@ -145,3 +147,4 @@
 | 비교일 | 원본 커밋 범위 | 복사한 파일에 해당하는 변경 | 반영 여부와 이유 |
 |---|---|---|---|
 | 2026-11-19 | `043c6d5` 기준 복사 | - | - |
+| 2026-11-19 | 원본은 그대로. 실기 결함 수정으로 CP-VM-05·06 대상 파일이 바뀜 | - | `copied-code.diff` 다시 만듦(17:04) |

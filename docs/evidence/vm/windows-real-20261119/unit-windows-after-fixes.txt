@@ -1,0 +1,118 @@
+== 2026-11-19T17:03:14 go version go1.27.4 windows/amd64
+== gofmt -l
+== go vet
+vet exit=0
+== go test -p 1 -count=1 -v ./...
+?   	ncc-vbr/cmd/vbr_agent	[no test files]
+?   	ncc-vbr/cmd/vbr_cifs	[no test files]
+?   	ncc-vbr/cmd/vbr_remove	[no test files]
+--- PASS: TestReadPassword (0.00s)
+ok  	ncc-vbr/cmd/vbr_secret	0.074s
+?   	ncc-vbr/cmd/vbr_vm	[no test files]
+--- PASS: TestMessageFrame (0.00s)
+--- PASS: TestTranLogFormatAndQuery (0.04s)
+--- PASS: TestAsyncBackupFlow (0.22s)
+--- PASS: TestAsyncResultOnOpenConnection (0.06s)
+--- PASS: TestQueryProcessingAndNotFound (0.01s)
+--- PASS: TestCancel (0.02s)
+--- PASS: TestRejects (0.12s)
+--- PASS: TestArgumentErrors (0.04s)
+--- PASS: TestBackupFailureResult (0.01s)
+--- PASS: TestPriorityOrder (0.02s)
+--- PASS: TestRestartRecovery (0.01s)
+--- PASS: TestAllowClient (0.00s)
+--- PASS: TestShortMessage (6.01s)
+--- PASS: TestXenBackup (0.02s)
+--- PASS: TestXenPartialBackup (0.01s)
+--- PASS: TestXenExportFailure (0.01s)
+--- PASS: TestXenSnapshotFailure (0.01s)
+--- PASS: TestXenRestore (0.01s)
+ok  	ncc-vbr/internal/agent	6.753s
+?   	ncc-vbr/internal/apiauth	[no test files]
+?   	ncc-vbr/internal/boot	[no test files]
+--- PASS: TestFirstRunCopiesEverything (0.05s)
+--- PASS: TestSecondRunCopiesNothing (0.01s)
+--- PASS: TestChangedFileKeepsOldVersion (0.01s)
+--- PASS: TestMissingTargetFileIsCopiedAgain (0.01s)
+--- SKIP: TestUntouchedSourceIsNotCompared (0.00s)
+--- PASS: TestFullScanDayComparesFilesOlderThanHistory (0.02s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/configured_Tuesday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/another_weekday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/default_Sunday (0.01s)
+    --- PASS: TestFullScanDayComparesFilesOlderThanHistory/invalid_setting (0.00s)
+--- PASS: TestExclusionAndSecondLevel (0.01s)
+--- PASS: TestDisabledFolderRenamesTarget (0.01s)
+--- PASS: TestDisabledFolderKeepsExistingData (0.01s)
+--- PASS: TestDisabledFolderPreservesActiveSourceBackup (0.01s)
+--- PASS: TestErrorKeepsHistoryUnchanged (0.01s)
+--- PASS: TestMissingTargetRootStops (0.00s)
+--- SKIP: TestSymlinkIsSkipped (0.00s)
+--- SKIP: TestHistoryFileName (0.00s)
+ok  	ncc-vbr/internal/cifs	0.305s
+--- PASS: TestSectionAndKeyRules (0.00s)
+--- PASS: TestLongLineIsNotTruncated (0.00s)
+--- PASS: TestRealDevelopmentFile (0.00s)
+ok  	ncc-vbr/internal/config	0.079s
+?   	ncc-vbr/internal/daemon	[no test files]
+?   	ncc-vbr/internal/fsx	[no test files]
+--- PASS: TestCatalogParity (0.00s)
+ok  	ncc-vbr/internal/i18n	0.072s
+--- PASS: TestReopenMarksInterrupted (0.05s)
+--- PASS: TestCompactAndRetention (0.01s)
+--- PASS: TestOutbox (0.01s)
+ok  	ncc-vbr/internal/jobstore	0.146s
+--- PASS: TestServerLogFormat (0.04s)
+--- PASS: TestTransactionLogFormat (0.00s)
+--- PASS: TestRotateWhenOverMaxSize (0.00s)
+ok  	ncc-vbr/internal/logx	0.127s
+--- PASS: TestEncodeLayout (0.03s)
+--- PASS: TestSendAndReceive (0.00s)
+ok  	ncc-vbr/internal/portal	0.114s
+--- PASS: TestValueMasksNestedSecrets (0.00s)
+ok  	ncc-vbr/internal/redact	0.073s
+--- PASS: TestIsExpiredVersion (0.00s)
+--- PASS: TestParseDays (0.00s)
+--- PASS: TestRunRejectsOverflowingDaysBeforeTraversing (0.00s)
+--- PASS: TestShellQuote (0.00s)
+--- PASS: TestLogModeDeletesNothing (0.01s)
+--- PASS: TestDeleteModeRemovesOnlyExpiredVersions (0.01s)
+--- PASS: TestMissingDirectoryFails (0.00s)
+ok  	ncc-vbr/internal/remove	0.119s
+--- PASS: TestRoundTrip (0.00s)
+--- PASS: TestUnknownField (0.00s)
+--- SKIP: TestFileMode (0.00s)
+ok  	ncc-vbr/internal/secret	0.073s
+--- PASS: TestSuffixedFileName (0.00s)
+ok  	ncc-vbr/internal/stdlogger	0.074s
+?   	ncc-vbr/internal/testkit	[no test files]
+?   	ncc-vbr/internal/vm	[no test files]
+--- PASS: TestHealthAndAuth (0.01s)
+--- PASS: TestSubmitValidation (0.04s)
+--- PASS: TestExportHaltedAuto (0.06s)
+--- PASS: TestExportRunningWithDisks (0.06s)
+--- PASS: TestExportDiskNotFound (0.06s)
+--- PASS: TestExportFileExists (0.11s)
+--- PASS: TestExportZstdVerifyAfter (0.06s)
+--- PASS: TestXAPIErrors (0.21s)
+--- PASS: TestVerify (0.16s)
+--- PASS: TestRestore (0.11s)
+--- PASS: TestRestoreZstd (0.06s)
+--- PASS: TestDuplicateConcurrent (0.02s)
+--- PASS: TestCancel (0.06s)
+--- PASS: TestCancelSnapshotInUse (4.06s)
+--- PASS: TestWorkersAndCancelQueued (0.06s)
+--- PASS: TestShutdown (0.01s)
+--- PASS: TestSecretsNotLeaked (0.06s)
+ok  	ncc-vbr/internal/vm/api	5.296s
+?   	ncc-vbr/internal/vm/vmtest	[no test files]
+--- PASS: TestLoadAndReload (0.00s)
+--- PASS: TestAuthAndCryptoRules (0.00s)
+ok  	ncc-vbr/internal/vmconfig	0.084s
+?   	ncc-vbr/internal/walk	[no test files]
+?   	ncc-vbr/internal/xapi	[no test files]
+--- PASS: TestPathRules (0.01s)
+ok  	ncc-vbr/internal/xva	0.083s
+?   	ncc-vbr/test/agent-parity/driver	[no test files]
+?   	ncc-vbr/test/agent-parity/fakexapi	[no test files]
+?   	ncc-vbr/test/vm/fakexapi	[no test files]
+test exit=0

@@ -44,6 +44,8 @@ type Fake struct {
 	Imported    []byte
 	ImportQuery string
 	canceled    bool
+	VDIInUse    int // 0 보다 크면 VDI.destroy 가 이만큼 VDI_IN_USE 로 실패한다(취소 직후 디스크 사용 중 재현)
+	Cancelling  int // 취소 뒤 task.get_status 가 이만큼 cancelling 을 돌려준다
 	startOnce   sync.Once
 }
 
@@ -125,12 +127,20 @@ func (f *Fake) rpc(method string, args []string) (any, string) {
 		}
 		return true, ""
 	case "VDI.destroy", "VM.destroy":
+		if method == "VDI.destroy" && f.VDIInUse > 0 {
+			f.VDIInUse--
+			return nil, "VDI_IN_USE|" + args[1] + "|destroy"
+		}
 		f.destroyed[args[1]] = true
 		return "", ""
 	case "task.create":
 		return "OpaqueRef:task", ""
 	case "task.get_status":
 		if f.canceled {
+			if f.Cancelling > 0 {
+				f.Cancelling--
+				return "cancelling", ""
+			}
 			return "cancelled", ""
 		}
 		return f.TaskStatus, ""

@@ -33,6 +33,16 @@ type progress struct {
 }
 
 // set 은 단계와 진행률을 바꾼다. msg 는 사람이 읽는 문구다.
+// note 는 처리 중 작업 기록의 Result 에 값을 바로 적는다(재기동 때 읽는다).
+func (p *progress) note(key string, val interface{}) {
+	_, _, _ = p.s.store.Update(p.id, true, func(r *jobstore.Record) {
+		if r.Result == nil {
+			r.Result = map[string]interface{}{}
+		}
+		r.Result[key] = val
+	})
+}
+
 func (p *progress) set(step string, pct int, msg string) {
 	p.mu.Lock()
 	now := p.s.now()

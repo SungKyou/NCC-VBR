@@ -2,7 +2,7 @@
 
 기준일: 2026-11-19 / 양식: T04(유형 B: 2장 기능 단위 변경 + 5장 결정) / 기준(원본): 기존 서비스 `vbr_agent` 3.000
 
-1장(원본 결함)은 1단계 [agent/04](../agent/04-change-register.md)에 있고, 2단계에서 새로 찾은 결함은 없다. 3장(유지한 특이 동작)은 해당 없음. 1단계에서 유지했던 특이 동작(K-AG-01 실패에도 조회 코드 0 등)은 새 인터페이스에서 이어 가지 않는다(아래 C-VM-05).
+1장(원본 결함)은 1단계 [agent/04](../agent/04-change-register.md)에 있고, 원본에서 새로 찾은 결함은 없다. 2단계 구현의 결함(실기에서 찾음)은 6장 D-VM-01~03. 3장(유지한 특이 동작)은 해당 없음. 1단계에서 유지했던 특이 동작(K-AG-01 실패에도 조회 코드 0 등)은 새 인터페이스에서 이어 가지 않는다(아래 C-VM-05).
 
 ## 2. 기존 대비 변경 (기능 단위)
 
@@ -59,6 +59,7 @@ DEC-VM-01~18은 [착수서](00-charter.md) 3장에 있다. 아래는 문서 작�
 | DEC-VM-33 | 설정 토큰 암호화 도구 | ncc-xen `ncc-crypto` 복사 / 1단계 `vbr_secret`에 용도 인자 | `vbr_secret encrypt <키링> [용도]`. 용도는 목록(`ncc-vbr/xapi-password` 기본, `sysconfig.api_auth.VBR_VM_API_TOKEN`, `sysconfig.api_auth.GATEWAY_INTERNAL_TOKEN`) 밖이면 거부. 인자 두 개짜리 기존 사용법은 그대로 | 운영 안내를 쓰다 발견: 토큰을 ENC 로 만들 방법이 없었다. ncc-crypto 는 대화형 메뉴·sysconfig 직접 수정까지 해 범위가 크다 | 수행자 2026-11-19 | `go/cmd/vbr_secret`(4개 서비스 공용), 07 3장. 시험: `TestReadPassword` 통과, 암호화 토큰으로 vbr_vm 기동·인증 확인 | 확정 |
 | Q-VM-01 | export 스냅샷 정책 기본값 | `auto`(ncc-xen: Running만 스냅샷, Halted는 그대로 내보냄) / `always`(기존: 항상 스냅샷) | **`auto`**. 요청의 `options.snapshot_mode`로 `always`를 고를 수 있다. 디스크 선택 백업은 항상 스냅샷. 설정 기본값 키는 두지 않는다(ncc-xen에도 없음) | 아래 판단 자료 | 사용자 2026-11-19 | 05 export options, 03 3장, C-VM-19 | 확정 |
 | Q-VM-02 | export 압축 기본값 | `none`(ncc-xen 기본) / `gzip`(기존, XenCenter 호환) / `zstd`(빠름, XenCenter 비호환) | **요청의 `options.compression`을 따르고, 없으면 `none`**(ncc-xen과 같음). 설정 기본값 키는 두지 않는다 | 사용자 답변 "요청에 따릅니다. 요청시 백업 방식을 받고, 없는 경우는 none" | 사용자 2026-11-19 | 05 export options·10장, C-VM-11 | 확정 |
+| Q-VM-03 | 진행 중 진행률 계산(실기 I06 에서 발견) | A. 그대로: XAPI export task progress(ncc-xen 같은 `progress*98+1`) / B. 받은 바이트 ÷ VM 디스크 사용량 합계(압축이면 근사) | **결정 대기**. 수행자 권장 B, 실기 시험을 마친 뒤 고친다 | 실기에서 none 백업이 25~26% 까지만 오르다 끝에서 99% 로 건너뛰었다. 조회 API 의 percent 가 실제 진행을 나타내지 못한다 | 사용자 | 05 API-VM-02 percent, xva `pollTask` | 대기 |
 
 결정 전 판단 자료(2026-11-19 기록, 보존). 수행자 권장은 `always`·`gzip`이었고 사용자가 `auto`와 "요청에 따름, 없으면 none"으로 정했다. `auto`에서 내보내는 동안 VM을 켤 수 있는지는 실기 시험 I10으로 확인해 운영 안내에 적는다.
 
@@ -81,3 +82,15 @@ Q-VM-02 판단 자료
 | XenCenter로 복구 | 됨 | 됨 | **안 됨**(이 서비스로만) |
 | 맞는 경우 | 디스크가 넉넉할 때 | 다른 도구(XenCenter)로도 복구해야 할 때 | 속도가 중요하고 복구를 이 서비스로만 할 때 |
 | **수행자 권장** | | **`gzip`**. 기존과 같고, 이 서비스가 없어도 XenCenter로 복구할 수 있어 재해 복구에 안전하다. 요청마다 `zstd`를 고를 수 있다 | |
+
+## 6. 실기에서 찾은 전환본 결함 (2026-11-19)
+
+1단계 대장의 1장(원본 결함)과 달리, 2단계 구현의 결함이다. 모두 실기 시험 중 찾아 고쳤고 회귀 시험을 더했다. 근거는 [06](06-test-plan-report.md) 5장·5.1.
+
+| 번호 | 시험 | 증상 | 원인 | 조치 | 회귀 시험 |
+|---|---|---|---|---|---|
+| D-VM-01 | 실기 준비 | Windows 에서 `logging.time_zone: "Asia/Seoul"`로 기동 실패 `invalid logging.time_zone` | Windows 에 IANA 시간대 자료가 없고 실행 파일이 Go 의 `zoneinfo.zip`도 찾지 못한다. 데모 자동 모드 설정은 `local`이라 잡지 못했다 | `cmd/vbr_vm/main.go`에 `_ "time/tzdata"`(실행 파일 약 450 KB 증가). tzdata 가 없는 Linux 에도 같은 효과 | 같은 설정으로 기동·`/health` 확인(수동) |
+| D-VM-02 | I07 | 처리 중 취소는 `canceled`인데 임시 스냅샷이 풀에 남음. `VDI.destroy failed: VDI_IN_USE` | `task.cancel` 직후 바로 지웠다. XenServer 는 내보내기를 멈추는 동안 스냅샷 디스크를 더 잡고 있다. 가짜 XAPI 는 이 상태를 흉내 내지 않았다 | `xva.settleIfCanceled`: 취소된 export·import 는 XAPI task 가 pending·cancelling 을 벗어날 때까지(최대 60초) 기다린다. `vm.uninstall`: `VDI_IN_USE`·`OTHER_OPERATION_IN_PROGRESS`면 2초 간격, 최대 2분 다시 지운다. 공통 `xapi` 패키지(1단계 agent 와 공유)는 바꾸지 않았다 | `TestCancelSnapshotInUse`(가짜 XAPI `Cancelling`·`VDIInUse`). 실기 I07 2차 통과 |
+| D-VM-03 | I09 | 강제 종료 뒤 `interrupted` 결과에 남은 임시 스냅샷 uuid 가 없음 | REQ-VM-17·05 9장(INTERRUPTED detail 에 남은 스냅샷)과 05 API-VM-02 `snapshot_left`를 구현하지 않았다 | 임시 스냅샷을 만들면 바로 작업 기록 `result.snapshot_left`에 uuid 를 적는다. 재기동 때 남아 있으면 detail 에 `; temporary snapshot may remain: <uuid>`. 정상·실패·취소로 끝나면 최종 결과가 덮어써 사라진다 | `TestReopenMarksInterrupted`, `TestCancelSnapshotInUse`(처리 중 조회에 `snapshot_left`, 끝나면 없음) |
+
+시험 스크립트(`demo.ps1`) 결함도 실기 중 고쳤다: 키링 경로 기본값·검사 없음(빈 암호를 보냄), 복구·검증 `file_path` 기본값 없음, 메뉴 6 이 압축·스냅샷을 묻지 않음, 메뉴 8 없는 SR 케이스에 없는 파일을 넣음. 06 5장 실행 기록.

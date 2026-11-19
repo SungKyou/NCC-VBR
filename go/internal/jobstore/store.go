@@ -48,6 +48,10 @@ type ErrorInfo struct {
 }
 
 // Record 는 작업 하나의 상태다. 파일의 한 줄과 메모리 표가 같은 모양이다.
+// SnapshotLeftKey 는 처리 중 작업 기록의 Result 에 임시 스냅샷 uuid 를 적는 키다. 작업이 정상으로 끝나면
+// 최종 결과가 Result 를 바꿔 쓰므로 사라지고, 재기동 때 남아 있으면 그 스냅샷이 풀에 남았을 수 있다.
+const SnapshotLeftKey = "snapshot_left"
+
 type Record struct {
 	TaskID     string                 `json:"taskId"`
 	JobType    string                 `json:"jobType"`
@@ -116,6 +120,9 @@ func Open(dir string, retention time.Duration, now func() time.Time) (*Store, []
 			continue
 		}
 		detail := "service restarted while the task was " + stepOrQueued(r) // 단계를 바꾸기 전에 만든다
+		if u, ok := r.Result[SnapshotLeftKey].(string); ok && u != "" {
+			detail += "; temporary snapshot may remain: " + u // REQ-VM-17, 05 9장 INTERRUPTED
+		}
 		r.Status = StatusInterrupted
 		r.Step = "done"
 		r.FinishedAt = &t

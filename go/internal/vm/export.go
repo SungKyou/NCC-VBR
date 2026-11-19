@@ -8,6 +8,7 @@ package vm
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"ncc-vbr/internal/i18n"
+	"ncc-vbr/internal/jobstore"
 	logger "ncc-vbr/internal/stdlogger"
 	"ncc-vbr/internal/vmconfig"
 	"ncc-vbr/internal/xapi"
@@ -162,6 +164,8 @@ func (s *Service) runExport(ctx context.Context, job *Job, cfg *vmconfig.Loaded,
 			return outcome{err: err}
 		}
 		exportUUID = snap.uuid
+		// 강제 종료되면 정리하지 못한다. 재기동 때 남은 스냅샷을 알 수 있게 바로 기록한다(REQ-VM-17)
+		p.note(jobstore.SnapshotLeftKey, snap.uuid)
 		defer func() { s.cleanupSnapshot(sess.vm, snap, o.KeepSnapshot, result, log) }()
 		if len(o.Disks) > 0 {
 			if err := keepOnlyDisks(ctx, sess.vm, snap.ref, o.Disks, log); err != nil {
@@ -331,15 +335,40 @@ func (s *Service) cleanupSnapshot(vm *xapi.VMClient, snap *tempSnapshot, keep bo
 	}
 }
 
+// cleanupRetryInterval 은 스냅샷 디스크가 아직 사용 중일 때 다시 지우기까지 기다리는 시간이다.
+var cleanupRetryInterval = 2 * time.Second
+
 func (s *Service) uninstall(vm *xapi.VMClient, snap *tempSnapshot, log *logger.Entry) error {
 	ctx, cancel := context.WithTimeout(context.Background(), cleanupTimeout)
 	defer cancel()
-	if err := vm.UninstallSnapshot(ctx, snap.ref); err != nil {
-		log.Warn(i18n.T("vm.log.snapshot_cleanup_failed"), "snapshotUUID", snap.uuid, "error", err)
-		return err
+	for attempt := 1; ; attempt++ {
+		err := vm.UninstallSnapshot(ctx, snap.ref)
+		if err == nil {
+			log.Info(i18n.T("vm.log.snapshot_removed"), "snapshotUUID", snap.uuid, "attempts", attempt)
+			return nil
+		}
+		// 취소 직후에는 XenServer 가 내보내기를 멈추며 디스크를 잠시 더 잡고 있다(2026-11-19 실기 I07).
+		// 같은 상태가 풀릴 때까지 cleanupTimeout 안에서 다시 지운다. UninstallSnapshot 은 이미 지운
+		// 디스크를 건너뛰므로 다시 불러도 된다.
+		if !retryableCleanup(err) || ctx.Err() != nil {
+			log.Warn(i18n.T("vm.log.snapshot_cleanup_failed"), "snapshotUUID", snap.uuid, "attempts", attempt, "error", err)
+			return err
+		}
+		select {
+		case <-ctx.Done():
+			log.Warn(i18n.T("vm.log.snapshot_cleanup_failed"), "snapshotUUID", snap.uuid, "attempts", attempt, "error", err)
+			return err
+		case <-time.After(cleanupRetryInterval):
+		}
 	}
-	log.Info(i18n.T("vm.log.snapshot_removed"), "snapshotUUID", snap.uuid)
-	return nil
+}
+
+func retryableCleanup(err error) bool {
+	var xe *xapi.XAPIError
+	if !errors.As(err, &xe) {
+		return false
+	}
+	return xe.Code == "VDI_IN_USE" || xe.Code == "OTHER_OPERATION_IN_PROGRESS"
 }
 
 func verifyMap(path string, vr xva.VerifyResult, now time.Time) map[string]interface{} {

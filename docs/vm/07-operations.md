@@ -1,11 +1,11 @@
 # vbr_vm 설치와 운영 안내
 
-기준일: 2026-11-19 / 양식: T07 / 대상: `vbr_vm` 4.000 / 상태: **개발 검증 통과, 실기 전**. 운영 반영은 [06](06-test-plan-report.md)의 V2·V3 뒤에 한다.
+기준일: 2026-11-19 / 양식: T07 / 대상: `vbr_vm` 4.000 / 상태: **개발 검증 통과, 실기 일부 통과(2026-11-19, [06](06-test-plan-report.md) 5.1)**. 운영 반영은 [06](06-test-plan-report.md)의 V2·V3 뒤에 한다.
 
 ## 1. 전환 전제
 
 - [x] 개발 검증 통과(V0·V1·데모 자동 모드)
-- [ ] 실기 시험 I01~I10 통과(06 6장)
+- [ ] 실기 시험 통과. 2026-11-19 I01~I03·I05~I09 통과, 남은 것 I04·I10·L01 등(06 6장)
 - [ ] 관리 서버 또는 middle 이 새 API(05 문서)로 호출하도록 바뀜. `vbr_agent`의 문자열 전문은 받지 않는다
 - [ ] 되돌리기(5장)를 시험 환경에서 한 번 실행
 
@@ -117,8 +117,11 @@ WantedBy=multi-user.target
 | `XAPI_AUTH_FAILED` | 계정·암호 | 1단계 실기 R1 처럼 PowerShell 파이프 BOM 은 `vbr_secret`이 뗀다 |
 | `XAPI_ERROR … DUPLICATE_MAC_SEED` | 원본 VM 이 같은 풀에 있는데 `restore_original_uuid: true` | `false`로 복구(1단계 실기 R4) |
 | `FILE_EXISTS` | 같은 이름 파일 | 다른 이름 또는 `overwrite: true` |
-| 완료됐는데 `snapshot_cleanup_failed` | 임시 스냅샷을 못 지움 | dom0 에서 그 uuid 를 확인하고 `xe snapshot-uninstall` |
-| 재기동 뒤 `interrupted` | `error.detail`의 단계 | 다시 보낼지 정한다(자동 재개 없음). 남은 스냅샷 확인 |
+| 완료됐는데 `snapshot_cleanup_failed` | 임시 스냅샷을 못 지움. 디스크 사용 중이면 2분 동안 다시 지운 뒤에도 실패한 것이다 | dom0 에서 그 uuid 를 확인하고 `xe snapshot-uninstall uuid=<uuid> force=true` |
+| 재기동 뒤 `interrupted` | `error.detail`의 단계와 `temporary snapshot may remain: <uuid>`, 결과의 `snapshot_left` | 다시 보낼지 정한다(자동 재개 없음). 강제 종료였으면 그 uuid 의 스냅샷(이름 `NCC-BACKUP-…`)과 `export_path`의 `<파일>.partial`이 남는다(실기 I09). 스냅샷은 `xe snapshot-uninstall`, `.partial`은 지운다. `systemctl stop`(SIGTERM) 정상 종료면 정리한 뒤 끝난다 |
+| 기동하지 않음 `invalid logging.time_zone` | 4.000 초기 빌드(2026-11-19 이전)는 Windows 에서 `Asia/Seoul`을 못 읽었다 | 지금 빌드는 시간대 자료를 실행 파일에 넣었다(04 D-VM-01). 다시 빌드한다 |
+| 진행 중 `.partial` 크기가 0 | Windows 는 쓰는 중인 파일의 크기를 닫을 때 갱신한다 | 정상. 진행은 `GET /api/v1/jobs/{taskId}`로 본다 |
+| 진행률이 25% 근처에서 멈춘 듯 보임 | XAPI 가 보고하는 export 진행률이 실제보다 낮다. 끝에서 99% 로 건너뛴다 | 정상(결정 대기 Q-VM-03). 끝났는지는 `status`로 판단한다 |
 | zstd 백업을 XenCenter 가 못 읽음 | 확장자 `.xva.zst` | `vbr_vm` restore 로 복구 |
 
 ## 8. 남은 일
@@ -127,9 +130,11 @@ WantedBy=multi-user.target
 |---|---|
 | 실기 시험 I01~I10, L01 | 06 6장 |
 | Linux 에서 실행 파일 기동 확인 | Linux 서버 단계 |
-| `auto`로 Halted VM 을 내보내는 동안 VM 시작 가능 여부(I10) | 실기 |
+| `auto`로 Halted VM 을 내보내는 동안 VM 시작 가능 여부(I10) | 실기. 같은 Halted VM 의 스냅샷 없는 내보내기 여러 개는 동시에 된다(I06) |
+| 진행률 계산(Q-VM-03) | 사용자 결정 |
 
 ## 9. 전환 기록
 
 | 일시 | 한 일 | 결과 | 누가 |
 |---|---|---|---|
+| 2026-11-19 | Windows PC 에서 실제 XenServer 9 풀로 실기(I01~I03, I05~I09) | 통과. 실기 중 결함 3건(04 D-VM-01~03) 수정 | 사용자 실행, Claude Code 수정 |

@@ -41,9 +41,24 @@ function Initialize-Session {
     $plain = Read-Secret "XAPI 암호($script:XAPI_USER, 화면에 보이지 않음)"
     $script:CRYPTO_ON = [bool]$h.Body.cryptoEnabled
     if ($script:CRYPTO_ON) {
-        $script:KEYRING = Get-Input 'key.yaml 경로(vbr_vm 과 같은 키링)' $script:KEYRING
-        $script:XAPI_PASSWORD_VALUE = Protect-Password -Plain $plain -Keyring $script:KEYRING
-        $script:WRONG_PASSWORD_ENC = Protect-Password -Plain ('wrong-' + [guid]::NewGuid().ToString('N')) -Keyring $script:KEYRING
+        # 기본값: 환경 변수 VBR_VM_KEYRING, 없으면 현재 폴더의 key.yaml(가이드 6.2 는 C:\temp\vbrvm 에서 실행)
+        if (-not $script:KEYRING) {
+            $script:KEYRING = $(if ($env:VBR_VM_KEYRING) { $env:VBR_VM_KEYRING } elseif (Test-Path (Join-Path $PWD 'key.yaml')) { (Join-Path $PWD 'key.yaml') } else { '' })
+        }
+        while ($true) {
+            $script:KEYRING = Get-Input 'key.yaml 경로(vbr_vm 과 같은 키링)' $script:KEYRING
+            if ($script:KEYRING -and (Test-Path -LiteralPath $script:KEYRING -PathType Leaf)) { break }
+            Write-Host "  ✗ 키링 파일이 없습니다: '$($script:KEYRING)'" -ForegroundColor Red
+            $script:KEYRING = ''
+        }
+        try {
+            $script:XAPI_PASSWORD_VALUE = Protect-Password -Plain $plain -Keyring $script:KEYRING
+            $script:WRONG_PASSWORD_ENC = Protect-Password -Plain ('wrong-' + [guid]::NewGuid().ToString('N')) -Keyring $script:KEYRING
+        } catch {
+            Write-Host "  ✗ 암호 암호화 실패: $($_.Exception.Message)" -ForegroundColor Red
+            $plain = $null; $script:XAPI_PASSWORD_VALUE = $null
+            return $false
+        }
         Write-Host '  암호를 ENC[...] 로 바꿔 보냅니다.' -ForegroundColor Gray
     } else {
         $script:XAPI_PASSWORD_VALUE = $plain

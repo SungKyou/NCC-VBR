@@ -99,9 +99,9 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 | 01 | [요건 정의서](vm/01-requirements.md) | 확인됨 |
 | 02 | [기존·참조 분석서](vm/02-baseline-reference-analysis.md): 기존 기능, 실기 사실, ncc-xen 규약·복사 후보 | 확인됨 |
 | 03 | [목표 설계서](vm/03-tobe-design.md) | 구현 반영 |
-| 04 | [변경·결정 대장](vm/04-change-register.md): 변경 C-VM-01~20, 결정 DEC-VM-19~33, Q-VM-01·02 결정 | 구현 반영 |
+| 04 | [변경·결정 대장](vm/04-change-register.md): 변경 C-VM-01~20, 결정 DEC-VM-19~33, Q-VM-01·02 결정, Q-VM-03 대기, 실기 결함 D-VM-01~03 | 구현 반영 |
 | 05 | [인터페이스 명세](vm/05-interface-spec.md): API, 오류 코드, `sysconfig.yaml` | 구현 반영 |
-| 06 | [시험 계획과 결과](vm/06-test-plan-report.md): 개발 검증 통과(Windows 76/4/0, Linux 75/1/0, 데모 자동 16/16, govulncheck 0) | 실기 남음 |
+| 06 | [시험 계획과 결과](vm/06-test-plan-report.md): 개발 검증 통과(데모 자동 16/16, govulncheck 0), 2026-11-19 실기 I01~I03·I05~I09 통과, 실기 결함 3건 수정 뒤 Windows 77/4/0·Linux 76/1/0 | 남은 실기 I04·I10·L01 등 |
 | 07 | [설치와 운영 안내](vm/07-operations.md) | 작성(실기 전) |
 | 08 | [복사 코드 대장](vm/08-copied-code-register.md) | 복사·수정 완료 |
 
@@ -125,6 +125,8 @@ agent는 원본을 그대로 옮기지 않고 범위를 줄여 다시 구성했�
 | `parity-final-rerun-agent.txt` | 공통 `logx` 변경 뒤 cifs·remove 원본 비교 재실행 |
 | `merge/unit-windows.txt`, `merge/unit-linux.txt` | 통합 뒤 전체 정적 검사와 단위 시험(Windows 46/4/0, Linux 49/1/0, agent 10회 반복) |
 | `merge/parity-cifs-remove.txt`, `merge/parity-agent.txt` | 통합 뒤 원본 비교(cifs·remove 28 통과, agent 같음 97·의도한 차이 21·다름 0) |
+| `vm/` | vbr_vm 개발 검증(단위 시험, govulncheck, 데모 자동, 회귀), `copied-code.diff`·`copied-original/`(ncc-xen 복사 코드) |
+| `vm/windows-real-20261119/` | vbr_vm 실기(2026-11-19): 서비스 로그, 작업 기록 `jobs.jsonl`(암호·토큰 없음), 결함 수정 뒤 단위 시험(Windows, Linux) |
 
 `history/codex-2026-11-17/`은 Codex 세션이 cifs·remove를 고치면서 쓴 문서 9편을 그대로 보관한 것이다. 내용은 서비스별 문서에 옮겨 적었다(05-merge-record 4장).
 

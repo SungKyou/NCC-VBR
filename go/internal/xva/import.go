@@ -55,6 +55,7 @@ func Import(ctx context.Context, p ImportParams) ([]string, error) {
 	defer destroyTask(p.VM, taskRef)
 	stopWatch := watchCancel(ctx, p.VM, taskRef)
 	defer stopWatch()
+	defer settleIfCanceled(ctx, p.VM, taskRef) // stopWatch·destroyTask 보다 먼저 돈다
 
 	q := url.Values{}
 	q.Set("session_id", p.Client.SessionRef())

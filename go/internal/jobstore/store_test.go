@@ -27,7 +27,12 @@ func TestReopenMarksInterrupted(t *testing.T) {
 		}
 	}
 	now := time.Now()
-	_, _, _ = s.Update("r", true, func(r *Record) { r.Status = StatusRunning; r.StartedAt = &now; r.Step = "exporting" })
+	_, _, _ = s.Update("r", true, func(r *Record) {
+		r.Status = StatusRunning
+		r.StartedAt = &now
+		r.Step = "exporting"
+		r.Result = map[string]interface{}{SnapshotLeftKey: "55689cc6-09e2-5391-4a74-a66041923f22"}
+	})
 	_, _, _ = s.Update("d", true, func(r *Record) { r.Status = StatusSucceeded; r.FinishedAt = &now })
 	_ = s.Close()
 
@@ -44,6 +49,11 @@ func TestReopenMarksInterrupted(t *testing.T) {
 		if r.Status != StatusInterrupted || r.Error == nil || r.Error.Code != "INTERRUPTED" {
 			t.Fatalf("%s: %+v", id, r)
 		}
+	}
+	if r, _ := s2.Get("r"); !strings.Contains(r.Error.Detail, "step exporting") ||
+		!strings.Contains(r.Error.Detail, "temporary snapshot may remain: 55689cc6-09e2-5391-4a74-a66041923f22") ||
+		r.Result[SnapshotLeftKey] != "55689cc6-09e2-5391-4a74-a66041923f22" {
+		t.Fatalf("interrupted detail must name the left snapshot: %+v %+v", r.Error, r.Result)
 	}
 	if r, _ := s2.Get("d"); r.Status != StatusSucceeded {
 		t.Fatalf("d: %+v", r)

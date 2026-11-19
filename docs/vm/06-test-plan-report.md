@@ -1,6 +1,6 @@
 # vbr_vm 시험 계획과 결과
 
-기준일: 2026-11-19 / 대상: `go/cmd/vbr_vm` 4.000, `go/internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}` / 상태: **개발 검증 통과(V0·V1·데모 자동 모드), 실기(V2·V3·V4) 남음**. 판정 표현은 [검증 절차](../00-process/02-verification-procedure.md) 5장.
+기준일: 2026-11-19 / 대상: `go/cmd/vbr_vm` 4.000, `go/internal/{vm,vm/api,xva,jobstore,vmconfig,apiauth,redact,i18n,stdlogger}` / 상태: **개발 검증 통과(V0·V1·데모 자동 모드), 실기 V2·V3 일부 통과(I01~I03, I05~I09, 2026-11-19 Windows PC), 남은 실기 I04·I10·L01 등(6장)**. 판정 표현은 [검증 절차](../00-process/02-verification-procedure.md) 5장.
 
 ## 1. 판정
 
@@ -11,11 +11,11 @@
 | V1 단위 시험 Linux | WSL Ubuntu, `go/test/run-linux-tests.sh`(시험 실행 파일 15개) | 통과 75, 건너뜀 1, 실패 0 | 2026-11-19 | `evidence/vm/unit-linux.txt` |
 | 데모 자동 모드 | `go/test/vm/demo.ps1 -Auto`: 가짜 XAPI 2개 + `vbr_vm.exe` 실제 실행 | **PASS 16, FAIL 0** | 2026-11-19 | `evidence/vm/demo-auto.txt` |
 | 회귀(DEC-VM-18·28·33) | Go 판·의존·`vbr_secret` 변경 뒤 cifs·remove·agent | 단위 시험 위 V1에 포함 통과. cifs·remove 원본 비교 `RESULT: ALL PASS`. agent 원본 비교 다름 0(2차), 마지막 3번은 다름 3·1·0: P02 한 요청의 시점 경합(5장) | 2026-11-19 | `evidence/vm/regression-*.txt` |
-| V2 기존 대비 비교 | 1단계 실기 R1~R9 시나리오를 새 API로 다시 실행해 풀에 남는 결과를 1단계 기록(`agent/06` 5.3)과 비교 | 미실행(사용자 실기 필요) | | |
-| V3 통합 | 실제 XenServer 9 풀(192.168.102.53), demo.ps1 실기 모드 1~9 | 미실행(사용자 실기 필요) | | |
+| V2 기존 대비 비교 | 1단계 실기 R1~R9 시나리오를 새 API로 다시 실행해 풀에 남는 결과를 1단계 기록(`agent/06` 5.3)과 비교 | 일부 통과(5.1). R2·R3·R7·R8 대응 항목은 같은 모양. R4(MAC 보존)·R6 같은 조건(gzip·always)은 남음 | 2026-11-19 | `evidence/vm/windows-real-20261119/` |
+| V3 통합 | 실제 XenServer 9 풀(192.168.102.53), demo.ps1 실기 모드 1~9 | 일부 통과(5.1): I01·I02·I03·I05·I06·I07·I08·I09. 실기에서 전환본 결함 3건을 찾아 고쳤다(5.1 아래, [04](04-change-register.md) 6장) | 2026-11-19 | 같음 |
 | V4 운영 규모 | 운영 크기 VM, 동시 3개 | 미실행(사용자 실기 필요) | | |
 
-전체 판정: **개발 검증 통과**. 실제 XAPI 의 `/export`·`/import`, 큰 파일, 처리 중 취소 뒤 풀에 남는 것은 실기(V2·V3)로만 확인할 수 있다.
+전체 판정: **개발 검증 통과, 실기 일부 통과**. 실기에서 찾은 결함 3건은 고친 뒤 Windows 77/4/0, Linux 76/1/0 으로 다시 통과했다(`evidence/vm/windows-real-20261119/unit-*-after-fixes.txt`). 남은 실기는 6장.
 
 ## 2. 시험 환경
 
@@ -98,7 +98,8 @@
 | U73 | 데모 실행 로그 `vbr_vm.log`에 `taskId=` 속성 확인(증거 `demo-auto.txt` 작업 폴더) | 정적 확인 |
 | U74 | `i18n/catalog_test.go` `TestCatalogParity`(키 44개 × 3개 언어, 형식 지시자) | 통과 |
 | U80~U82 | `TestHealthAndAuth`, `TestSubmitValidation`(평문 거부), `TestSecretsNotLeaked`(ENC 복호화로 성공, 평문·ENC 값이 기록·응답에 없음), 데모 U82(로그·기록) | 통과 |
-| I01~I10, L01 | 데모 실기 모드 | 미실행(6장) |
+| I01~I03, I05~I09 | 데모 실기 모드(5.1) | 통과(I08 없는 SR 은 시험 스크립트 수정 뒤 사용자 판정, I09 의 `snapshot_left` 표시는 단위 시험으로 확인) |
+| I04, I10, L01 | 데모 실기 모드 | 미실행(6장) |
 
 ## 5. 실행 기록
 
@@ -115,21 +116,57 @@
 | 2026-11-19 | 회귀 2차 | 원본 비교(go1.27.4) | cifs·remove ALL PASS, agent 같음 97·의도한 차이 21·다름 0 | - | - | `regression-parity-*.txt` |
 | 2026-11-19 | 데모 3차 | `demo.ps1 -Auto`(go1.27.4 빌드) | PASS 16, FAIL 0. 띄운 프로세스 남지 않음 | - | - | `demo-auto.txt` |
 | 2026-11-19 | 회귀 3차 | `vbr_secret` 용도 인자(DEC-VM-33) 뒤 전체 단위 시험, 빌드, 원본 비교 | Windows 76/4/0, cifs·remove ALL PASS. agent 원본 비교 3번: 다름 3 → 1 → 0 | 시험 환경(시점 경합): 차이는 모두 P02(인자 오류 결과) 하나이고 C·Go 양쪽 방향으로 번갈아 난다. 결과 기록의 마지막 단계가 5에서 0으로 바뀌는 순간에 조회가 걸린다. agent 코드는 이번에 바뀌지 않았다(`git status`) | 시험 도구는 고치지 않고 알려진 불안정 항목으로 둔다(아래) | `regression-parity-agent-final-run1~3.txt` |
+| 2026-11-19 | 실기 준비 | 사용자 PC 에서 `vbr_vm.exe -config C:/temp/vbrvm/sysconfig.yaml`(05 10장 예, `time_zone: "Asia/Seoul"`) | 기동 실패 `invalid logging.time_zone: "Asia/Seoul"` | 전환본: Windows 에는 IANA 시간대 자료가 없고 실행 파일이 Go 의 `zoneinfo.zip`도 찾지 못한다. 데모 자동 모드 설정은 `time_zone: "local"`이라 잡지 못했다 | `cmd/vbr_vm/main.go`에 `_ "time/tzdata"`(시간대 자료를 실행 파일에 넣음, 약 450 KB). 재빌드 뒤 같은 설정 형식(`Asia/Seoul`)으로 기동·`/health` 200, 로그 시각 KST 확인 | 대화 기록 |
+| 2026-11-19 | 실기 준비 | `demo.ps1` 메뉴 1(실기 모드) | 키링 경로를 비운 채 넘어가 암호화 실패, 빈 암호로 메뉴 2 를 보내 400 `MISSING_FIELD payload.credentials.password` | 시험 스크립트: 키링 경로에 기본값이 없고, 빈 값과 암호화 실패를 막지 않았다 | 기본값(`$env:VBR_VM_KEYRING`, 없으면 현재 폴더 `key.yaml`), 파일이 있을 때까지 다시 물음, 암호화 실패면 세션 준비 실패로 처리. `demo.ps1 -Auto` PASS 16 재확인 | 대화 기록 |
+| 2026-11-19 | 실기 중 | `demo.ps1` 메뉴 4·5(사용자 지적) | 복구·검증의 `file_path` 기본값 없음. 메뉴 6 은 압축·스냅샷을 묻지 않아 none·auto 로 같은 VM 을 3개 보냄(1단계 R6 과 조건이 다르고 파일이 VM 디스크 크기만큼) | 시험 스크립트 | 메뉴 2·3에서 마지막으로 성공한 백업 파일을 복구·검증 기본값으로, 빈 값이면 다시 물음. 메뉴 6 에 VM·compression(기본 gzip)·snapshot_mode(기본 always) 입력과 dom0 확인 안내. 메뉴 8 에 없는 SR(`XAPI_ERROR UUID_INVALID \| SR`, 1단계 R8) 추가. `demo.ps1 -Auto` PASS 16 | 대화 기록 |
+| 2026-11-19 16:30 | V3 I06 | `demo.ps1` 메뉴 6(고치기 전 판: none·auto, Halted 시험 VM 같은 것 3개 동시) | 3개 모두 succeeded, 각 5,983,571,968바이트(I01 `test1.xva`와 같은 크기), 4분 0~12초. `snapshotUsed=false`. 같은 Halted VM 의 스냅샷 없는 내보내기 3개가 동시에 진행됨 | 진행 중 관찰 두 가지: ① `.partial` 크기가 탐색기·`Get-ChildItem`에서 0 으로 보임 — Windows 는 쓰는 중인 파일의 디렉터리 항목 크기를 닫을 때 갱신한다(서비스 문제 아님) ② 진행률이 1→26% 까지만 오르다 끝에서 99% 로 건너뜀 — XAPI export task 의 progress 를 그대로 쓰는 ncc-xen 방식(`progress*98+1`)이 실제 전송량을 따라가지 않는다 | ②는 개선 여부 사용자 결정 대기 | `C:/temp/vbrvm/vbr_vm.log`, `tasks\jobs.jsonl` |
+| 2026-11-19 16:37 | V3 I07 | `demo.ps1` 메뉴 7(`snapshot_mode: always`, 15초 뒤 취소) | `canceled` / `CANCELED`, `.partial` 지워짐. **임시 스냅샷 `55689cc6-…`(NCC-BACKUP-copy_20gb2-20261119163708)이 남음**: `VDI.destroy failed: VDI_IN_USE` | 전환본: `task.cancel` 직후 바로 스냅샷을 지웠다. XenServer 는 내보내기를 멈추는 동안 스냅샷 디스크를 더 잡고 있다. 가짜 XAPI 는 이 상태를 흉내 내지 않아 단위 시험이 잡지 못했다 | ① `xva.settleIfCanceled`: 취소된 export·import 는 XAPI task 가 pending·cancelling 을 벗어날 때까지(최대 60초) 기다린 뒤 돌아온다 ② `vm.uninstall`: `VDI_IN_USE`·`OTHER_OPERATION_IN_PROGRESS`면 2초 간격으로 `cleanupTimeout`(2분) 안에서 다시 지운다. 공통 `xapi` 패키지는 바꾸지 않음 ③ 가짜 XAPI 에 `Cancelling`·`VDIInUse`, 회귀 시험 `TestCancelSnapshotInUse`. 전체 단위 시험 통과. 남은 스냅샷은 사용자가 dom0 에서 지움. 메뉴 7 재실기 필요 | 대화 기록, `C:/temp/vbrvm/vbr_vm.log` |
+| 2026-11-19 | V3 I07 재실기 | 새 빌드(취소 정리 수정) 메뉴 7 | 정상(사용자 확인: canceled, 임시 스냅샷 남지 않음) | - | - | 대화 기록 |
+| 2026-11-19 | V3 I08 | `demo.ps1` 메뉴 8 | 없는 VM `XAPI_ERROR UUID_INVALID \| VM`, 없는 복구 파일 `FILE_IO_ERROR`, 틀린 암호 `XAPI_AUTH_FAILED SESSION_AUTHENTICATION_FAILED`, 필수 값 없음 400 `MISSING_FIELD payload.options.file_name` 모두 PASS. **없는 SR 은 FAIL**(`FILE_IO_ERROR`) | 시험 스크립트: 없는 SR 케이스에 없는 파일을 넣었다. 서비스는 로컬 파일 확인 → 로그인 → SR 확인 → 해제·업로드 순이라 파일 오류가 먼저 났다(전송 전 SR 실패라는 설계 의도 E-05 와 맞음) | 케이스가 실제로 있는 백업 파일(기본: 마지막 백업 또는 `test1.xva`)을 쓰게 고침. 재실기 필요 | 대화 기록 |
+| 2026-11-19 15:55 | V3 I09 | 메뉴 2(`always`) 3% 에서 `Stop-Process -Name vbr_vm -Force` → 재기동 → `GET /api/v1/jobs?status=interrupted` | `export-58d5225919c6`: `interrupted`, `INTERRUPTED`, detail `service restarted while the task was running (step exporting)`, percent 3 에서 멈춤(자동 재개 없음). `test3.xva.partial` 753,805,824바이트와 dom0 임시 스냅샷 1개가 남음(1단계 R7 과 같은 모양). **남은 스냅샷 uuid 가 결과에 없음** | 전환본: REQ-VM-17·05 9장(INTERRUPTED detail 에 남은 스냅샷 uuid)을 구현하지 않았다 | 임시 스냅샷을 만들면 바로 작업 기록 `result.snapshot_left`에 uuid 를 적고(`progress.note`), 재기동 때 detail 에 `; temporary snapshot may remain: <uuid>`를 붙인다. 정상·실패·취소로 끝나면 최종 결과가 덮어써 없어진다. 시험 `TestReopenMarksInterrupted`, `TestCancelSnapshotInUse`에 확인 추가. 전체 단위 시험 통과. 재빌드 뒤 I09 재실기 필요 | 대화 기록 |
 
 agent 원본 비교의 같음·의도한 차이 수가 실행마다 96/22, 97/21로 다른 것과 회귀 3차의 P02 차이는 시험 환경의 시점 경합이다. 그중 같음·의도한 차이 수가 다른 것은 C-AG-03(전송 시점) 1건이 실행마다 달라지기 때문이다. 통합 기록([05-merge-record.md](../00-process/05-merge-record.md))에도 같은 설명이 있다.
+
+### 5.1 실기 결과 요약 (2026-11-19, Windows PC → XenServer 9 풀)
+
+`vbr_vm.exe`(Windows)를 `C:/temp/vbrvm`에서 띄우고 `demo.ps1` 실기 모드로 실행했다. 시험 VM `42097417-…`(Halted, 이름 `copy_20gb2`). 근거: `evidence/vm/windows-real-20261119/jobs.jsonl`, `vbr_vm.log`(암호·토큰·ENC 값 없음 확인).
+
+| 시험 | 조건 | 결과 | 1단계 대응 | 판정 |
+|---|---|---|---|---|
+| I01 전체 백업 | none, auto(Halted → 스냅샷 없음) | 5,983,571,968바이트, 108초, SHA256 기록 | R2(gzip·스냅샷 2.59 GB, 4분 30초). 조건이 달라 크기·시간은 비교하지 않음 | 통과 |
+| I02 디스크 선택 | `disks:[1]`, 임시 스냅샷 | 2,134,528바이트, 임시 스냅샷 생성·삭제 | R5(디스크 0). 디스크 번호가 다름 | 통과 |
+| I03 복구 | `test1.xva`, `restore_original_uuid=false`, `name_label: test_1_sk` | 122초, 새 VM `0e96b402-…`, 템플릿 아님 | R3 | 통과 |
+| I05 검증 | `test1.xva`(none) | `verified=true`, chunk 5,698, 6초 | (1단계 없음) | 통과. gzip·zstd 파일은 남음 |
+| I06 동시 | 고치기 전 메뉴: none·auto, 같은 Halted VM 3개 | 3개 모두 성공, 각 5,983,571,968바이트, 240~252초. **같은 Halted VM 의 스냅샷 없는 내보내기 여러 개가 동시에 돈다** | R6(gzip·스냅샷, 작업자 2) | 통과. R6 같은 조건은 남음 |
+| I07 처리 중 취소 | always, 15초 뒤 취소 | 1차: canceled, `.partial` 삭제, **임시 스냅샷이 남음**(`VDI_IN_USE`) → 결함 D-VM-02 수정 → 2차: canceled, 스냅샷·`.partial` 없음 | R6 의 처리 중 취소 거부를 대체 | 통과(2차) |
+| I08 오류 | 없는 VM / 없는 SR / 없는 파일 / 틀린 암호 / 필수 값 없음 | `XAPI_ERROR UUID_INVALID \| VM`, (없는 SR 은 시험 스크립트가 없는 파일을 넣어 `FILE_IO_ERROR` → 스크립트 수정), `FILE_IO_ERROR`, `XAPI_AUTH_FAILED`, 400 `MISSING_FIELD` | R8 | 통과(사용자 판정) |
+| I09 강제 종료 | always, 3% 에서 `Stop-Process -Force` → 재기동 | `interrupted`/`INTERRUPTED`, detail `… (step exporting)`, 다시 실행 안 함. `.partial` 753,805,824바이트와 임시 스냅샷이 남음(R7 과 같은 모양). **결과에 남은 스냅샷 uuid 가 없음** → 결함 D-VM-03 수정(`snapshot_left`) | R7 | 통과(사용자 판정, 수정분은 단위 시험) |
+
+실기 중 관찰(결함 아님)
+
+| 관찰 | 내용 | 반영 |
+|---|---|---|
+| `.partial` 크기 0 | 쓰는 중인 파일은 Windows 디렉터리 항목 크기가 닫을 때 갱신돼 탐색기·`Get-ChildItem`에 0 으로 보인다 | 07 7장 |
+| 진행률 | XAPI export task 의 progress 가 실제 전송량보다 낮다. none 백업에서 25~26% 까지만 오르고 끝에서 99% 로 건너뛴다(ncc-xen 같은 계산) | 결정 대기 Q-VM-03([04](04-change-register.md) 5장) |
+| 복구 순서 | 로컬 파일 확인 → 로그인 → SR 확인 → 해제·업로드. 없는 파일이면 SR 보다 파일 오류가 먼저 난다 | 05 9장 그대로(설계 의도와 맞음) |
 
 ## 6. 실행하지 못한 시험
 
 | 번호 | 사유 | 재개 조건 | 누가 |
 |---|---|---|---|
-| I01~I10 (V2·V3) | 실제 XenServer 풀이 필요하다 | `vbr_vm`을 시험 PC 또는 Linux 서버에 띄우고 `demo.ps1` 실기 모드 1~9 실행(절차는 [06-windows-test-guide.md](../00-process/06-windows-test-guide.md) 6장) | 사용자 |
+| I04 복구 MAC 보존 | 실기에서 하지 않았다 | 메뉴 4 에서 `restore_original_uuid` y. 원본이 있으면 `DUPLICATE_MAC_SEED`(R4) | 사용자 |
+| I05 gzip·zstd 검증 | none 파일만 검증했다 | 메뉴 2 를 gzip·zstd 로 백업한 뒤 메뉴 5 | 사용자 |
+| I06 R6 같은 조건 | 고치기 전 메뉴로 none·auto 만 했다 | 메뉴 6, gzip·always | 사용자 |
+| I08 없는 SR | 시험 스크립트 수정 뒤 다시 돌리지 않았다(사용자 판정 정상) | 메뉴 8 | 사용자 |
+| I09 `snapshot_left` 표시 | 수정분(D-VM-03)을 실기로 다시 보지 않았다(단위 시험 통과, 사용자 판정 정상) | I09 다시 | 사용자 |
+| I10 Halted 내보내기 중 VM 시작 | 미실행 | 가이드 6.3 | 사용자 |
 | L01 (V4) | 운영 크기 VM | 운영 VM 하나로 gzip·zstd 백업 시간 측정 | 사용자 |
 | U60 `send_progress` | 진행 중 결과 보고는 middle 이 정해지지 않아 시험하지 않았다. 코드는 같은 outbox 경로를 쓴다 | middle 연동 때 | 수행자 |
 | Linux 실행 파일 기동 | 단위 시험은 Linux 에서 통과했지만 `vbr_vm` 실행 파일을 Linux 에서 띄워 보지 않았다 | Linux 서버 단계 | 사용자·수행자 |
 
 ## 7. 사용자 실행 시험의 절차
 
-T-VM-I01~I10, L01은 9장의 demo.ps1 실기 모드로 한다. 절차는 구현 뒤 `00-process/06-windows-test-guide.md`에 5장(vbr_vm)으로 더한다.
+T-VM-I01~I10, L01은 9장의 demo.ps1 실기 모드로 한다. 절차는 [06-windows-test-guide.md](../00-process/06-windows-test-guide.md) 6장에 있다(메뉴가 없는 I09·I10은 6.3).
 
 ## 8. 알려진 한계
 

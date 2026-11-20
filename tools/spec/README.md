@@ -16,6 +16,13 @@ vbr_vm Job Type 표준 명세서(Word)를 만든다. 서식은 NCC-Xen Job Type 
 python -X utf8 tools\spec\build_vm_spec.py
 ```
 
+같은 생성기로 개발 인계서도 만든다(원문 경로를 인자로 준다, 그림 `![캡션](경로)` 지원):
+
+```powershell
+python -X utf8 tools\handoff\diagrams.py
+python -X utf8 tools\spec\build_vm_spec.py docs\handoff\01-cifs.md docs\handoff\02-remove.md docs\handoff\03-agent.md docs\handoff\04-vm.md docs\handoff\05-common-source.md
+```
+
 ## 판을 올릴 때
 
 1. `vm_spec_source.md` 첫머리의 `version`, `date`, `isodate`, `header`, `output`(파일 이름의 판)을 고친다.

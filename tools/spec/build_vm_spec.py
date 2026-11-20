@@ -5,8 +5,9 @@
 docs/NCC-XEN_JobType_표준명세서_v3.36.docx(@043c6d5)에서 복사했다(docs/vm/08 CP-VM-14).
 표지·표·코드 상자의 글꼴·색·여백은 같은 문서의 본문 XML 값을 그대로 쓴다.
 
-사용(저장소 최상위에서):  python -X utf8 tools/spec/build_vm_spec.py
-필요한 것: Python 3 표준 라이브러리만.
+사용(저장소 최상위에서):  python -X utf8 tools/spec/build_vm_spec.py [원문.md ...]
+  인자를 빼면 tools/spec/vm_spec_source.md(표준 명세서). 개발 인계서(docs/handoff/*.md)도 같은 생성기로 만든다.
+필요한 것: Python 3 표준 라이브러리만(그림 크기는 PNG 머리에서 읽는다).
 
 원문 문법(마크다운의 일부):
   첫머리 --- … ---   표지 값(product, title, subtitle, version, date, isodate, header, footer, output)
@@ -15,9 +16,13 @@ docs/NCC-XEN_JobType_표준명세서_v3.36.docx(@043c6d5)에서 복사했다(doc
   ```                코드 상자(회색, Consolas)
   빈 줄로 나눈 줄     문단.  `코드` 와 **굵게** 를 쓸 수 있다
   첫 번째 표(제목 앞)  표지 아래 요약 표
+  ![캡션](그림.png)   그림(원문 파일 기준 상대 경로, 쪽 너비에 맞춤)과 그 아래 캡션
+  - 항목              글머리표 문단
+  [글](주소)          링크는 글만 남긴다
 """
 import os
 import re
+import struct
 import sys
 import zipfile
 from xml.sax.saxutils import escape
@@ -31,6 +36,9 @@ TABLE_W = 9360  # NCC-Xen 본문 표 너비(dxa)
 NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
       'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '
       'xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" '
+      'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" '
+      'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '
+      'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" '
       'xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="w14"')
 
 
@@ -54,7 +62,8 @@ def run(text, **kw):
 
 
 def inline(text, color="222222", size=None, bold=False):
-    """`코드` 와 **굵게** 를 런으로 나눈다."""
+    """`코드` 와 **굵게** 를 런으로 나눈다. [글](주소) 링크는 글만 남긴다."""
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
     out = []
     for part in re.split(r"(`[^`]+`|\*\*[^*]+\*\*)", text):
         if not part:
@@ -70,6 +79,41 @@ def inline(text, color="222222", size=None, bold=False):
 
 def para(text, before=60, after=60):
     return f'<w:p><w:pPr><w:spacing w:before="{before}" w:after="{after}"/></w:pPr>{inline(text)}</w:p>'
+
+
+def bullet(text):
+    return (f'<w:p><w:pPr><w:spacing w:before="20" w:after="20"/><w:ind w:left="360" w:hanging="220"/></w:pPr>'
+            f'{run("· ")}{inline(text)}</w:p>')
+
+
+IMAGES = []  # (zip 안 이름, 원본 경로, 관계 ID)
+PAGE_EMU = 9360 * 635  # 표 너비(6.5인치)
+
+
+def png_size(path):
+    with open(path, "rb") as f:
+        head = f.read(24)
+    return struct.unpack(">II", head[16:24])
+
+
+def image(path, caption):
+    n = len(IMAGES) + 1
+    rid = f"rIdImg{n}"
+    IMAGES.append((f"media/image{n}.png", path, rid))
+    w, h = png_size(path)
+    cx = min(PAGE_EMU, w * 9525)  # 96 dpi 기준
+    cy = int(cx * h / w)
+    # pPr 자식 순서는 스키마 순서(keepNext → spacing → jc)를 지킨다
+    pic = (f'<w:p><w:pPr><w:keepNext/><w:spacing w:before="120" w:after="40"/><w:jc w:val="center"/></w:pPr><w:r><w:drawing>'
+           f'<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="{cx}" cy="{cy}"/>'
+           f'<wp:docPr id="{n}" name="그림 {n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>'
+           '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic>'
+           f'<pic:nvPicPr><pic:cNvPr id="{n}" name="image{n}.png"/><pic:cNvPicPr/></pic:nvPicPr>'
+           f'<pic:blipFill><a:blip r:embed="{rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>'
+           f'<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="{cx}" cy="{cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>'
+           '</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>')
+    cap = f'<w:p><w:pPr><w:spacing w:before="0" w:after="160"/><w:jc w:val="center"/></w:pPr>{run(caption, color="555555", size=18)}</w:p>'
+    return pic + cap
 
 
 def spacer(before):
@@ -179,7 +223,7 @@ def cover(meta):
     ])
 
 
-def parse(src):
+def parse(src, base):
     m = re.match(r"---\n(.*?)\n---\n", src, re.S)
     meta = dict(l.split(":", 1) for l in m.group(1).splitlines() if ":" in l)
     meta = {k.strip(): v.strip() for k, v in meta.items()}
@@ -221,6 +265,18 @@ def parse(src):
             body.append(table(rows))
             body.append(spacer(80))
             continue
+        im = re.match(r"^!\[(.*)\]\((.+)\)\s*$", l.strip())
+        if im:
+            flush()
+            body.append(image(os.path.normpath(os.path.join(base, im.group(2))), im.group(1)))
+            i += 1
+            continue
+        bm = re.match(r"^\s*[-*] (.*)", l)
+        if bm:
+            flush()
+            body.append(bullet(bm.group(1).strip()))
+            i += 1
+            continue
         if not l.strip():
             flush()
         else:
@@ -230,9 +286,10 @@ def parse(src):
     return meta, body
 
 
-def build():
-    src = open(SOURCE, encoding="utf-8").read().replace("\r\n", "\n")
-    meta, body = parse(src)
+def build(source=SOURCE):
+    IMAGES.clear()
+    src = open(source, encoding="utf-8").read().replace("\r\n", "\n")
+    meta, body = parse(src, os.path.dirname(os.path.abspath(source)))
     sect = ('<w:sectPr><w:headerReference w:type="default" r:id="rId11"/><w:footerReference w:type="default" r:id="rId12"/>'
             '<w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" '
             'w:header="708" w:footer="708" w:gutter="0"/><w:cols w:space="720"/><w:docGrid w:linePitch="360"/></w:sectPr>')
@@ -254,10 +311,19 @@ def build():
             data = open(os.path.join(TEMPLATE, n), encoding="utf-8").read()
             for k, v in fill.items():
                 data = data.replace(k, v)
+            if n == "[Content_Types].xml" and IMAGES:
+                data = data.replace('<Default Extension="xml"', '<Default Extension="png" ContentType="image/png"/><Default Extension="xml"')
+            if n == "word/_rels/document.xml.rels" and IMAGES:
+                rels = "".join(f'<Relationship Id="{rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="{zn}"/>'
+                               for zn, _, rid in IMAGES)
+                data = data.replace("</Relationships>", rels + "</Relationships>")
             z.writestr(n, data)
+        for zn, path, _ in IMAGES:
+            z.write(path, "word/" + zn)
         z.writestr("word/document.xml", doc)
     print(f"wrote {out} ({len(body)} blocks)")
 
 
 if __name__ == "__main__":
-    sys.exit(build())
+    for src in (sys.argv[1:] or [SOURCE]):
+        build(src)

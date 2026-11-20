@@ -108,6 +108,7 @@ agent는 구현 전에 사용자에게 문제를 먼저 알리도록 지시받�
 | 2026-11-18~19 | agent V3 실기(일부) | Windows PC의 `vbr_agent.exe` → 실제 XenServer 9 풀, 가이드 4장 R0~R9 (사용자 실행) | IT-01~05, PT-01, PT-02 통과. 원본 VM이 있는 풀의 preserve=true 복구는 DUPLICATE_MAC_SEED로 거부(운영 안내 반영). 정리 완료 | `evidence/agent/windows-real-20261119/`, `agent/06` 5.3 |
 | 2026-11-19 | vbr_vm V2·V3 실기(일부) | Windows PC 의 `vbr_vm.exe` → 실제 XenServer 9 풀, `demo.ps1` 실기 모드(사용자 실행). I01~I03, I05~I09 | 통과. 실기 중 전환본 결함 3건(시간대 자료, 취소 뒤 스냅샷 정리, 중단 결과의 남은 스냅샷 uuid)과 시험 스크립트 결함 4건 수정. 수정 뒤 Windows 77/4/0, Linux 76/1/0. 결정 대기 Q-VM-03(진행률) | `evidence/vm/windows-real-20261119/`, `vm/06` 5.1, `vm/04` 6장 |
 | 2026-11-19 | vbr_vm 표준 명세서 | NCC-Xen Job Type 표준 명세서 v3.36 과 같은 서식의 Word 명세서 작성(개발팀 전달용). 원문 `tools/spec/vm_spec_source.md`, 생성기 `build_vm_spec.py`, 양식은 NCC-Xen 에서 복사(CP-VM-14). 실기 I10 결과 반영. 설정·키링을 저장소 최상위로 옮김(`sysconfig.example.yaml`, 실제 파일은 .gitignore) | Word 열기·형식 검사 통과, 16쪽 | `vm/NCC-VBR_VM_JobType_표준명세서_v1.00.docx` |
+| 2026-11-20 | 개발 인계서 | 서비스별 인계서 4편(cifs, remove, agent, vbr_vm)과 공통 구성 · 소스 설명서. 각 문서 5장 구성(구성 · 흐름도 / 설정 · 키 · 로그 · 암호화 / 호출 · 결과 분석 / 소스 파일 / 이전 안내). Markdown 원문 + Word(흐름도 PNG 8개 포함). Codex 의 developer-handoff 는 참고 | Word 형식 검사 통과, Word 로 PDF 변환 확인 | `docs/handoff/` |
 
 V2 1차와 2차의 원인과 조치는 [cifs/06-test-report.md](../cifs/06-test-report.md) 5장에 있다.
 
